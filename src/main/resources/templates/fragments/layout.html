@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title} + ' | Drive-Ü'">Drive-Ü</title>
+    <link rel="stylesheet" th:href="@{/css/driveu-common.css}">
+    <link rel="stylesheet" th:href="@{/css/driveu-menu-fix.css}">
+</head>
+<body>
+
+<header class="site-header" th:fragment="header(activeMenu)">
+    <div class="header-inner">
+        <a th:href="@{/drive-u}" class="brand">
+            <span class="brand-text">
+                <strong>Drive-Ü</strong>
+                <em>운전면허 교육 LMS</em>
+            </span>
+        </a>
+
+        <nav class="user-menu">
+            <span class="hello">안녕하세요 <b th:text="${loginName} ?: '000'">000</b>님</span>
+            <a th:href="@{/drive-u/myPage}">마이페이지</a>
+            <a th:href="@{/drive-u/login}">로그아웃</a>
+        </nav>
+    </div>
+
+    <nav class="main-nav">
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'edu'} ? ' active'">사전교육</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'cbt'} ? ' active'">모의시험</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'process'} ? ' active'">면허취득절차</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'card'} ? ' active'">면허증</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'userInfo'} ? ' active'">고객센터</button>
+    </nav>
+
+    <div class="mega-menu">
+        <div class="mega-inner">
+            <div class="mega-column">
+                <a th:href="@{/drive-u/du}">교통안전교육</a>
+                <a th:href="@{/drive-u/lVideo}">학습영상</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/cbt}">CBT 문제은행</a>
+                <a th:href="@{/drive-u/Driving}">주행 시뮬레이션</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/process}">면허취득절차</a>
+                <a th:href="@{/drive-u/process/checking}">신체검사 안내내용</a>
+                <a th:href="@{/drive-u/process/wApply1}">학과시험</a>
+                <a th:href="@{/drive-u/process/fApply1}">기능시험</a>
+                <a th:href="@{/drive-u/process/dApply1}">도로주행</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/card}">신규발급</a>
+                <a th:href="@{/drive-u/card/re}">재발급</a>
+                <a th:href="@{/drive-u/card/up}">갱신</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/userInfo}">공지사항</a>
+                <a th:href="@{/drive-u/userInfo/question}">문의사항</a>
+                <a th:href="@{/drive-u/userInfo/law}">최신법규</a>
+                <a th:href="@{/drive-u/userInfo/location}">길 안내</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<aside class="side-menu" th:fragment="side(menuKey, currentPage)">
+    <div th:switch="${menuKey}">
+        <div th:case="'edu'">
+            <h2>사전교육</h2>
+            <div class="side-group">
+                <button type="button" class="side-title">사전교육</button>
+                <ul>
+                    <li><a th:href="@{/drive-u/du}" th:classappend="${currentPage == 'du'} ? ' selected'">교통안전교육</a>
+                    </li>
+                    <li><a th:href="@{/drive-u/lVideo}"
+                           th:classappend="${currentPage == 'lVideo'} ? ' selected'">학습영상</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:case="'cbt'">
+            <h2>모의고사</h2>
+            <div class="side-group">
+                <button type="button" class="side-title">모의시험</button>
+                <ul>
+                    <li><a th:href="@{/drive-u/cbt}" th:classappend="${currentPage == 'cbt'} ? ' selected'">CBT 문제은행</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/drive-u/Driving}" th:classappend="${currentPage == 'Driving'} ? ' selected'">주행
+                            시뮬레이션</a>
+                    </li>
+                    <li class="side-sub"
+                        >
+                        <a th:href="@{/drive-u/driving/fDriving}"
+                           th:classappend="${currentPage == 'fDriving'} ? ' selected'">기능</a>
+                    </li>
+                    <li class="side-sub"
+                        >
+                        <a th:href="@{/drive-u/driving/rDriving}"
+                           th:classappend="${currentPage == 'rDriving'} ? ' selected'">주행</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:case="'process'">
+            <h2>면허취득절차</h2>
+            <div class="side-group">
+                <button type="button" class="side-title">취득절차안내</button>
+                <ul>
+                    <li><a th:href="@{/drive-u/process}" th:classappend="${currentPage == 'process'} ? ' selected'">면허취득절차</a>
+                    </li>
+                    <li><a th:href="@{/drive-u/process/checking}"
+                           th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사 안내내용</a></li>
+                    <li><a th:href="@{/drive-u/process/wApply1}"
+                           th:classappend="${currentPage == 'wApply'} ? ' selected'">학과시험</a></li>
+                    <li><a th:href="@{/drive-u/process/fApply1}"
+                           th:classappend="${currentPage == 'fApply'} ? ' selected'">기능시험</a></li>
+                    <li><a th:href="@{/drive-u/process/dApply1}"
+                           th:classappend="${currentPage == 'dApply'} ? ' selected'">도로주행</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:case="'card'">
+            <h2>면허증</h2>
+            <div class="side-group">
+                <button type="button" class="side-title">면허증</button>
+                <ul>
+                    <li><a th:href="@{/drive-u/card}" th:classappend="${currentPage == 'card'} ? ' selected'">신규발급</a>
+                    </li>
+                    <li><a th:href="@{/drive-u/card/re}" th:classappend="${currentPage == 're'} ? ' selected'">재발급</a>
+                    </li>
+                    <li><a th:href="@{/drive-u/card/up}" th:classappend="${currentPage == 'up'} ? ' selected'">갱신</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:case="'userInfo'">
+            <h2>고객센터</h2>
+            <div class="side-group">
+                <button type="button" class="side-title">고객센터</button>
+                <ul>
+                    <li><a th:href="@{/drive-u/userInfo}"
+                           th:classappend="${currentPage == 'notice'} ? ' selected'">공지사항</a></li>
+                    <li><a th:href="@{/drive-u/userInfo/question}"
+                           th:classappend="${currentPage == 'question'} ? ' selected'">문의사항</a></li>
+                    <li><a th:href="@{/drive-u/userInfo/law}" th:classappend="${currentPage == 'law'} ? ' selected'">최신법규</a>
+                    </li>
+                    <li><a th:href="@{/drive-u/userInfo/location}"
+                           th:classappend="${currentPage == 'location'} ? ' selected'">길 안내</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<footer class="site-footer" th:fragment="footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div>
+                <strong>Drive-Ü</strong>
+                <p>주소 대전광역시 중구 중앙로121번길 20</p>
+                <p>전화 042-000-0000 (평일 09:00~18:00)</p>
+                <p>이메일 DWacademy@driveu.com</p>
+            </div>
+            <div>
+                <strong>관련 사이트</strong>
+                <a href="#">도로교통공단</a>
+                <a href="#">경찰청</a>
+                <a href="#">정부24</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Drive-Ü. All rights reserved.</span>
+            <span>개인정보처리방침 · 이용약관 · 저작권정책</span>
+        </div>
+    </div>
+</footer>
+
+<th:block th:fragment="scripts">
+    <button type="button" class="top-button" onclick="scrollTopSmooth()">↑</button>
+    <script th:src="@{/js/driveu-common.js}"></script>
+</th:block>
+
+</body>
+</html>

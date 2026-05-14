@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('기능 시뮬레이션')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('cbt')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('cbt', 'fDriving')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 모의고사 &gt; 기능 시뮬레이션</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">FUNCTION SIMULATION</p>
+                <h1>기능 시뮬레이션</h1>
+                <p>장내기능 코스를 Unity 기반으로 연습하고 결과를 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">기능 시뮬레이션 실행</h2>
+            <div class="simulator-box">
+                <div class="sim-screen"><strong>Unity WebGL 영역</strong><span>직각주차 · 경사로 · 돌발상황</span></div>
+                <div class="sim-result"><h3>실습 결과</h3>
+                    <div class="score">82점</div>
+                    <p>감점: 방향지시등 미작동, 정지선 초과</p>
+                    <button type="button" class="outline-btn">다시 연습</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

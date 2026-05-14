@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('결제')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'wApply')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 결제</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">APPLICATION</p>
+                <h1>결제</h1>
+                <p>접수 내역을 확인하고 결제를 진행합니다.</p>
+            </div>
+        </section>
+
+        <section class="apply-step-wrap"><a class="apply-step done" th:href="@{/drive-u/process/wApply1}"><span>1</span><p>약관동의</p></a><a class="apply-step done" th:href="@{/drive-u/process/wApply2}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step done" th:href="@{/drive-u/process/wApply3}"><span>3</span><p>연락처등록</p></a><a class="apply-step current" th:href="@{/drive-u/process/wApply4}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/drive-u/process/wApply5}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
+    <div class="section-head"><h2>결제</h2><span>step 04.</span></div>
+    <div class="apply-info-list">
+        <div class="apply-info-row"><strong>접수방법</strong><span>온라인접수</span></div>
+        <div class="apply-info-row"><strong>시험구분</strong><span>필기시험</span></div>
+        <div class="apply-info-row"><strong>시험장</strong><span>대전 운전면허시험장</span></div>
+        <div class="apply-info-row"><strong>응시일시</strong><span>2026년 05월 21일 13:10</span></div>
+    </div>
+    <div class="payment-box"><h3>지불방법 선택</h3><div class="pay-method"><strong>수수료</strong><span>25,000원</span></div><div class="pay-method"><strong>지불방법</strong><label><input type="radio" name="paymentMethod"> 신용카드</label><label><input type="radio" name="paymentMethod"> 계좌이체</label></div></div>
+    <div class="button-area"><a class="outline-btn sub" th:href="@{/drive-u/process/wApply3}">이전</a><button class="outline-btn" th:data-next="@{/drive-u/process/wApply5}" onclick="goPayment(this)">결제하기</button></div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

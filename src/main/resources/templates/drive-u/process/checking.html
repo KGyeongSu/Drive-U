@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('신체검사 안내내용')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'checking')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 면허취득절차 &gt; 신체검사 안내내용</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">PHYSICAL CHECK</p>
+                <h1>신체검사 안내내용</h1>
+                <p>운전면허 취득 전 필요한 신체검사 기준과 준비물을 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">신체검사 안내</h2>
+            <div class="info-table">
+                <div class="info-row"><strong>검사 대상</strong><span>운전면허 신규 취득 및 적성검사 대상자</span></div>
+                <div class="info-row"><strong>검사 장소</strong><span>운전면허시험장 신체검사실 또는 지정 병원</span></div>
+                <div class="info-row"><strong>준비물</strong><span>신분증, 응시원서, 사진</span></div>
+                <div class="info-row"><strong>확인 항목</strong><span>시력, 색채식별, 청력 등 운전 가능 여부</span></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

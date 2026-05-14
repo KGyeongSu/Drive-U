@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('길 안내')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('userInfo')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('userInfo', 'location')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 길 안내</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">LOCATION GUIDE</p>
+                <h1>길 안내</h1>
+                <p>지역별 운전면허시험장과 약도를 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section"><h2 class="section-title">시험장 찾기</h2>
+            <div class="guide-filter">
+                <label>지역 선택
+                    <select id="regionSelect">
+                        <option value="daejeon">대전</option>
+                        <option value="seoul">서울</option>
+                        <option value="chungbuk">충북</option>
+                        <option value="busan">부산</option>
+                    </select>
+                </label>
+            </div>
+            <div class="center-layout">
+                <div class="center-list" id="centerList"></div>
+                <div class="map-panel"><h3 id="mapTitle">대전 운전면허시험장</h3>
+                    <div class="map-sketch"><span>약도 영역</span><small>주요 도로 · 버스정류장 · 입구 표시</small></div>
+                    <p id="mapAddress">대전광역시 동구 산서로1660번길 90</p></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
