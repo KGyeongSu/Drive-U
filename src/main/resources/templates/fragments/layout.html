@@ -28,7 +28,7 @@
         <button type="button" class="nav-button" th:classappend="${activeMenu == 'edu'} ? ' active'">사전교육</button>
         <button type="button" class="nav-button" th:classappend="${activeMenu == 'cbt'} ? ' active'">모의시험</button>
         <button type="button" class="nav-button" th:classappend="${activeMenu == 'process'} ? ' active'">면허취득절차</button>
-        <button type="button" class="nav-button" th:classappend="${activeMenu == 'card'} ? ' active'">면허증</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'card'} ? ' active'">면허증 관리</button>
         <button type="button" class="nav-button" th:classappend="${activeMenu == 'userInfo'} ? ' active'">고객센터</button>
     </nav>
 
@@ -46,7 +46,7 @@
 
             <div class="mega-column">
                 <a th:href="@{/drive-u/process}">면허취득절차</a>
-                <a th:href="@{/drive-u/process/checking}">신체검사 안내내용</a>
+                <a th:href="@{/drive-u/process/checking}">신체검사 안내</a>
                 <a th:href="@{/drive-u/process/wApply1}">학과시험</a>
                 <a th:href="@{/drive-u/process/fApply1}">기능시험</a>
                 <a th:href="@{/drive-u/process/dApply1}">도로주행</a>
@@ -116,7 +116,7 @@
                     <li><a th:href="@{/drive-u/process}" th:classappend="${currentPage == 'process'} ? ' selected'">면허취득절차</a>
                     </li>
                     <li><a th:href="@{/drive-u/process/checking}"
-                           th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사 안내내용</a></li>
+                           th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사 안내</a></li>
                     <li><a th:href="@{/drive-u/process/wApply1}"
                            th:classappend="${currentPage == 'wApply'} ? ' selected'">학과시험</a></li>
                     <li><a th:href="@{/drive-u/process/fApply1}"
@@ -128,7 +128,7 @@
         </div>
 
         <div th:case="'card'">
-            <h2>면허증</h2>
+            <h2>면허증 관리</h2>
             <div class="side-group">
                 <button type="button" class="side-title">면허증</button>
                 <ul>
