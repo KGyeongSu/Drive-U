@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주행 시험 원서 접수')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'dApply')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 주행 시험 원서 접수</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">APPLICATION</p>
+                <h1>주행 시험 원서 접수</h1>
+                <p>도로주행시험 접수를 단계별로 진행합니다.</p>
+            </div>
+        </section>
+
+        <section class="apply-step-wrap"><a class="apply-step current" th:href="@{/license/road-exam}"><span>1</span><p>약관동의</p></a><a class="apply-step " th:href="@{/license/road-exam/schedule}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step " th:href="@{/license/road-exam/contact}"><span>3</span><p>연락처등록</p></a><a class="apply-step " th:href="@{/license/road-exam/payment}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/license/road-exam/complete}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
+    <div class="section-head"><h2>도로주행시험 약관동의</h2><span>step 01.</span></div>
+    <div class="notice-box">
+        <p>시험 접수 전 아래 내용을 확인해 주세요.</p>
+        <ul>
+            <li>인터넷 시험 접수 및 변경 가능 시간은 07:30 ~ 22:00입니다.</li>
+            <li>시험 시작 1시간 전까지 시험장에 도착해 주세요.</li>
+            <li>시험장 사정에 따라 일부 일정은 접수가 불가할 수 있습니다.</li>
+            <li>결제 완료 후 마이페이지에서 접수 내역 확인이 가능합니다.</li>
+        </ul>
+    </div>
+    <label class="agree-line"><input type="checkbox" id="agreeYn"><span>위 내용을 확인하였으며, 도로주행시험 접수 약관에 동의합니다.</span></label>
+    <div class="button-area"><button type="button" class="outline-btn" th:data-next="@{/license/road-exam/schedule}" onclick="goTermsNext(this)">다음</button></div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

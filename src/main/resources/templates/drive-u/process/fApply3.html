@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('연락처 등록')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'fApply')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 연락처 등록</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">APPLICATION</p>
+                <h1>연락처 등록</h1>
+                <p>접수 안내를 받을 연락처를 등록합니다.</p>
+            </div>
+        </section>
+
+        <section class="apply-step-wrap"><a class="apply-step done" th:href="@{/drive-u/process/fApply1}"><span>1</span><p>약관동의</p></a><a class="apply-step done" th:href="@{/drive-u/process/fApply2}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step current" th:href="@{/drive-u/process/fApply3}"><span>3</span><p>연락처등록</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply4}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply5}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
+    <div class="section-head"><h2>연락처 등록</h2><span>step 03.</span></div>
+    <div class="apply-info-list">
+        <div class="apply-info-row"><strong>이름</strong><span>전**</span></div>
+        <div class="apply-info-row"><strong>휴대전화번호</strong><span><input value="010-0000-0000"></span></div>
+        <div class="apply-info-row"><strong>이메일</strong><span class="email-row"><input placeholder="이메일아이디"><b>@</b><input placeholder="직접입력"><select><option>직접입력</option><option>gmail.com</option><option>naver.com</option></select></span></div>
+    </div>
+    <div class="button-area"><a class="outline-btn sub" th:href="@{/drive-u/process/fApply2}">이전</a><a class="outline-btn" th:href="@{/drive-u/process/fApply4}">다음</a></div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('마이페이지')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('license', 'process')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 마이페이지</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">MY PAGE</p>
+                <h1>마이페이지</h1>
+                <p>개인 정보, 면허 취득 현황, 시험별 유효기간을 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+    <h2 class="section-title">기본 정보</h2>
+    <div class="profile-grid">
+        <article class="license-card"><h3>이름</h3><p th:text="${memberName} ?: '전인수'">전인수</p></article>
+        <article class="license-card"><h3>생년월일</h3><p th:text="${birthDate} ?: '1999-06-21'">1999-06-21</p></article>
+        <article class="license-card"><h3>주소</h3><p th:text="${address} ?: '대전광역시 중구 중앙로121번길 20'">대전광역시 중구 중앙로121번길 20</p></article>
+        <article class="license-card"><h3>현재 상태</h3><p><span class="badge">기능시험 준비중</span></p></article>
+    </div>
+</section>
+
+<section class="content-section">
+    <h2 class="section-title">면허 취득 현황</h2>
+    <div class="info-table">
+        <div class="info-row"><strong>취득일</strong><span>2026년 05월 21일</span></div>
+        <div class="info-row"><strong>시험장</strong><span>대전 운전면허시험장</span></div>
+        <div class="info-row"><strong>면허 종류</strong><span>1종 보통</span></div>
+        <div class="info-row"><strong>운전 가능 기종</strong><span>승용자동차, 승차정원 15명 이하 승합자동차, 적재중량 12톤 미만 화물자동차</span></div>
+    </div>
+</section>
+
+<section class="content-section">
+    <h2 class="section-title">시험별 유효기간</h2>
+    <div class="valid-grid">
+        <article class="valid-card"><h3>학과시험</h3><p>합격일로부터 1년</p><span class="badge">2027-05-21 만료</span></article>
+        <article class="valid-card"><h3>기능시험</h3><p>학과시험 유효기간 내 응시 필요</p><span class="badge">진행중</span></article>
+        <article class="valid-card"><h3>연습면허</h3><p>발급일로부터 1년</p><span class="badge">미발급</span></article>
+    </div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

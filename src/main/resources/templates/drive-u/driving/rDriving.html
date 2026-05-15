@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주행 시뮬레이션')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('cbt')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('cbt', 'rDriving ')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 모의고사 &gt; 주행 시뮬레이션</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">DRIVING SIMULATION</p>
+                <h1>주행 시뮬레이션</h1>
+                <p>도로주행 상황을 Unity 기반으로 연습하고 결과를 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+    <h2 class="section-title">주행 시뮬레이션 실행</h2>
+    <div class="simulator-box">
+        <div class="sim-screen"><strong>Unity WebGL 영역</strong><span>차선변경 · 우회전 · 어린이보호구역</span></div>
+        <div class="sim-result"><h3>실습 결과</h3><div class="score">87점</div><p>감점: 우회전 일시정지 미흡, 차선 유지 불안정</p><button type="button" class="outline-btn">다시 연습</button></div>
+    </div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

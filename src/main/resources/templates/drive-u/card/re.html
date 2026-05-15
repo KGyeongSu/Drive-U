@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('재발급')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('card')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('card', 're')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 재발급</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">LICENSE CARD</p>
+                <h1>재발급</h1>
+                <p>분실 또는 훼손 시 면허증 재발급 절차를 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section"><h2 class="section-title">주요 기능</h2>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="icon">💳</div>
+                    <h3>신청 안내</h3>
+                    <p>분실 또는 훼손 시 면허증 재발급 절차를 확인합니다.</p></article>
+                <article class="feature-card">
+                    <div class="icon">📄</div>
+                    <h3>준비물</h3>
+                    <p>신분증과 필요 서류를 확인합니다.</p></article>
+                <article class="feature-card">
+                    <div class="icon">📍</div>
+                    <h3>수령 안내</h3>
+                    <p>시험장 방문 또는 수령 절차를 확인합니다.</p></article>
+            </div>
+        </section>
+        <section class="content-section"><h2 class="section-title">상세 안내</h2>
+            <div class="info-table">
+                <div class="info-row"><strong>대상</strong><span>면허증 발급 또는 관리 대상자</span></div>
+                <div class="info-row"><strong>준비물</strong><span>신분증, 신청서</span></div>
+                <div class="info-row"><strong>처리 방식</strong><span>온라인 안내 후 방문 또는 발급 신청</span></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

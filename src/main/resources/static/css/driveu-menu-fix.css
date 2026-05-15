@@ -1,0 +1,152 @@
+/* Drive-Ü 메뉴 CSS 고정 패치
+   기존 원본 메뉴 폭/간격 기준 유지 + 모의고사 > 주행 시뮬레이션 내부 사이드 구조 */
+
+.site-header {
+    position: relative;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #e8edf5;
+}
+
+.header-inner,
+.main-nav,
+.mega-inner,
+.layout,
+.home-content,
+.footer-inner {
+    width: 1420px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main-nav {
+    height: 64px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 34px;
+    align-items: stretch;
+    border-top: 1px solid #f0f3f8;
+}
+
+.nav-button {
+    position: relative;
+    height: 64px;
+    width: 100%;
+    padding: 0;
+    margin-left: 6px;
+    border: 0;
+    background: transparent;
+    color: #111827;
+    font-size: 19px;
+    font-weight: 900;
+    text-align: left;
+    cursor: pointer;
+}
+
+.nav-button::after {
+    content: "⌄";
+    margin-left: 8px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.nav-button.active,
+.nav-button:hover,
+.nav-button:focus {
+    color: #2f6fdc;
+}
+
+.nav-button.active::before,
+.nav-button:hover::before,
+.nav-button:focus::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 96px;
+    bottom: 0;
+    height: 3px;
+    border-radius: 999px;
+    background: #2f6fdc;
+}
+
+.mega-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 156px;
+    z-index: 90;
+    border-top: 1px solid #eef2f7;
+    border-bottom: 2px solid #0f3767;
+    background: #fff;
+    box-shadow: 0 22px 42px rgba(15,55,103,.14);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: .2s ease;
+}
+
+.site-header.menu-open .mega-menu,
+.site-header:hover .mega-menu,
+.site-header:focus-within .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.mega-inner {
+    min-height: 188px;
+    padding: 10px 0 26px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 34px;
+}
+
+.mega-column a {
+    min-height: 38px;
+    margin: 10px 2px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.mega-column a:hover {
+    background: #eef5ff;
+    color: #2f6fdc;
+}
+
+.side-sub {
+    margin-top: -8px !important;
+    margin-left: 14px !important;
+}
+
+.side-sub a {
+    color: #64748b !important;
+    font-size: 15px !important;
+}
+
+.side-sub a::before {
+    content: "↳" !important;
+    color: #94a3b8;
+}
+
+.side-sub a.selected {
+    color: #2f6fdc !important;
+    font-weight: 900 !important;
+}
+
+@media (max-width: 1200px) {
+    .header-inner,
+    .main-nav,
+    .mega-inner,
+    .layout,
+    .home-content,
+    .footer-inner {
+        width: 100%;
+    }
+}

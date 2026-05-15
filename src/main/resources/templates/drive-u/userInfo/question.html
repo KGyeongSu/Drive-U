@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('문의사항')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('userInfo')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('userInfo', 'question')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 문의사항</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">INQUIRY</p>
+                <h1>문의사항</h1>
+                <p>서비스 이용 중 궁금한 내용을 문의합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section"><h2 class="section-title">문의 작성</h2><div class="form-box"><div class="form-grid"><label>문의 유형<select><option>시험 접수</option><option>결제</option><option>학습 영상</option></select></label><label>연락처<input placeholder="010-0000-0000"></label><label class="full">제목<input placeholder="문의 제목을 입력하세요"></label><label class="full">내용<textarea placeholder="문의 내용을 입력하세요"></textarea></label></div><div class="button-area"><button class="outline-btn">문의 등록</button></div></div></section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

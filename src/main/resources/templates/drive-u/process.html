@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('면허시험 순서 및 완료 현황')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'process')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 면허취득과정 &gt; 면허시험 순서 및 완료 현황</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">LICENSE PROCESS</p>
+                <h1>면허시험 순서 및 완료 현황</h1>
+                <p>운전면허 취득까지 필요한 단계를 확인하고, 완료한 항목을 체크해 진행 현황을 관리하세요.</p>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+            <article>
+                <span>현재 추천 단계</span>
+                <strong id="nextStepText">응시 전 교통안전교육</strong>
+            </article>
+            <article>
+                <span>다음 준비물</span>
+                <strong id="nextPrepareText">신분증</strong>
+            </article>
+            <article>
+                <span>접수 바로가기</span>
+                <strong>필기 · 기능 · 주행</strong>
+            </article>
+        </section>
+
+        <section class="process-list">
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>1</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>응시 전 교통안전교육</span>
+                    </label>
+                    <p>학과시험 전까지 이수해야 하는 필수 교육입니다.</p>
+                    <div class="chips">
+                        <span>준비물 신분증</span>
+                        <span>상태 필수 이수</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a th:href="@{/drive-u/du}" class="outline-btn">교육 신청</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>2</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>신체검사</span>
+                    </label>
+                    <p>운전 가능 여부를 확인하기 위한 신체검사 단계입니다.</p>
+                    <div class="chips">
+                        <span>장소 시험장/병원</span>
+                        <span>준비물 신분증</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a href="#" class="outline-btn sub">안내 보기</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>3</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>학과시험</span>
+                    </label>
+                    <p>도로교통법과 안전운전 지식을 평가하는 필기시험입니다.</p>
+                    <div class="chips">
+                        <span>CBT 모의고사</span>
+                        <span>응시원서</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a th:href="@{/drive-u/process/wApply1}" class="outline-btn">필기 접수</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>4</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>기능시험</span>
+                    </label>
+                    <p>장내기능 코스를 기준으로 차량 조작 능력을 평가합니다.</p>
+                    <div class="chips">
+                        <span>준비물 응시원서</span>
+                        <span>불합격 시 3일 후</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a th:href="@{/drive-u/process/fApply1}" class="outline-btn">기능 접수</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>5</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>연습면허 발급</span>
+                    </label>
+                    <p>학과시험과 기능시험에 합격한 뒤 도로주행을 위해 발급받는 단계입니다.</p>
+                    <div class="chips">
+                        <span>대상 1·2종 보통</span>
+                        <span>준비물 응시원서</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a href="#" class="outline-btn sub">발급 안내</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>6</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>도로주행시험</span>
+                    </label>
+                    <p>실제 도로 환경에서 주행 능력과 안전운전 습관을 평가합니다.</p>
+                    <div class="chips">
+                        <span>Unity 주행 실습</span>
+                        <span>준비물 신분증</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a th:href="@{/drive-u/process/dApply1}" class="outline-btn">주행 접수</a>
+                </div>
+            </article>
+
+            <article class="process-item">
+                <div class="step-badge">
+                    <strong>7</strong>
+                    <span>STEP</span>
+                </div>
+                <div class="item-body">
+                    <label class="check-title">
+                        <input type="checkbox" class="step-check">
+                        <span>운전면허증 발급</span>
+                    </label>
+                    <p>모든 시험에 합격한 후 운전면허증을 발급받는 최종 단계입니다.</p>
+                    <div class="chips">
+                        <span>조건 모든 시험 합격</span>
+                        <span>준비물 신분증</span>
+                    </div>
+                </div>
+                <div class="item-action">
+                    <a th:href="@{/drive-u/card}" class="outline-btn sub">발급 안내</a>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script src="/js/license-process.js"></script>
+</body>
+</html>

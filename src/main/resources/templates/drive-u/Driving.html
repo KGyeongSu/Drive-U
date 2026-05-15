@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주행 시뮬레이션')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('cbt')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('cbt', 'Driving')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 모의고사 &gt; 주행 시뮬레이션</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">SIMULATION</p>
+                <h1>주행 시뮬레이션</h1>
+                <p>기능과 주행 시뮬레이션을 선택해 연습합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">시뮬레이션 선택</h2>
+            <div class="feature-grid">
+                <a class="feature-card" th:href="@{/drive-u/driving/fDriving}">
+                    <div class="icon">🚘</div>
+                    <h3>기능</h3>
+                    <p>장내기능 코스를 Unity 기반으로 연습합니다.</p>
+                </a>
+                <a class="feature-card" th:href="@{/drive-u/driving/rDriving}">
+                    <div class="icon">🛣️</div>
+                    <h3>주행</h3>
+                    <p>도로주행 상황을 Unity 기반으로 연습합니다.</p>
+                </a>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

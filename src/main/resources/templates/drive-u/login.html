@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('로그인')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<main class="home-content">
+    <section class="hero-card">
+        <div class="hero-text">
+            <p class="eyebrow">LOGIN</p>
+            <h1>로그인</h1>
+            <p>Drive-Ü 서비스를 이용하기 위해 로그인하세요.</p>
+        </div>
+    </section>
+    <section class="content-section">
+        <div class="form-box">
+            <div class="form-grid">
+                <label class="full">아이디<input type="text" placeholder="아이디"></label>
+                <label class="full">비밀번호<input type="password" placeholder="비밀번호"></label>
+            </div>
+            <div class="button-area">
+                <button class="outline-btn">로그인</button>
+                <a th:href="@{/login/signUp}" class="outline-btn sub">회원가입</a>
+            </div>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

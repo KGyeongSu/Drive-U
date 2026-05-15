@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('교통안전교육')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('edu')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('edu', 'du')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 교통안전교육</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">SAFETY EDUCATION</p>
+                <h1>교통안전교육</h1>
+                <p>스킵 제한, 챕터별 영상, 챕터 퀴즈로 필수 교통안전교육을 이수합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section"><h2 class="section-title">주요 기능</h2><div class="feature-grid"><article class="feature-card"><div class="icon">🎞️</div><h3>챕터별 영상</h3><p>교통안전교육을 챕터 단위로 순서대로 이수합니다.</p></article><article class="feature-card"><div class="icon">🔒</div><h3>스킵 제한</h3><p>필수 교육 영상은 건너뛰기 없이 시청해야 합니다.</p></article><article class="feature-card"><div class="icon">❓</div><h3>챕터 퀴즈</h3><p>챕터 종료 후 퀴즈를 통과해야 다음 단계로 이동합니다.</p></article></div></section><section class="content-section">
+    <h2 class="section-title">교통안전교육 진행</h2>
+    <div class="video-layout">
+        <div class="video-player">
+            <div class="video-screen"><span>교통안전교육 영상</span><small>스킵 제한 · 챕터 순차 진행</small></div>
+            <div class="fake-progress"><div></div></div>
+        </div>
+        <div class="chapter-panel">
+            <h3>챕터 목록</h3>
+            <button class="chapter active">1. 안전운전 기본</button>
+            <button class="chapter">2. 보행자 보호</button>
+            <button class="chapter locked">3. 교차로 통행</button>
+            <button class="chapter locked">4. 사고 예방</button>
+        </div>
+    </div>
+</section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
