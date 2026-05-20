@@ -1546,13 +1546,14 @@ button, input, select, textarea { font-family: inherit; }
     overflow: hidden;
 }
 
-/* 1. 왼쪽 지도 영역 (기존 스타일 유지 및 보정) */
+/* 지도 영역 */
 .map-split-area {
+    position: relative;
     flex: 1; /* 왼쪽 1비율 */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 40px;
     background-color: #fff;
 }
 
@@ -1562,36 +1563,55 @@ button, input, select, textarea { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-
-    margin-top: -60px;
+    margin-left: 30px;
+    margin-bottom: -30px;
 }
 
+/* 지도 컨테이너 */
 .korea-map {
     width: 100%;
-    height: 100%;
-    max-height: 700px;
-    object-fit: contain; /* 비율 유지하며 꽉 채움 */
+    max-width: 700px;
+    height: auto;
+    transition: all 0.5s ease;
 }
 
-/* 2. 각 지역(Path) 스타일 (사용자 설정 유지) */
-.region {
-    fill: #DDE5F0;             /* 기본 지도 색상 */
-    stroke: #ffffff;           /* 경계선 색상 */
-    stroke-width: 2;
-    transition: all 0.3s ease;
+/* 기본 지역  */
+.region, .region-part {
+    fill: #e5e7eb;
+    stroke: #ffffff;
+    stroke-width: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 }
 
-.region:hover, .region.active {
-    fill: #06275E !important;  /* 강조될 남색 */
-    filter: drop-shadow(0px 0px 5px rgba(0,0,0,0.2));
+/* 오버 시: 남색으로 변경 */
+.region:hover,
+.region-group:hover .region-part {
+    fill: #1D3567;
 }
 
-/* 3. 오른쪽 정보창 영역 (사용자 설정 유지 및 보정) */
+/* 클릭된 상태일 때 전체 블러 처리 */
+.korea-map.is-selected .region,
+.korea-map.is-selected .region-group {
+    filter: blur(3px) grayscale(50%);
+    opacity: 0.5;
+}
+
+/* 클릭된 지역: 블러 해제 + 3D */
+.korea-map.is-selected .active-region,
+.korea-map.is-selected .active-region .region-part {
+    fill: #1D3567 !important;
+    filter: blur(0) grayscale(0) drop-shadow(0 20px 15px rgba(0, 0, 0, 0.4)) !important;
+    opacity: 1 !important;
+    transform: translateY(-20px);
+}
+
+/* 오른쪽 정보창 영역 */
 .info-split-area {
-    flex: 1; /* 오른쪽 1비율 */
+    flex: 1;
     padding: 20px;
-    border-left: 1px solid var(--line); /* 구분선 스타일 통일 */
+    padding-top: 0;
+    border-left: 1px solid var(--line);
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -1617,8 +1637,8 @@ button, input, select, textarea { font-family: inherit; }
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 420px; /* 적절한 높이 설정 */
-    overflow-y: auto; /* 스크롤 기능은 유지 */
+    height: 420px;
+    overflow-y: auto;
     padding-right: 5px;
     /*background-color: black;*/
 }
@@ -1637,7 +1657,7 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 /* =========================================================
-   최근소식(News Section)
+   최근소식
    ========================================================= */
 
 /* 섹션 간격 */
@@ -1649,7 +1669,7 @@ button, input, select, textarea { font-family: inherit; }
 .news-container {
     height: 500px;
     display: flex;
-    padding: 0 !important; /* 내부 패딩 제거하여 2분할 꽉 채움 */
+    padding: 0 !important;
     overflow: hidden;
 }
 
