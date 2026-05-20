@@ -1548,6 +1548,7 @@ button, input, select, textarea { font-family: inherit; }
 
 /* 지도 영역 */
 .map-split-area {
+    position: relative;
     flex: 1; /* 왼쪽 1비율 */
     display: flex;
     align-items: center;

@@ -111,7 +111,7 @@ async function selectRegion(regionName) {
 
                 // 이제 정확한 중심 좌표(centerX, centerY)를 넘겨줍니다.
                 renderDynamicMindmap(centers, centerX, centerY);
-            }, 250);
+            });
 
 
         } catch (error) {
@@ -129,6 +129,10 @@ function renderDynamicMindmap(centers, passedX, passedY) {
     const nodesContainer = document.getElementById('mindmap-nodes-container');
 
     if (!mindmap || !linesContainer || !nodesContainer) return;
+
+    mindmap.dataset.clickScrollX = window.scrollX; // 클릭한 순간의 가로 스크롤 저장
+    mindmap.dataset.clickScrollY = window.scrollY; // 클릭한 순간의 세로 스크롤 저장
+    mindmap.style.transform = 'none';
 
     linesContainer.innerHTML = '';
     nodesContainer.innerHTML = '';
@@ -359,7 +363,10 @@ document.querySelector('.korea-map').addEventListener('click', function(e) {
             el.classList.remove('active-region');
         });
 
-        document.getElementById('mindmap-container').style.display = 'none';
+        const mindmap = document.getElementById('mindmap-container');
+        mindmap.style.display = 'none';
+        mindmap.style.transform = 'none';
+
         document.getElementById('academy-list').style.display = 'none';
 
         // 초기상태로 복구
@@ -377,6 +384,19 @@ document.querySelector('.korea-map').addEventListener('click', function(e) {
             `;
         }
 
+    }
+});
+
+// 스크롤 시 마인드맵 고정
+window.addEventListener('scroll', function() {
+    const mindmap = document.getElementById('mindmap-container');
+
+    if (mindmap && mindmap.style.display === 'block' && mindmap.dataset.clickScrollY !== undefined) {
+        // 처음 클릭했을 때보다 스크롤이 얼마나 움직였는지 차이 계산
+        const deltaX = window.scrollX - parseFloat(mindmap.dataset.clickScrollX);
+        const deltaY = window.scrollY - parseFloat(mindmap.dataset.clickScrollY);
+
+        mindmap.style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
     }
 });
 
