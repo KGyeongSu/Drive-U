@@ -11,21 +11,6 @@ public class PageController {
         return "/index";
     }
 
-    @GetMapping("/drive-u/myPage")
-    public String myPage() {
-        return "drive-u/myPage";
-    }
-
-    @GetMapping("/drive-u/login")
-    public String login() {
-        return "drive-u/login";
-    }
-
-    @GetMapping("/login/signUp")
-    public String signUp() {
-        return "login/signUp";
-    }
-
     @GetMapping("/drive-u/du")
     public String safetyEducation() {
         return "drive-u/du";
