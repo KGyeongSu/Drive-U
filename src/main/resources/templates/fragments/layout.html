@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <title th:text="${title} + ' | Drive-Ü'">Drive-Ü</title>
@@ -19,9 +19,23 @@
         </a>
 
         <nav class="user-menu">
-            <span class="hello">안녕하세요 <b th:text="${loginName} ?: '000'">000</b>님</span>
-            <a th:href="@{/drive-u/myPage}">마이페이지</a>
-            <a th:href="@{/drive-u/login}">로그아웃</a>
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/drive-u/login}" class="login-btn">로그인</a>
+                <a th:href="@{/login/signUp}">회원가입</a>
+            </th:block>
+
+            <th:block sec:authorize="isAuthenticated()">
+        <span class="hello">
+            안녕하세요
+            <b th:text="${#authentication.principal instanceof T(com.zerock.driveu.dto.AuthUserDTO)
+                ? #authentication.principal.realName : '사용자'}"></b>님
+        </span>
+                <a th:href="@{/drive-u/myPage}">마이페이지</a>
+
+                <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
+                    <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+                </form>
+            </th:block>
         </nav>
     </div>
 
