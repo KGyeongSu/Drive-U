@@ -22,6 +22,7 @@
 .idea/**/dataSources/
 .idea/**/dataSources.ids
 .idea/**/dataSources.local.xml
+.idea/**/dataSources.xml
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
@@ -36,13 +37,15 @@
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
 # .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
 # .idea/modules
-# *.iml
-# *.ipr
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/*.iml
+*.iml
+*.ipr
+
 
 # CMake
 cmake-build-*/
@@ -214,7 +217,6 @@ application-*.yaml
 uploads/
 
 # 로그
-*.log
 logs/
 
 # 환경변수
