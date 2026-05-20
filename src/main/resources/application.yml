@@ -46,14 +46,14 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
-#  # DB정보넣으면 주석풀기
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    properties:
-#      hibernate:
-#        format_sql: true
-#    show-sql: true
+  # DB정보넣으면 주석풀기
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
 
 server:
   port: 8081

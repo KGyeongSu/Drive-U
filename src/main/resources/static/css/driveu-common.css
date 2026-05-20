@@ -224,7 +224,7 @@ button, input, select, textarea { font-family: inherit; }
 .home-content {
     width: 1420px;
     margin: 0 auto;
-    padding: 42px 0 120px;
+    padding: 30px 0 100px;
 }
 
 .side-menu {
@@ -321,8 +321,8 @@ button, input, select, textarea { font-family: inherit; }
     border: 1px solid #dbe7f6;
     border-radius: 28px;
     background:
-        radial-gradient(circle at 96% 10%, rgba(47,111,220,.18), transparent 32%),
-        linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eef5ff 100%);
+            radial-gradient(circle at 96% 10%, rgba(47,111,220,.18), transparent 32%),
+            linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eef5ff 100%);
     box-shadow: var(--shadow);
 }
 
@@ -1019,9 +1019,9 @@ button, input, select, textarea { font-family: inherit; }
     height: 310px;
     border-radius: 22px;
     background:
-        linear-gradient(90deg, transparent 48%, rgba(47,111,220,.25) 49%, rgba(47,111,220,.25) 51%, transparent 52%),
-        linear-gradient(0deg, transparent 48%, rgba(47,111,220,.25) 49%, rgba(47,111,220,.25) 51%, transparent 52%),
-        #f3f7fb;
+            linear-gradient(90deg, transparent 48%, rgba(47,111,220,.25) 49%, rgba(47,111,220,.25) 51%, transparent 52%),
+            linear-gradient(0deg, transparent 48%, rgba(47,111,220,.25) 49%, rgba(47,111,220,.25) 51%, transparent 52%),
+            #f3f7fb;
     color: var(--navy);
     font-weight: 900;
     display: flex;
@@ -1114,19 +1114,58 @@ button, input, select, textarea { font-family: inherit; }
     justify-content: space-between;
 }
 
+/* =========================================================
+   하단 퀵메뉴
+   ========================================================= */
+
+/* 1. 모든 버튼 공통: 사용자님이 주신 스타일 그대로 유지 */
 .top-button {
     position: fixed;
     right: 70px;
-    bottom: 70px;
     width: 62px;
     height: 62px;
     border: 1px solid #e5e7eb;
     border-radius: 50%;
     background: #fff;
     color: var(--navy);
-    font-size: 32px;
+    font-size: 20px;
+    font-weight: bold;
     box-shadow: 0 8px 20px rgba(0,0,0,.09);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: all 0.3s ease; /* 부드러운 효과용 */
+}
+
+/* 2. 클래스별 위치(간격) 지정 */
+
+/* 클래스가 없는 버튼 (가장 아래) */
+.top-button:not(.btn-qna):not(.btn-chat) {
+    bottom: 70px;
+}
+
+/* 챗봇 버튼 (중간) */
+.btn-chat {
+    bottom: 145px; /* 75px 간격 */
+    font-size: 15px; /* 글자 버튼은 폰트 크기 조정 */
+    font-weight: 900;
+}
+
+/* 문의 버튼 (맨 위) */
+.btn-qna {
+    bottom: 220px; /* 75px 간격 */
+    font-size: 15px; /* 글자 버튼은 폰트 크기 조정 */
+    font-weight: 900;
+}
+
+.btn-qna:hover,
+.btn-chat:hover {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border-color: var(--blue);
+    transform: translateY(-5px);
 }
 
 /* ================= Responsive ================= */
@@ -1435,6 +1474,28 @@ button, input, select, textarea { font-family: inherit; }
     justify-content: flex-end;
 }
 
+.notice-phy {
+    padding: 14px 18px;
+    margin: 20px 0;
+    border-radius: 8px;
+    background: #eff6ff;        /* 신체검사: 정보톤 */
+    border-left: 4px solid #3b82f6;
+}
+.notice-phy a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.notice-phy a:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+.notice-phy.warning {
+    background: #fef3c7;        /* 학과시험: 경고톤 */
+    border-left-color: #f59e0b;
+}
+
 @media (max-width: 1200px) {
     .summary-grid {
         grid-template-columns: 1fr;
@@ -1467,4 +1528,261 @@ button, input, select, textarea { font-family: inherit; }
     .item-action {
         grid-column: auto;
     }
+}
+
+
+/*mainHome*/
+.map-section-wrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border-radius: 28px;
+    padding: 0;
+    box-shadow: var(--shadow);
+    margin: 20px auto;
+    max-width: 1400px;
+    height: 550px;
+    overflow: hidden;
+}
+
+/* 지도 영역 */
+.map-split-area {
+    position: relative;
+    flex: 1; /* 왼쪽 1비율 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: #fff;
+}
+
+.svg-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 30px;
+    margin-bottom: -30px;
+}
+
+/* 지도 컨테이너 */
+.korea-map {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    transition: all 0.5s ease;
+}
+
+/* 기본 지역  */
+.region, .region-part {
+    fill: #e5e7eb;
+    stroke: #ffffff;
+    stroke-width: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+/* 오버 시: 남색으로 변경 */
+.region:hover,
+.region-group:hover .region-part {
+    fill: #1D3567;
+}
+
+/* 클릭된 상태일 때 전체 블러 처리 */
+.korea-map.is-selected .region,
+.korea-map.is-selected .region-group {
+    filter: blur(3px) grayscale(50%);
+    opacity: 0.5;
+}
+
+/* 클릭된 지역: 블러 해제 + 3D */
+.korea-map.is-selected .active-region,
+.korea-map.is-selected .active-region .region-part {
+    fill: #1D3567 !important;
+    filter: blur(0) grayscale(0) drop-shadow(0 20px 15px rgba(0, 0, 0, 0.4)) !important;
+    opacity: 1 !important;
+    transform: translateY(-20px);
+}
+
+/* 오른쪽 정보창 영역 */
+.info-split-area {
+    flex: 1;
+    padding: 20px;
+    padding-top: 0;
+    border-left: 1px solid var(--line);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.info-main-title {
+    font-size: 28px;
+    color: #111827;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.info-main-desc {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.academy-list-box {
+    margin-top: -10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 420px;
+    overflow-y: auto;
+    padding-right: 5px;
+    /*background-color: black;*/
+}
+
+/* 리스트 내 안내 문구 스타일 */
+.empty-msg {
+    color: var(--muted);
+    padding: 20px;
+    background: var(--soft);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 25px;
+}
+
+/* =========================================================
+   최근소식
+   ========================================================= */
+
+/* 섹션 간격 */
+.news-section-margin {
+    margin-top: 30px !important;
+}
+
+/* 컨테이너 및 레이아웃 */
+.news-container {
+    height: 500px;
+    display: flex;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+/* 왼쪽 리스트 영역 */
+.news-list-area {
+    height: 90%;
+    flex: 1.2;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.news-tabs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.news-tab {
+    padding: 10px 5px;
+    border: none;
+    background: none;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #999;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s ease;
+}
+
+.news-tab.active {
+    color: var(--navy) !important;
+    border-bottom: 2px solid var(--navy) !important;
+}
+
+.news-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.news-item {
+    cursor: pointer;
+    padding: 12px 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.news-date {
+    color: var(--muted);
+    font-size: 14px;
+    margin-right: 20px;
+    font-weight: 600;
+}
+
+.news-item-title {
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* 오른쪽 상세 영역 */
+.news-detail-area {
+    height: 100%;
+    flex: 1;
+    padding: 40px;
+    border-left: 1px solid var(--line);
+    background-color: rgba(0, 0, 0, 0);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.news-more-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    min-width: 100px !important;
+    height: 36px !important;
+    font-size: 13px !important;
+}
+
+.news-category-label {
+    color: var(--blue);
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.news-main-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 40px 0 20px;
+    line-height: 1.3;
+    color: #111827;
+}
+
+.news-main-desc {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 16px;
+    margin: 0;
+}
+
+#detail-category {
+
+    display: block;
+    margin-top: -10px;
+    /*margin-bottom: ;*/
+    font-size: 30px;
+
 }

@@ -8,7 +8,7 @@
     <aside th:replace="~{fragments/layout :: side('process', 'process')}"></aside>
 
     <main class="content">
-        <div class="breadcrumb">홈 &gt; 면허취득과정 &gt; 면허시험 순서 및 완료 현황</div>
+        <div class="breadcrumb">홈 &gt; 면허취득절차 &gt; 면허시험 순서 및 완료 현황</div>
 
         <section class="hero-card">
             <div class="hero-text">
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="item-action">
-                    <a href="#" class="outline-btn sub">안내 보기</a>
+                    <a th:href="@{/drive-u/process/checking}" class="outline-btn sub">안내 보기</a>
                 </div>
             </article>
 
