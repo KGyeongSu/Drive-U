@@ -1,6 +1,6 @@
 package com.zerock.driveu.dto;
 
-import com.zerock.driveu.entity.ExamSchedule;
+import com.zerock.driveu.domain.ExamSchedule;
 import lombok.*;
 
 import java.time.LocalDate;

@@ -1,7 +1,7 @@
 package com.zerock.driveu.repository;
 
-import com.zerock.driveu.entity.ExamSchedule;
-import com.zerock.driveu.entity.TestCenter;
+import com.zerock.driveu.domain.ExamSchedule;
+import com.zerock.driveu.domain.TestCenter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

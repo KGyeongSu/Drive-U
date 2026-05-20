@@ -1,4 +1,4 @@
-package com.zerock.driveu.entity;
+package com.zerock.driveu.domain;
 
 
 import jakarta.persistence.*;
