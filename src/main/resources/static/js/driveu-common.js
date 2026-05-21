@@ -112,28 +112,3 @@ function renderCenters(region) {
         }
     });
 }
-
-function scrollTopSmooth() {
-    window.scrollTo({top: 0, behavior: "smooth"});
-}
-
-const siteHeader = document.querySelector(".site-header");
-const navButtons = document.querySelectorAll(".nav-button");
-const megaMenu = document.querySelector(".mega-menu");
-
-navButtons.forEach(button => {
-    button.addEventListener("click", event => {
-        event.stopPropagation();
-        siteHeader.classList.toggle("menu-open");
-    });
-});
-
-if (megaMenu) {
-    megaMenu.addEventListener("click", event => event.stopPropagation());
-}
-
-document.addEventListener("click", () => {
-    if (siteHeader) {
-        siteHeader.classList.remove("menu-open");
-    }
-});

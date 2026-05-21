@@ -25,17 +25,6 @@ public class PageController {
     public String signUp() {
         return "login/signUp";
     }
-
-    @GetMapping("/drive-u/du")
-    public String safetyEducation() {
-        return "drive-u/du";
-    }
-
-    @GetMapping("/drive-u/lVideo")
-    public String learningVideo() {
-        return "drive-u/lVideo";
-    }
-
     @GetMapping("/drive-u/cbt")
     public String cbt() {
         return "drive-u/cbt";
