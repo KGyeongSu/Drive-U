@@ -39,6 +39,15 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+    //Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // 타임리프에서 시큐리티 속성(로그인 여부 등)을 사용하기 위한 라이브러리
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+//    //// H2 임시DB
+//    runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
 
     // === 수동 의존성 추가 === //
 

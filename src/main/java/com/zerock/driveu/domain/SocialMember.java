@@ -2,14 +2,14 @@ package com.zerock.driveu.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-@Table(
-        name = "social_member")
+
+
+
 @Entity
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class SocialMember {
 
@@ -20,7 +20,7 @@ public class SocialMember {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "social_key", nullable = false, unique = true)
+    @Column(nullable = false, unique = true) //kakao_12345,
     private String socialKey;
 
     @Column(nullable = false)
@@ -35,5 +35,4 @@ public class SocialMember {
     public enum Role {
         USER, ADMIN
     }
-
 }

@@ -3,14 +3,15 @@ package com.zerock.driveu.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Entity
-@Getter
-@Setter
 @Builder
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -33,8 +34,7 @@ public class Member {
     @Column(nullable = false)
     private String phone;
 
-    public enum Role{
+    public enum Role {
         USER, ADMIN
     }
-
 }

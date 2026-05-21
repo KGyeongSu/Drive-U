@@ -1,0 +1,214 @@
+@charset "UTF-8";
+
+/* ==========================================
+   1. 지도 컨테이너 고정 및 크기 복원
+   ========================================== */
+
+/* 지도를 감싸는 구역이 찌그러지지 않도록 원래의 배경과 크기를 유지합니다. */
+.map-split-area {
+    position: relative; /* 레이아웃 분할 구역 자체를 기준점으로 승격 */
+    width: 100%;
+    min-height: 600px;  /* 화면에 맞게 최소 높이를 확보하여 지도가 작아지는 것 방지 */
+}
+
+/* SVG를 감싸는 래퍼는 지도의 본래 크기(100%)를 그대로 유지합니다. */
+.svg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 지도 SVG 자체 스타일: 부모 안에서 최대 크기로 유지 */
+.korea-map {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+}
+
+
+/* ==========================================
+   2. 마인드맵 컨테이너 및 도트 선(Line) 디자인
+   ========================================== */
+
+/* 마인드맵 절대 좌표계: .svg-wrapper와 완벽히 겹치도록 설정 */
+#mindmap-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9;
+}
+
+#mindmap-container {
+    position: fixed; /* 화면 전체를 덮는 기준점 */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* 지도를 계속 클릭할 수 있게 함 */
+    z-index: 9;
+}
+
+#mindmap-lines-container,
+#mindmap-nodes-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 마인드맵 연결 선 디자인 (보내주신 이미지처럼 이쁜 도트 점선) */
+.mindmap-line {
+    position: absolute;
+    height: 2px;
+    border-top: 2px dotted #2f6fdc; /* 이쁜 파란색 점선 */
+    transform-origin: 0 50%;
+    width: 0;
+    opacity: 0;
+    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+}
+
+/* 활성화 시 부드럽게 펼쳐지는 효과 */
+#mindmap-container.is-active .mindmap-line {
+    opacity: 0.7;
+    width: var(--line-length);
+}
+
+
+/* ==========================================
+   3. 시험장 버튼 노드(Node) 디자인 및 호버 효과
+   ========================================== */
+
+/* 깔끔한 라운드 사각형 버튼 스타일 */
+.mindmap-node {
+    position: absolute;
+    min-width: 85px;
+    padding: 0 12px;
+    height: 38px;
+
+    margin: 0;
+
+    background: #ffffff;
+    border: 2px solid #2f6fdc;
+    border-radius: 6px; /* 부드러운 라운드 사각형 */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    pointer-events: auto; /* 버튼은 클릭 가능하도록 설정 */
+    white-space: nowrap;
+
+    /* 정중앙 정렬 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* 좌표 변화 및 등장 애니메이션 */
+    transform: translate(-50%, -50%) scale(0);
+    transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    top 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.4s ease,
+    opacity 0.5s ease;
+}
+
+/* 활성화 상태일 때 뿅 하고 나타남 */
+#mindmap-container.is-active .mindmap-node {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+/* 마우스 올렸을 때 채워지는 하이라이트 효과 */
+.mindmap-node:hover {
+    background: #2f6fdc;
+    color: white;
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 6px 15px rgba(47, 111, 220, 0.35);
+    border-color: #2f6fdc;
+}
+
+/* 시험장 정보 */
+/* 3개의 카드를 세로로 정렬하고 간격을 주는 컨테이너 */
+.center-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px;
+    width: 100%;
+}
+
+/* 세로로 배치될 개별 카드 스타일 (도로교통공단 느낌 반영) */
+.info-status-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
+}
+
+/* 카드 내 제목 영역 */
+.card-title-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 8px;
+}
+
+.card-title-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1e293b;
+}
+
+/* 카드 내부 본문 텍스트 */
+.card-content-text {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+/* 데이터가 비어있을 때 표기할 마감/운영전 배지 스타일 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: #64748b;
+    color: #ffffff;
+    margin-top: 8px;
+}
+
+/* 클릭 전: 지도 위에 텍스트가 항상 보임 */
+.region-label {
+    display: block;
+    pointer-events: none;
+    font-size: 30px;
+    font-weight: bold;
+    fill: #333;
+    text-anchor: middle;
+}
+
+.region-group:hover .region-label {
+
+    fill: #f0f0f0 !important;
+
+}
+
+/* 클릭 후: 선택된 그룹 안에 있는 텍스트만 숨김 */
+.active-region .region-label {
+    display: none;
+}

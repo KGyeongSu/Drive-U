@@ -8,18 +8,25 @@
     <aside th:replace="~{fragments/layout :: side('process', 'wApply')}"></aside>
 
     <main class="content">
-        <div class="breadcrumb">홈 &gt; 필기 시험 원서 접수</div>
+        <div class="breadcrumb">홈 &gt; 학과시험 원서 접수</div>
 
         <section class="hero-card">
             <div class="hero-text">
                 <p class="eyebrow">APPLICATION</p>
-                <h1>필기 시험 원서 접수</h1>
-                <p>필기시험 접수를 단계별로 진행합니다.</p>
+                <h1>학과시험 원서 접수</h1>
+                <p>학과시험 접수를 단계별로 진행합니다.</p>
             </div>
         </section>
 
-        <section class="apply-step-wrap"><a class="apply-step current" th:href="@{/drive-u/process/wApply1}"><span>1</span><p>약관동의</p></a><a class="apply-step " th:href="@{/drive-u/process/wApply2}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step " th:href="@{/drive-u/process/wApply3}"><span>3</span><p>연락처등록</p></a><a class="apply-step " th:href="@{/drive-u/process/wApply4}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/drive-u/process/wApply5}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
-    <div class="section-head"><h2>필기시험 약관동의</h2><span>step 01.</span></div>
+        <div class="notice-phy">
+            학과시험 응시 전 반드시 신체검사를 먼저 받아야 합니다.
+            <a th:href="@{/drive-u/process/checking}">신체검사 안내 바로가기 →</a>
+        </div>
+
+        <br>
+
+        <section class="apply-step-wrap"><a class="apply-step current"><span>1</span><p>약관동의</p></a><a class="apply-step "><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step "><span>3</span><p>연락처등록</p></a><a class="apply-step "><span>4</span><p>결제</p></a><a class="apply-step "><span>5</span><p>접수완료</p></a></section><section class="apply-card">
+    <div class="section-head"><h2>학과시험 약관동의</h2><span>step 01.</span></div>
     <div class="notice-box">
         <p>시험 접수 전 아래 내용을 확인해 주세요.</p>
         <ul>
@@ -29,7 +36,7 @@
             <li>결제 완료 후 마이페이지에서 접수 내역 확인이 가능합니다.</li>
         </ul>
     </div>
-    <label class="agree-line"><input type="checkbox" id="agreeYn"><span>위 내용을 확인하였으며, 필기시험 접수 약관에 동의합니다.</span></label>
+    <label class="agree-line"><input type="checkbox" id="agreeYn"><span>위 내용을 확인하였으며, 학과시험 접수 약관에 동의합니다.</span></label>
     <div class="button-area"><button type="button" class="outline-btn" th:data-next="@{/drive-u/process/wApply2}" onclick="goTermsNext(this)">다음</button></div>
 </section>
     </main>

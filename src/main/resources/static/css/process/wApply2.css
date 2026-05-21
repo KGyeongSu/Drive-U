@@ -1,0 +1,30 @@
+.calendar td.past-day {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.time-item.too-soon {
+    background: #eee;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* 지난 날짜 비활성화 */
+.calendar td.past-day {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 1시간 이내 시간대 비활성화 */
+.time-item.too-soon {
+    background: #eee;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* 미운영 학과시험 비활성화 */
+.time-item.no-schedule {
+    background: #f5f5f5;
+    color: #bbb;
+    cursor: not-allowed;
+}
