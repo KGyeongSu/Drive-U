@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('학습영상')}"></head>
+<head th:replace="~{fragments/layout :: head('학습영상')}">
+
+</head>
 <body>
 <header th:replace="~{fragments/layout :: header('edu')}"></header>
 
@@ -14,18 +16,47 @@
             <div class="hero-text">
                 <p class="eyebrow">LEARNING VIDEO</p>
                 <h1>학습영상</h1>
-                <p>유튜브 등 실제 주행·기능 영상을 활용해 실전 감각을 익힙니다.</p>
+                <p>실제 주행·기능 영상을 활용해 실전 감각을 익힙니다.</p>
             </div>
         </section>
 
-        <section class="content-section"><h2 class="section-title">주요 기능</h2><div class="feature-grid"><article class="feature-card"><div class="icon">🎬</div><h3>실제 주행 영상</h3><p>도로 상황별 실제 주행 참고 영상을 학습합니다.</p></article><article class="feature-card"><div class="icon">🚘</div><h3>기능 코스 영상</h3><p>장내기능 코스별 조작 방법을 영상으로 확인합니다.</p></article><article class="feature-card"><div class="icon">🔗</div><h3>외부 영상 연계</h3><p>유튜브 등 외부 영상을 학습 자료로 연결합니다.</p></article></div></section><section class="content-section">
-    <h2 class="section-title">추천 학습영상</h2>
-    <div class="video-card-grid">
-        <article class="learn-video-card"><div class="thumb">YouTube<br>주행 기본</div><h3>도로주행 기본 자세</h3><p>차선 변경, 우회전, 정지선 확인 등 실제 주행 상황을 학습합니다.</p><a href="#" class="outline-btn">영상 보기</a></article>
-        <article class="learn-video-card"><div class="thumb">YouTube<br>기능 코스</div><h3>장내기능 코스 설명</h3><p>직각주차, 경사로, 돌발 상황 등 기능시험 핵심 코스를 확인합니다.</p><a href="#" class="outline-btn">영상 보기</a></article>
-        <article class="learn-video-card"><div class="thumb">Guide<br>실전 팁</div><h3>감점 포인트 모음</h3><p>실제 시험에서 자주 감점되는 항목을 영상으로 학습합니다.</p><a href="#" class="outline-btn">영상 보기</a></article>
-    </div>
-</section>
+        <section class="content-section">
+            <section class="content-section">
+                <h2 class="section-title">추천 학습영상</h2>
+
+                <div class="video-card-grid"
+                     th:if="${videos != null and !videos.isEmpty()}">
+
+                    <article class="learn-video-card"
+                             th:each="video : ${videos}">
+
+                        <div class="thumb">
+                            YouTube<br>
+                            <span th:text="${video.category}">주행 기본</span>
+                        </div>
+
+                        <h3 th:text="${video.title}">
+                            도로주행 기본 자세
+                        </h3>
+
+                        <p th:text="${video.description}">
+                            차선 변경, 우회전, 정지선 확인 등 실제 주행 상황을 학습합니다.
+                        </p>
+
+                        <a th:href="@{/drive-u/lVideo/{courseId}(courseId=${video.courseId})}"
+                           class="outline-btn">
+                            영상 보기
+                        </a>
+                    </article>
+                </div>
+
+                <div class="empty-box"
+                     th:if="${videos == null or videos.isEmpty()}">
+                    <h3>등록된 학습영상이 없습니다.</h3>
+                    <p>관리자가 학습영상을 등록하면 이곳에 표시됩니다.</p>
+                </div>
+            </section>
+        </section>
     </main>
 </div>
 
