@@ -13,14 +13,16 @@ public class AuthUserDTO extends User implements OAuth2User {
 
     private final String email;
     private final String name;
+    private String phone;
     private Map<String, Object> attr; //소셜 로그인 시 카카오/네이버가 주는 원본 데이터 저장소
 
     // 로컬 로그인용
     public AuthUserDTO(String username, String password, Collection<? extends GrantedAuthority> authorities,
-                       String email, String name) {
+                       String email, String name,String phone) {
         super(username, password, authorities);
         this.email = email;
         this.name = name;
+        this.phone = phone;
     }
 
     //소셜 로그인용

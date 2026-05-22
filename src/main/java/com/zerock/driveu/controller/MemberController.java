@@ -1,10 +1,12 @@
 package com.zerock.driveu.controller;
 
 import com.zerock.driveu.dto.AuthUserDTO;
+import com.zerock.driveu.dto.MemberDTO;
 import com.zerock.driveu.dto.SocialUserDTO;
 import com.zerock.driveu.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,12 +14,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository; // [추가]
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +29,12 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    // [핵심] 모든 요청마다 세션에서 socialUser를 꺼내 모델에 자동으로 담아줍니다.
+    @ModelAttribute("socialUser")
+    public SocialUserDTO getSocialUser(HttpSession session) {
+        return (SocialUserDTO) session.getAttribute("socialUser");
+    }
+
     @GetMapping("/drive-u/login")
     public String login() {
         return "drive-u/login";
@@ -36,51 +43,67 @@ public class MemberController {
     @GetMapping("/login/signUp")
     public String signUp(HttpSession session, Model model) {
         SocialUserDTO socialUser = (SocialUserDTO) session.getAttribute("socialUser");
-        if (socialUser != null) {
-            model.addAttribute("socialUser", socialUser);
-        }
-        return "drive-u/login/signUp";
-    }
 
-    @GetMapping("/drive-u/myPage")
-    public String myPage() {
-        return "drive-u/myPage";
+        MemberDTO memberDTO = new MemberDTO();
+        if (socialUser != null) {
+            memberDTO.setName(socialUser.getName());
+            memberDTO.setEmail(socialUser.getEmail());
+            memberDTO.setPhone(socialUser.getPhone());
+        }
+
+        model.addAttribute("memberDTO", memberDTO);
+        return "drive-u/login/signup";
     }
 
     @PostMapping("/login/signUp")
     public String registerMember(
-            @RequestParam(value = "id", required = false) String id,
-            @RequestParam(value = "pwd", required = false) String pwd,
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
+            @Valid MemberDTO memberDTO,
+            BindingResult bindingResult,
             HttpServletRequest request) {
 
-        log.info("--- [Controller] 회원가입 요청 접수 ---");
         HttpSession session = request.getSession();
         SocialUserDTO socialUser = (SocialUserDTO) session.getAttribute("socialUser");
 
-        // 1. 서비스에서 DB 저장
-        String loginUsername = memberService.registerMember(id, pwd, name, email, phone, socialUser);
+        // 소셜 가입이 아닐 때(즉, 아이디를 입력받는 상황일 때)만 중복 체크
+        if (socialUser == null && memberService.checkIdDuplicate(memberDTO.getId())) {
+            bindingResult.rejectValue("id", "duplicate", "이미 사용 중인 아이디입니다.");
+        }
+
+        // 1. 유효성 검사 분기 처리
+        if (socialUser == null) {
+            // 로컬 회원가입: 모든 에러 체크
+            if (bindingResult.hasErrors()) {
+                return "drive-u/login/signup";
+            }
+        } else {
+
+            if (bindingResult.hasFieldErrors("name") ||
+                    bindingResult.hasFieldErrors("phone")) {
+                return "drive-u/login/signup";
+            }
+        }
+
+        // 2. 서비스 로직 호출
+        String loginUsername = memberService.registerMember(memberDTO, socialUser);
 
         if (socialUser != null) {
             session.removeAttribute("socialUser");
         }
 
-        // 2. 인증 객체 생성
+        // 3. 인증 객체 생성
         AuthUserDTO authUser = new AuthUserDTO(
                 loginUsername,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_USER")),
-                email,
-                name
+                memberDTO.getEmail(),
+                memberDTO.getName(),
+                memberDTO.getPhone()
         );
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 authUser, null, authUser.getAuthorities()
         );
 
-        // 3. SecurityContext를 생성하고 인증 객체를 담음
         SecurityContext sc = SecurityContextHolder.createEmptyContext();
         sc.setAuthentication(auth);
         SecurityContextHolder.setContext(sc);
@@ -88,5 +111,12 @@ public class MemberController {
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
 
         return "redirect:/";
+    }
+
+    // 아이디 중복 확인 요청을 받는 컨트롤러 메서드
+    @GetMapping("/login/checkId")
+    @ResponseBody // HTML이 아니라 결과값(true/false)만 반환하겠다는 선언
+    public boolean checkId(@RequestParam("id") String id) {
+        return memberService.checkIdDuplicate(id);
     }
 }
