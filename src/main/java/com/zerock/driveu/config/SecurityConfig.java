@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/drive-u/userInfo/law",
                                 "/drive-u/userInfo/location",
                                 "/login/signUp",
-                                "/css/**", "/js/**", "/images/**" // 정적 리소스도 꼭 포함하세요!
+                                "/login/checkId",
+                                "/css/**", "/js/**", "/images/**"
                         ).permitAll()
                 // 관리자 권한
                 .requestMatchers("/admin/**").hasRole("ADMIN")

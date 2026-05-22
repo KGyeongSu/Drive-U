@@ -2,6 +2,7 @@ package com.zerock.driveu.service;
 
 import com.zerock.driveu.domain.Member;
 import com.zerock.driveu.domain.SocialMember;
+import com.zerock.driveu.dto.MemberDTO;
 import com.zerock.driveu.dto.SocialUserDTO;
 import com.zerock.driveu.repository.MemberRepository;
 import com.zerock.driveu.repository.SocialMemberRepository;
@@ -22,34 +23,32 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public String registerMember(String id, String pwd, String name, String email, String phone, SocialUserDTO socialUser) {
+    public String registerMember(MemberDTO memberDTO, SocialUserDTO socialUser) {
         String loginUsername = "";
 
         if (socialUser != null) {
-            log.info("▶ [ServiceImpl] 소셜 회원가입 진행");
-
             loginUsername = socialUser.getSocialKey();
 
             SocialMember socialMember = SocialMember.builder()
-                    .socialKey(loginUsername) // 이제 정확히 맞춰짐
-                    .name(name)
-                    .email(email)
-                    .phone(phone)
+                    .socialKey(loginUsername)
+                    .name(memberDTO.getName())
+                    .email(memberDTO.getEmail())
+                    .phone(memberDTO.getPhone())
                     .role(SocialMember.Role.USER)
                     .build();
 
             socialMemberRepository.save(socialMember);
         } else {
-            loginUsername = id;
 
-            String encodedPassword = passwordEncoder.encode(pwd);
+            loginUsername = memberDTO.getId(); // DTO에서 가져옴
+            String encodedPassword = passwordEncoder.encode(memberDTO.getPwd());
 
             Member member = Member.builder()
-                    .id(id)
+                    .id(memberDTO.getId())
                     .pwd(encodedPassword)
-                    .name(name)
-                    .email(email)
-                    .phone(phone)
+                    .name(memberDTO.getName())
+                    .email(memberDTO.getEmail())
+                    .phone(memberDTO.getPhone())
                     .role(Member.Role.USER)
                     .build();
 
@@ -57,5 +56,11 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return loginUsername;
+    }
+
+    @Override
+    public boolean checkIdDuplicate(String id) {
+        // existsById는 해당 ID가 DB에 있으면 true를 반환합니다.
+        return memberRepository.existsById(id);
     }
 }

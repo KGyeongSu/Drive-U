@@ -31,7 +31,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 member.getPwd(),
                 List.of(new SimpleGrantedAuthority(roleName)),// 변수로 권한 찾게
                 member.getEmail(),
-                member.getName()
+                member.getName(),
+                member.getPhone()
         );
     }
 

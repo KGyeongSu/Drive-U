@@ -32,7 +32,15 @@ public class SocialMember {
     @Column(nullable = false)
     private String phone;
 
+    @Column(nullable = true)
+    private String address;
+
     public enum Role {
         USER, ADMIN
+    }
+
+    //주소 수정용 메소드 (육상우 만듦)
+    public void changeAddress(String address) {
+        this.address = address;
     }
 }

@@ -19,36 +19,105 @@
         </section>
 
         <section class="content-section">
-    <h2 class="section-title">기본 정보</h2>
-    <div class="profile-grid">
-        <article class="license-card"><h3>이름</h3><p th:text="${memberName} ?: '전인수'">전인수</p></article>
-        <article class="license-card"><h3>생년월일</h3><p th:text="${birthDate} ?: '1999-06-21'">1999-06-21</p></article>
-        <article class="license-card"><h3>주소</h3><p th:text="${address} ?: '대전광역시 중구 중앙로121번길 20'">대전광역시 중구 중앙로121번길 20</p></article>
-        <article class="license-card"><h3>현재 상태</h3><p><span class="badge">기능시험 준비중</span></p></article>
-    </div>
-</section>
+            <h2 class="section-title">기본 정보</h2>
+            <div class="profile-grid">
+                <article class="license-card">
+                    <h3>이름</h3>
+                    <p th:text="${user.name} ?: '이름 없음'">전인수</p>
+                </article>
+                <article class="license-card">
+                    <h3>로그인 계정</h3>
 
-<section class="content-section">
-    <h2 class="section-title">면허 취득 현황</h2>
-    <div class="info-table">
-        <div class="info-row"><strong>취득일</strong><span>2026년 05월 21일</span></div>
-        <div class="info-row"><strong>시험장</strong><span>대전 운전면허시험장</span></div>
-        <div class="info-row"><strong>면허 종류</strong><span>1종 보통</span></div>
-        <div class="info-row"><strong>운전 가능 기종</strong><span>승용자동차, 승차정원 15명 이하 승합자동차, 적재중량 12톤 미만 화물자동차</span></div>
-    </div>
-</section>
+                    <div>
+                        <p th:if="${user.loginType == 'LOCAL'}" style="font-size: 16px; color: #333; font-weight: bold;">
+                            <span style="background-color: #f1f3f5; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; color: #4e73df; font-weight: normal;">일반</span>
+                            <span th:text="${user.id}">user01</span>
+                        </p>
 
-<section class="content-section">
-    <h2 class="section-title">시험별 유효기간</h2>
-    <div class="valid-grid">
-        <article class="valid-card"><h3>학과시험</h3><p>합격일로부터 1년</p><span class="badge">2027-05-21 만료</span></article>
-        <article class="valid-card"><h3>기능시험</h3><p>학과시험 유효기간 내 응시 필요</p><span class="badge">진행중</span></article>
-        <article class="valid-card"><h3>연습면허</h3><p>발급일로부터 1년</p><span class="badge">미발급</span></article>
-    </div>
-</section>
+                        <div th:if="${user.loginType == 'SOCIAL'}" style="font-size: 16px; color: #333; font-weight: bold;">
+            <span th:if="${#strings.startsWith(user.id, 'naver')}"
+                  style="background-color: #03C75A; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; font-weight: normal;">NAVER</span>
+                            <span th:if="${#strings.startsWith(user.id, 'kakao')}"
+                                  style="background-color: #FEE500; color: #191919; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; font-weight: normal;">KAKAO</span>
+                            <span th:if="${#strings.startsWith(user.id, 'google')}"
+                                  style="background-color: #ea4335; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-right: 5px; font-weight: normal;">GOOGLE</span>
+
+                            <span th:text="${user.email}">user@gmail.com</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="license-card">
+                    <h3>이메일 / 연락처</h3>
+
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-size: 13px; color: #858796; display: inline-block; width: 60px;">이메일</span>
+                        <strong th:text="${user.email} ?: '등록된 이메일이 없습니다.'" style="color: #333;">test@example.com</strong>
+                    </div>
+
+                    <div>
+                        <span style="font-size: 13px; color: #858796; display: inline-block; width: 60px;">연락처</span>
+                        <strong th:text="${user.phone} ?: '등록된 연락처가 없습니다.'" style="color: #333;">010-1234-5678</strong>
+                    </div>
+                </article>
+                <article class="license-card">
+                    <h3>주소</h3>
+
+                    <div id="address-display-area">
+                        <p id="current-address" th:text="${user.address} ?: '등록된 주소가 없습니다.'" style="color: #333; margin-bottom: 8px;">등록된 주소가 없습니다.</p>
+                        <button type="button" onclick="toggleAddressEdit(true)" class="badge"
+                                style="background-color: #4e73df; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                            주소 수정
+                        </button>
+                    </div>
+
+                    <div id="address-edit-area" style="display: none;">
+                        <input type="text" id="input-address" th:value="${user.address}" placeholder="새로운 주소를 입력하세요"
+                               style="width: 100%; max-width: 300px; padding: 8px; border: 1px solid #d1d3e2; border-radius: 4px; font-size: 14px; margin-bottom: 8px; display: block;">
+
+                        <div style="display: flex; gap: 5px;">
+                            <button type="button" onclick="submitAddress()" class="badge"
+                                    style="background-color: #1cc88a; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                주소 저장
+                            </button>
+                            <button type="button" onclick="toggleAddressEdit(false)" class="badge"
+                                    style="background-color: #858796; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                <article class="license-card">
+                    <h3>로그인 형태</h3>
+                    <p>
+                        <span th:if="${user.loginType == 'LOCAL'}" class="badge" style="background-color: #4e73df; color: white;">일반 계정</span>
+                        <span th:if="${user.loginType == 'SOCIAL'}" class="badge" style="background-color: #f6e35b; color: #3c1e1e;">소셜 계정</span>
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">면허 취득 현황</h2>
+            <div class="info-table">
+                <div class="info-row"><strong>취득일</strong><span>2026년 05월 21일</span></div>
+                <div class="info-row"><strong>시험장</strong><span>대전 운전면허시험장</span></div>
+                <div class="info-row"><strong>면허 종류</strong><span>1종 보통</span></div>
+                <div class="info-row"><strong>운전 가능 기종</strong><span>승용자동차, 승차정원 15명 이하 승합자동차, 적재중량 12톤 미만 화물자동차</span></div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">시험별 유효기간</h2>
+            <div class="valid-grid">
+                <article class="valid-card"><h3>학과시험</h3><p>합격일로부터 1년</p><span class="badge">2027-05-21 만료</span></article>
+                <article class="valid-card"><h3>기능시험</h3><p>학과시험 유효기간 내 응시 필요</p><span class="badge">진행중</span></article>
+                <article class="valid-card"><h3>연습면허</h3><p>발급일로부터 1년</p><span class="badge">미발급</span></article>
+            </div>
+        </section>
     </main>
 </div>
 
+<script src="/js/myPage.js"></script>
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
