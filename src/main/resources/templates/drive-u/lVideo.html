@@ -19,8 +19,6 @@
                 <p>실제 주행·기능 영상을 활용해 실전 감각을 익힙니다.</p>
             </div>
         </section>
-
-        <section class="content-section">
             <section class="content-section">
                 <h2 class="section-title">추천 학습영상</h2>
 
@@ -30,9 +28,18 @@
                     <article class="learn-video-card"
                              th:each="video : ${videos}">
 
-                        <div class="thumb">
-                            YouTube<br>
-                            <span th:text="${video.category}">주행 기본</span>
+                        <div class="thumb video-thumb">
+                            <img th:if="${video.thumbnailUrl != null and !video.thumbnailUrl.isEmpty()}"
+                                 th:src="${video.thumbnailUrl}"
+                                 th:alt="${video.title}">
+
+                            <div class="thumb-placeholder"
+                                 th:if="${video.thumbnailUrl == null or video.thumbnailUrl.isEmpty()}">
+                                YouTube<br>
+                                <span th:text="${video.category}">주행 기본</span>
+                            </div>
+
+                            <span class="play-badge">▶</span>
                         </div>
 
                         <h3 th:text="${video.title}">
@@ -56,7 +63,6 @@
                     <p>관리자가 학습영상을 등록하면 이곳에 표시됩니다.</p>
                 </div>
             </section>
-        </section>
     </main>
 </div>
 
