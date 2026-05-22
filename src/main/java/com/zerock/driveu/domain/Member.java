@@ -46,3 +46,4 @@ public class Member {
         this.address = address;
     }
 }
+}

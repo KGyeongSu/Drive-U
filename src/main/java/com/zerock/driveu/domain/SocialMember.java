@@ -44,3 +44,4 @@ public class SocialMember {
         this.address = address;
     }
 }
+}
