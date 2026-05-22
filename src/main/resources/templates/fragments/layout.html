@@ -200,8 +200,30 @@
 </footer>
 
 <th:block th:fragment="scripts">
+    <div id="chatbotWindow" class="chatbot-container">
+        <div class="chatbot-header">
+            <div class="chat-header-content">
+                <img th:src="@{/imgs/chatImg.svg}" alt="캐릭터">
+                <span>물어봐 Ü</span>
+            </div>
+            <button onclick="toggleChat()" style="border:none; background:none; cursor:pointer;">X</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message bot">Drive-Ü 운전면허 및 교통안전교육 안내입니다. 궁금한 분야를 선택하거나 대화창에 키워드로 질문하시면 답변해드려요.</div>
+        </div>
+        <div class="button-grid">
+            <button onclick="sendQuestion('운전면허시험')">운전면허시험</button>
+            <button onclick="sendQuestion('운전면허발급')">운전면허발급</button>
+            <button onclick="sendQuestion('교통안전교육')">교통안전교육</button>
+            <button onclick="sendQuestion('기능시험 및 도로주행 시뮬레이션')">기능시험 및 도로주행 <br/> 시뮬레이션</button>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="직접 질문을 입력하세요..." />
+            <button onclick="sendManualQuestion()">전송</button>
+        </div>
+    </div>
     <button type="button" class="top-button btn-qna" onclick="location.href='/drive-u/userInfo/question'">문의</button>
-    <button type="button" class="top-button btn-chat" onclick="">챗봇</button>
+    <button type="button" class="top-button btn-chat" onclick="toggleChat()">챗봇</button>
     <button type="button" class="top-button" onclick="scrollTopSmooth()">↑</button>
     <script th:src="@{/js/driveu-common.js}"></script>
 </th:block>
