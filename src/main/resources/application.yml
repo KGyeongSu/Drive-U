@@ -4,12 +4,6 @@ spring:
   profiles:
     active: local
 
-  # DB 들어오면 이 exclude 지우고 application-local.yml에 dateSource주석풀기
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-
   # 파일 업로드 설정
   servlet:
     multipart:
@@ -18,14 +12,14 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
-#  # DB정보넣으면 주석풀기
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    properties:
-#      hibernate:
-#        format_sql: true
-#    show-sql: true
+#  DB정보넣으면 주석풀기
+jpa:
+  hibernate:
+    ddl-auto: update
+  properties:
+    hibernate:
+      format_sql: true
+  show-sql: true
 
 server:
   port: 8081

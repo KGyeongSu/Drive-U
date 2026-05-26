@@ -1,6 +1,38 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('길 안내')}"></head>
+<style>
+    /* 리스트 카드를 예쁘게 정렬해줄 스타일 */
+    .location-list-wrapper {
+        margin-top: 15px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    .location-item {
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: #fff;
+        text-align: left;
+    }
+    .location-item:hover {
+        background-color: #f5f7fa;
+        border-color: #007bff;
+    }
+    .location-item.active {
+        background-color: #e9f2ff;
+        border-color: #007bff;
+        box-shadow: 0 2px 4px rgba(0,123,255,0.2);
+    }
+    .loc-name { margin: 0 0 5px 0; color: #333; font-size: 16px; font-weight: bold; }
+    .loc-address, .loc-phone { margin: 3px 0; color: #666; font-size: 13px; }
+
+    /* 지도 100% 꽉 채우기 */
+    gmp-map { height: 100%; width: 100%; }
+</style>
 <body>
 <header th:replace="~{fragments/layout :: header('userInfo')}"></header>
 
@@ -18,22 +50,44 @@
             </div>
         </section>
 
-        <section class="content-section"><h2 class="section-title">시험장 찾기</h2>
-            <div class="guide-filter">
-                <label>지역 선택
-                    <select id="regionSelect">
-                        <option value="daejeon">대전</option>
-                        <option value="seoul">서울</option>
-                        <option value="chungbuk">충북</option>
-                        <option value="busan">부산</option>
-                    </select>
-                </label>
-            </div>
+        <section class="content-section">
+            <h2 class="section-title">시험장 찾기</h2>
+
             <div class="center-layout">
-                <div class="center-list" id="centerList"></div>
-                <div class="map-panel"><h3 id="mapTitle">대전 운전면허시험장</h3>
-                    <div class="map-sketch"><span>약도 영역</span><small>주요 도로 · 버스정류장 · 입구 표시</small></div>
-                    <p id="mapAddress">대전광역시 동구 산서로1660번길 90</p></div>
+                <div class="center-list" id="centerList">
+                    <div class="guide-filter">
+                        <label>지역 선택
+                            <select id="regionSelect">
+                                <option value="">지역을 선택하세요</option>
+                                <option value="seoul">서울</option>
+                                <option value="daejeon">대전</option>
+                                <option value="incheon">인천</option>
+                                <option value="busan">부산</option>
+                                <option value="gyeonggi">경기</option>
+                                <option value="gangwon">강원</option>
+                                <option value="chungcheong">충청</option>
+                                <option value="jeolla">전라</option>
+                                <option value="gyeongsang">경상</option>
+                                <option value="daegu">대구</option>
+                                <option value="ulsan">울산</option>
+                                <option value="jeju">제주</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div id="examLocationList" class="location-list-wrapper"></div>
+                </div>
+
+                <div class="map-panel">
+                    <h3 id="mapTitle">시험장을 선택해주세요</h3>
+                    <div class="map-sketch" style="height: 450px;">
+                        <script async th:src="|https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=maps,marker&v=beta|"></script>
+
+                        <gmp-map id="myMap" center="36.285138,127.461949" zoom="16" map-id="DEMO_MAP_ID">
+                            <gmp-advanced-marker id="myMarker" position="36.285138,127.461949" title="site location"></gmp-advanced-marker>
+                        </gmp-map>
+                    </div>
+                    <p id="mapAddress">지역과 시험장을 선택하면 상세 주소가 표시됩니다.</p>
+                </div>
             </div>
         </section>
     </main>
@@ -41,5 +95,117 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<script>
+    // 1. 지역별 시험장 목록 데이터 (배열 형태)
+    const regionData = {
+        "seoul": [
+            { name: "강남 운전면허시험장", address: "서울특별시 강남구 테헤란로114길 23", phone: "1577-1120", coords: "37.507572,127.067158" },
+            { name: "도봉 운전면허시험장", address: "서울특별시 노원구 동일로 1449", phone: "1577-1120", coords: "37.653457,127.056612" },
+            { name: "서부 운전면허시험장", address: "서울특별시 마포구 월드컵로42길 13", phone: "1577-1120", coords: "37.570953,126.883192" },
+            { name: "강서 운전면허시험장", address: "서울특별시 강서구 남부순환로 171", phone: "1577-1120", coords: "37.541289,126.818451" }
+        ],
+        "daejeon": [
+            { name: "대전 운전면허시험장", address: "대전광역시 동구 산서로1660번길 90", phone: "042-555-5555", coords: "36.285138,127.461949" }
+        ],
+        "incheon": [
+            { name: "인천 운전면허시험장", address: "인천광역시 남동구 아암대로 1247", phone: "1577-1120", coords: "37.384383, 126.707792" }
+        ],
+        "busan": [
+            { name: "부산 남부 운전면허시험장", address: "부산광역시 남구 용호로 16", phone: "051-610-8000", coords: "35.132800,129.106314" },
+            { name: "부산 북부 운전면허시험장", address: "부산광역시 사상구 사상로 367번길 35", phone: "051-310-7600", coords: "35.177377, 128.983040" }
+        ],
+        "gyeonggi": [
+            { name: "용인 운전면허시험장", address: "경기도 용인시 기흥구 용구대로 2267", phone: "031-289-0100", coords: "37.289550, 127.108401" },
+            { name: "안산 운전면허시험장", address: "경기도 안산시 단원구 순환로 352", phone: "051-310-7600", coords: "37.345735, 126.828934" },
+            { name: "의정부 운전면허시험장", address: "경기도 의정부시 금오로109번길 55", phone: "031-850-8700", coords: "37.759860, 127.076573" }
+        ],
+        "gangwon": [
+            { name: "춘천 운전면허시험장", address: "강원특별자치도 춘천시 신북읍 신북로 247", phone: "1577-1120", coords: "37.947270, 127.750687" },
+            { name: "강릉 운전면허시험장", address: "강원특별자치도 강릉시 사천면 중앙서로 464", phone: "1577-1120", coords: "37.795481, 128.818053" },
+            { name: "원주 운전면허시험장", address: "강원특별자치도 원주시 호저면 사제로 596", phone: "033-737-0600", coords: "37.338694, 127.898299" },
+            { name: "태백 운전면허시험장", address: "강원특별자치도 태백시 수아밭길 166", phone: "1577-1120", coords: "37.181006, 128.970762" }
+        ],
+        "chungcheong": [
+            { name: "청주 운전면허시험장", address: "충북 청주시 상당구 가덕면 교육원로 131-20", phone: "1577-1120", coords: "36.577523, 127.567194" },
+            { name: "충주 운전면허시험장", address: "충북 충주시 달천동 대가주1길 16", phone: "043-840-4600", coords: "36.939165, 127.897973" },
+            { name: "예산 운전면허시험장", address: "충청남도 예산군 오가면 국사봉로 500", phone: "1577-1120", coords: "36.775896, 126.883574" }
+        ],
+        "jeolla": [
+            { name: "전북 운전면허시험장", address: "전북특별자치도 전주시 덕진구 팔복로 359", phone: "1577-1120", coords: "35.861759, 127.070637" },
+            { name: "전남 운전면허시험장", address: "전라남도 나주시 내영산2길 49", phone: "1577-1120", coords: "35.009233, 126.705828" },
+            { name: "광양 운전면허시험장", address: "전라남도 광양시 광양읍 대학로 11", phone: "061-760-1600", coords: "34.960953, 127.571996" }
+        ],
+        "gyeongsang": [
+            { name: "문경 운전면허시험장", address: "경북 문경시 신기공단1길 12", phone: "054-550-2600", coords: "36.637098, 128.173615" },
+            { name: "포항 운전면허시험장", address: "경상북도 포항시 남구 오천읍 냉천로 656", phone: "1577-1120", coords: "35.942327, 129.393145" },
+            { name: "마산 운전면허시험장", address: "경상남도 창원시 마산합포구 진동면 진북산업로 90-1", phone: "055-240-8100", coords: "35.125239, 128.487467" }
+        ],
+        "daegu": [
+            { name: "대구 운전면허시험장", address: "대구광역시 북구 태암남로 38", phone: "1577-1120", coords: "35.924373, 128.551118" }
+        ],
+        "ulsan": [
+            { name: "울산 운전면허시험장", address: "울산광역시 울주군 상북면 봉화로 342", phone: "1577-1120", coords: "35.576128, 129.100063" }
+        ],
+        "jeju": [
+            { name: "제주 운전면허시험장", address: "제주특별자치도 제주시 애월읍 평화로 2072", phone: "1577-1120", coords: "33.406319, 126.388029" }
+        ]
+    };
+
+    // 2. 이벤트 리스너 바인딩
+    window.addEventListener('load', () => {
+        const select = document.getElementById('regionSelect');
+        const listWrapper = document.getElementById('examLocationList');
+
+        const mapTag = document.getElementById('myMap');
+        const markerTag = document.getElementById('myMarker');
+        const titleTag = document.getElementById('mapTitle');
+        const addressTag = document.getElementById('mapAddress');
+
+        if (!select || !listWrapper) return;
+
+        // 셀렉트 박스 선택 변경 시 이벤트
+        select.addEventListener('change', (e) => {
+            const selectedRegion = e.target.value;
+            const locations = regionData[selectedRegion];
+
+            // 왼쪽 목록 비우기
+            listWrapper.innerHTML = '';
+
+            if (!locations || locations.length === 0) {
+                listWrapper.innerHTML = '<p style="padding:15px; color:#999;">해당 지역에 시험장 데이터가 없습니다.</p>';
+                return;
+            }
+
+            // 루프 돌며 시험장 카드 추가
+            locations.forEach(loc => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'location-item';
+                itemDiv.innerHTML = `
+                    <h4 class="loc-name">${loc.name}</h4>
+                    <p class="loc-address">📍 ${loc.address}</p>
+                    <p class="loc-phone">📞 ${loc.phone}</p>
+                `;
+
+                // 리스트 카드 클릭 시 오른쪽 지도 변경되는 핵심 이벤트
+                itemDiv.addEventListener('click', () => {
+                    document.querySelectorAll('.location-item').forEach(el => el.classList.remove('active'));
+                    itemDiv.classList.add('active');
+
+                    // 구글 컴포넌트 속성 동적 제어
+                    if (mapTag && markerTag) {
+                        mapTag.setAttribute('center', loc.coords);
+                        markerTag.setAttribute('position', loc.coords);
+                    }
+
+                    if (titleTag) titleTag.innerText = loc.name;
+                    if (addressTag) addressTag.innerHTML = `${loc.address}<br/>📞 연락처: ${loc.phone}`;
+                });
+
+                listWrapper.appendChild(itemDiv);
+            });
+        });
+    });
+</script>
 </body>
 </html>
