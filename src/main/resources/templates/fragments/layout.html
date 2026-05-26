@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <title th:text="${title} + ' | Drive-Ü'">Drive-Ü</title>
     <link rel="stylesheet" th:href="@{/css/driveu-common.css}">
     <link rel="stylesheet" th:href="@{/css/driveu-menu-fix.css}">
+    <link rel="stylesheet" th:href="@{/css/driveu-map.css}">
 </head>
 <body>
 
@@ -18,9 +19,23 @@
         </a>
 
         <nav class="user-menu">
-            <span class="hello">안녕하세요 <b th:text="${loginName} ?: '000'">000</b>님</span>
-            <a th:href="@{/drive-u/myPage}">마이페이지</a>
-            <a th:href="@{/drive-u/login}">로그아웃</a>
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/drive-u/login}" class="login-btn">로그인</a>
+                <a th:href="@{/login/signUp}">회원가입</a>
+            </th:block>
+
+            <th:block sec:authorize="isAuthenticated()">
+        <span class="hello">
+            안녕하세요
+            <b th:text="${#authentication.principal instanceof T(com.zerock.driveu.dto.AuthUserDTO)
+                ? #authentication.principal.realName : '사용자'}"></b>님
+        </span>
+                <a th:href="@{/drive-u/myPage}">마이페이지</a>
+
+                <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
+                    <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+                </form>
+            </th:block>
         </nav>
     </div>
 
@@ -45,7 +60,7 @@
             </div>
 
             <div class="mega-column">
-                <a th:href="@{/drive-u/process}">면허취득절차</a>
+                <a th:href="@{/drive-u/process}">취득절차안내</a>
                 <a th:href="@{/drive-u/process/checking}">신체검사 안내</a>
                 <a th:href="@{/drive-u/process/wApply1}">학과시험</a>
                 <a th:href="@{/drive-u/process/fApply1}">기능시험</a>
@@ -111,9 +126,9 @@
         <div th:case="'process'">
             <h2>면허취득절차</h2>
             <div class="side-group">
-                <button type="button" class="side-title">취득절차안내</button>
+                <button type="button" class="side-title">면허취득절차</button>
                 <ul>
-                    <li><a th:href="@{/drive-u/process}" th:classappend="${currentPage == 'process'} ? ' selected'">면허취득절차</a>
+                    <li><a th:href="@{/drive-u/process}" th:classappend="${currentPage == 'process'} ? ' selected'">취득절차안내</a>
                     </li>
                     <li><a th:href="@{/drive-u/process/checking}"
                            th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사 안내</a></li>
@@ -185,6 +200,30 @@
 </footer>
 
 <th:block th:fragment="scripts">
+    <div id="chatbotWindow" class="chatbot-container">
+        <div class="chatbot-header">
+            <div class="chat-header-content">
+                <img th:src="@{/imgs/chatImg.svg}" alt="캐릭터">
+                <span>물어봐 Ü</span>
+            </div>
+            <button onclick="toggleChat()" style="border:none; background:none; cursor:pointer;">X</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message bot">Drive-Ü 운전면허 및 교통안전교육 안내입니다. 궁금한 분야를 선택하거나 대화창에 키워드로 질문하시면 답변해드려요.</div>
+        </div>
+        <div class="button-grid">
+            <button onclick="sendQuestion('운전면허시험')">운전면허시험</button>
+            <button onclick="sendQuestion('운전면허발급')">운전면허발급</button>
+            <button onclick="sendQuestion('교통안전교육')">교통안전교육</button>
+            <button onclick="sendQuestion('기능시험 및 도로주행 시뮬레이션')">기능시험 및 도로주행 <br/> 시뮬레이션</button>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="직접 질문을 입력하세요..." />
+            <button onclick="sendManualQuestion()">전송</button>
+        </div>
+    </div>
+    <button type="button" class="top-button btn-qna" onclick="location.href='/drive-u/userInfo/question'">문의</button>
+    <button type="button" class="top-button btn-chat" onclick="toggleChat()">챗봇</button>
     <button type="button" class="top-button" onclick="scrollTopSmooth()">↑</button>
     <script th:src="@{/js/driveu-common.js}"></script>
 </th:block>

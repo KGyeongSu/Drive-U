@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('회원가입')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: header('')}"></header>
+<link rel="stylesheet" th:href="@{/css/Login.css}">
+
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .input-wrapper input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-wrapper input:focus {
+        border-color: #4A90E2;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+    .btn-check-custom {
+        padding: 0 18px;
+        background-color: #f1f3f5;
+        border: 1px solid #ced4da;
+        color: #495057;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+    .btn-check-custom:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+    }
+    .status-msg {
+        font-size: 0.8rem;
+        margin-top: 6px;
+        font-weight: 500;
+        display: block;
+    }
+</style>
+
+<main class="login-main-container">
+    <section class="login-intro-section">
+        <h1 class="intro-title">안전 운전의 첫걸음,<br>지금 시작해보세요</h1>
+    </section>
+
+    <section class="login-card-section">
+        <form th:action="@{/login/signUp}" th:object="${memberDTO}" method="post" onsubmit="return prepareEmailSubmit()">
+
+            <div th:if="${socialUser != null}" class="form-group" style="text-align: center; margin-bottom: 25px; padding: 12px; background: #f0f7ff; border-radius: 8px;">
+                <p style="color: #4A90E2; font-weight: 600; font-size: 0.95rem; margin: 0;">
+                    <span th:text="${#strings.toUpperCase(socialUser.socialProvider)}">소셜</span> 계정으로 연동 가입 중입니다.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>이름</label>
+                <div class="input-wrapper">
+                    <input type="text" th:field="*{name}" placeholder="실명을 입력하세요">
+                </div>
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="status-msg" style="color: #dc3545;"></p>
+            </div>
+
+            <div th:if="${socialUser == null}">
+                <div class="form-group">
+                    <label>아이디</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="idInput" th:field="*{id}" placeholder="아이디를 입력하세요">
+                        <button type="button" onclick="checkId()" class="btn-check-custom">중복확인</button>
+                    </div>
+                    <span id="idMessage" class="status-msg"></span>
+                    <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="status-msg" style="color: #dc3545;"></p>
+                </div>
+
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <div class="input-wrapper">
+                        <input type="password" th:field="*{pwd}" placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <p th:if="${#fields.hasErrors('pwd')}" th:errors="*{pwd}" class="status-msg" style="color: #dc3545;"></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>전화번호</label>
+                <div class="input-wrapper">
+                    <input type="text" th:field="*{phone}" placeholder="010-0000-0000">
+                </div>
+                <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="status-msg" style="color: #dc3545;"></p>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold; display: block; margin-bottom: 8px; color: #333;">이메일</label>
+                <div class="input-wrapper" style="display: flex; align-items: center; gap: 8px; border: none; padding: 0;">
+                    <input type="text" id="email-id" placeholder="이메일" oninput="combineEmail()"
+                           style="flex: 1; padding: 12px; border: 1px solid #d1d3e2; border-radius: 8px; font-size: 15px;">
+
+                    <span style="color: #858796; font-weight: bold;">@</span>
+
+                    <input type="text" id="email-domain" placeholder="직접 입력" oninput="combineEmail()"
+                           style="flex: 1; padding: 12px; border: 1px solid #d1d3e2; border-radius: 8px; font-size: 15px;">
+
+                    <select id="email-select" onchange="handleEmailSelect()"
+                            style="flex: 1; padding: 12px; border: 1px solid #d1d3e2; border-radius: 8px; font-size: 15px; background-color: #fff; color: #555; cursor: pointer;">
+                        <option value="direct">선택</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                        <option value="hanmail.net">hanmail.net</option>
+                    </select>
+                </div>
+                <input type="hidden" id="real-email" name="email" th:value="${memberDTO.email}">
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="status-msg" style="color: #dc3545; margin-top: 5px;"></p>
+            </div>
+
+            <div class="login-btn-group" style="margin-top: 30px;">
+                <button type="submit" class="btn-action btn-login">가입하기</button>
+                <a th:href="@{/drive-u/login}" class="btn-action btn-signup">취소</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script src="/js/signup.js"></script>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+</body>
+</html>
