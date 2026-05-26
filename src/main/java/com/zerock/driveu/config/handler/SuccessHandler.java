@@ -55,7 +55,9 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
                     List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER")),
                     socialMember.getEmail(),
                     socialMember.getName(),
-                    oAuth2User.getAttributes()
+                    oAuth2User.getAttributes(),
+                    socialMember.getSeq(),
+                    "SOCIAL"
             );
 
             SecurityContextHolder.getContext().setAuthentication(
