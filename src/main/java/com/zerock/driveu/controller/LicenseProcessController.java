@@ -7,6 +7,7 @@ import com.zerock.driveu.domain.Application;
 import com.zerock.driveu.domain.enums.ApplicationStatus;
 import com.zerock.driveu.domain.enums.ExamType;
 import com.zerock.driveu.dto.ApplySessionDTO;
+import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.dto.ExamScheduleDTO;
 import com.zerock.driveu.domain.ExamSchedule;
 import com.zerock.driveu.domain.TestCenter;
@@ -17,9 +18,11 @@ import com.zerock.driveu.service.PaymentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,8 +93,15 @@ public class LicenseProcessController {
 
     @PostMapping("/wApply2")
     public String wApply2Submit(@RequestParam String licenseType,
-                                @RequestParam Long examScheduleId,
-                                HttpSession session) {
+                                @RequestParam(required = false) Long examScheduleId,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+
+        // 일정 미선택 방어
+        if (examScheduleId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "시험 일정을 선택해주세요.");
+            return "redirect:/drive-u/process/wApply2";
+        }
 
         // 1. ExamSchedule 조회 (실제 존재하는지 검증)
         ExamSchedule schedule = examScheduleRepository.findById(examScheduleId)
@@ -123,7 +133,8 @@ public class LicenseProcessController {
     }
 
     @GetMapping("/wApply3")
-    public String wApply3(HttpSession session, Model model) {
+    public String wApply3(@AuthenticationPrincipal AuthUserDTO authUser,
+                            HttpSession session, Model model) {
 
         // wApply2 안 거치고 직접 진입한 경우 방어 (세션DTO 없으면 리턴)
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -132,12 +143,11 @@ public class LicenseProcessController {
             return "redirect:/drive-u/process/wApply1";
         }
 
-        // 세션 LOGIN_MEMBER에서 회원 타입 확인 후 MemberDTO / SocialMemberDTO 분기 조회 예정
-        // Member 인증 완성 후 memberRepository.findById로 교체예정.
+        // 로그인 회원 정보를 화면에 표시
         Map<String, Object> member = new HashMap<>();
-        member.put("name",  "김경수");
-        member.put("phone", "010-1234-5678");
-        member.put("email", "test@drive-u.com");
+        member.put("name", authUser.getRealName());
+        member.put("phone", authUser.getPhone());
+        member.put("email", authUser.getEmail());
 
         model.addAttribute("member", member);
         return "drive-u/process/wApply3";
@@ -163,7 +173,8 @@ public class LicenseProcessController {
     }
 
     @GetMapping("/wApply4")
-    public String wApply4(HttpSession session, Model model) {
+    public String wApply4(@AuthenticationPrincipal AuthUserDTO authUser,
+                            HttpSession session, Model model) {
 
         // 1. 세션 검증
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -172,9 +183,9 @@ public class LicenseProcessController {
             return "redirect:/drive-u/process/wApply1";
         }
 
-        // 2. 회원 정보 (TODO: Member 인증 완성 후 세션에서 꺼내기)
-        Long memberId = 1L;              // 임시
-        String memberType = "MEMBER";    // 임시
+        // 2. 회원 식별자 꺼내기
+        Long memberId = authUser.getSeq();
+        String memberType = authUser.getMemberType();
 
         // 3. Application INSERT (기존 미결제건 있으면 CANCELLED 처리됨)
         Application application = paymentService.createApplication(applyData, memberId, memberType);
@@ -187,8 +198,8 @@ public class LicenseProcessController {
         model.addAttribute("storeId", portoneProperties.getStoreId());
         model.addAttribute("channelKey", portoneProperties.getChannelKey());
 
-        // TODO: Member 인증 완성 후 회원 이름은 세션에서 꺼내기
-        model.addAttribute("customerName", "김경수");                  // 임시
+        // 결제창에 표시될 고객 정보 (포트원 SDK 요구)
+        model.addAttribute("customerName", authUser.getRealName());
         model.addAttribute("customerPhone", applyData.getContactPhone());
         model.addAttribute("customerEmail", applyData.getContactEmail());
 
@@ -196,7 +207,8 @@ public class LicenseProcessController {
     }
 
     @GetMapping("/wApply5")
-    public String wApply5(HttpSession session, Model model) {
+    public String wApply5(@AuthenticationPrincipal AuthUserDTO authUser,
+                            HttpSession session, Model model) {
 
         // 1. 세션 검증
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -205,13 +217,15 @@ public class LicenseProcessController {
             return "redirect:/drive-u/process/wApply1";
         }
 
-        // 2. 회원 정보 (TODO: Member 인증 완성 후 세션에서 꺼내기)
-        Long memberId = 1L;
+        // 2. 회원 정보
+        Long memberId = authUser.getSeq();
+        String memberType = authUser.getMemberType();
 
         // 3. 가장 최근 COMPLETED 신청건 조회
         Application application = applicationRepository
-                .findFirstByMemberIdAndStatusOrderByCreatedAtDesc(
+                .findFirstByMemberIdAndMemberTypeAndStatusOrderByCreatedAtDesc(
                         memberId,
+                        memberType,
                         ApplicationStatus.COMPLETED)
                 .orElseThrow(() -> new IllegalStateException("완료된 신청건 없음"));
 

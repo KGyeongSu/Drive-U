@@ -43,8 +43,9 @@ public class PaymentService {
 
         // 2. 기존 미결제건 정리 (있으면 CANCELLED)
         applicationRepository
-                .findByMemberIdAndExamSchedule_ScheduleIdAndStatus(
+                .findByMemberIdAndMemberTypeAndExamSchedule_ScheduleIdAndStatus(
                         memberId,
+                        memberType,
                         dto.getExamScheduleId(),
                         ApplicationStatus.WAITING_PAYMENT
                 )

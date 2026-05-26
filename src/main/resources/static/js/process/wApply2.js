@@ -250,3 +250,12 @@ document.querySelectorAll('.time-item').forEach(btn => {
         document.getElementById('examScheduleIdInput').value = selectedScheduleId;  // ← 추가
     });
 });
+
+//// 폼 제출 시 일정 선택 여부 검증
+document.getElementById('applyForm').addEventListener('submit', (e) => {
+    if (!selectedScheduleId) {
+        e.preventDefault();
+        alert('시험 일정을 선택해주세요.');
+        return false;
+    }
+});

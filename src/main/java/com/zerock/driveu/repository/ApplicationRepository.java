@@ -10,8 +10,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     Optional<Application> findByMerchantUid(String merchantUid);
 
-    Optional<Application> findByMemberIdAndExamSchedule_ScheduleIdAndStatus(
+    Optional<Application> findByMemberIdAndMemberTypeAndExamSchedule_ScheduleIdAndStatus(
             Long memberId,
+            String memberType,
             Long scheduleId,
             ApplicationStatus status);
 
@@ -19,7 +20,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             Long scheduleId, ApplicationStatus status);
 
     // 회원의 가장 최근 COMPLETED 신청건 조회 (wApply5 표시용)
-    Optional<Application> findFirstByMemberIdAndStatusOrderByCreatedAtDesc(
-            Long memberId, ApplicationStatus status);
+    Optional<Application> findFirstByMemberIdAndMemberTypeAndStatusOrderByCreatedAtDesc(
+            Long memberId,
+            String memberType,
+            ApplicationStatus status);
 
 }
