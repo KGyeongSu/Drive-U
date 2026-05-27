@@ -27,7 +27,7 @@
         <div class="apply-info-row"><strong>응시일시</strong><span th:text="|${#temporals.format(applyData.examDate, 'yyyy년 MM월 dd일')} ${applyData.examTime}|"></span></div>
     </div>
         <div class="payment-box"><h3>지불방법 선택</h3>
-            <div class="pay-method"><strong>수수료</strong>
+            <div class="pay-method"><strong>응시료</strong>
                 <span th:text="|${#numbers.formatInteger(fee, 3, 'COMMA')}원|"></span>
             </div>
             <div class="pay-method">

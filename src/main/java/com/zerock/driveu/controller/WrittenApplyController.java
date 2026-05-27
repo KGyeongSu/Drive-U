@@ -1,16 +1,17 @@
 package com.zerock.driveu.controller;
 
+
 import com.zerock.driveu.config.PortoneProperties;
 import com.zerock.driveu.constant.ExamConstants;
 import com.zerock.driveu.constant.SessionConst;
 import com.zerock.driveu.domain.Application;
+import com.zerock.driveu.domain.ExamSchedule;
+import com.zerock.driveu.domain.TestCenter;
 import com.zerock.driveu.domain.enums.ApplicationStatus;
 import com.zerock.driveu.domain.enums.ExamType;
 import com.zerock.driveu.dto.ApplySessionDTO;
 import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.dto.ExamScheduleDTO;
-import com.zerock.driveu.domain.ExamSchedule;
-import com.zerock.driveu.domain.TestCenter;
 import com.zerock.driveu.repository.ApplicationRepository;
 import com.zerock.driveu.repository.ExamScheduleRepository;
 import com.zerock.driveu.repository.TestCenterRepository;
@@ -34,7 +35,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/drive-u/process")
 @RequiredArgsConstructor
-public class LicenseProcessController {
+public class WrittenApplyController {
 
     private final TestCenterRepository testCenterRepository;
     private final ExamScheduleRepository examScheduleRepository;
@@ -46,7 +47,6 @@ public class LicenseProcessController {
     public String process() {
         return "drive-u/process";
     }
-
     @GetMapping("/checking")
     public String checking() {
         return "drive-u/process/checking";
@@ -59,7 +59,7 @@ public class LicenseProcessController {
 
     @GetMapping("/wApply2")
     public String wApply2(Model model) {
-        model.addAttribute("licenseTypes", ExamConstants.LICENSE_TYPES);
+        model.addAttribute("licenseTypes", ExamConstants.WRITTEN_LICENSE_TYPES);
         model.addAttribute("regions", testCenterRepository.findDistinctRegions());
         model.addAttribute("centers", testCenterRepository.findAll());
         model.addAttribute("examTimes", ExamConstants.EXAM_TIMES);
@@ -134,7 +134,7 @@ public class LicenseProcessController {
 
     @GetMapping("/wApply3")
     public String wApply3(@AuthenticationPrincipal AuthUserDTO authUser,
-                            HttpSession session, Model model) {
+                          HttpSession session, Model model) {
 
         // wApply2 안 거치고 직접 진입한 경우 방어 (세션DTO 없으면 리턴)
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -174,7 +174,7 @@ public class LicenseProcessController {
 
     @GetMapping("/wApply4")
     public String wApply4(@AuthenticationPrincipal AuthUserDTO authUser,
-                            HttpSession session, Model model) {
+                          HttpSession session, Model model) {
 
         // 1. 세션 검증
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -208,7 +208,7 @@ public class LicenseProcessController {
 
     @GetMapping("/wApply5")
     public String wApply5(@AuthenticationPrincipal AuthUserDTO authUser,
-                            HttpSession session, Model model) {
+                          HttpSession session, Model model) {
 
         // 1. 세션 검증
         ApplySessionDTO applyData = (ApplySessionDTO)
@@ -243,55 +243,5 @@ public class LicenseProcessController {
         session.removeAttribute(SessionConst.APPLY_DATA);
 
         return "drive-u/process/wApply5";
-    }
-
-    @GetMapping("/fApply1")
-    public String fApply1() {
-        return "drive-u/process/fApply1";
-    }
-
-    @GetMapping("/fApply2")
-    public String fApply2() {
-        return "drive-u/process/fApply2";
-    }
-
-    @GetMapping("/fApply3")
-    public String fApply3() {
-        return "drive-u/process/fApply3";
-    }
-
-    @GetMapping("/fApply4")
-    public String fApply4() {
-        return "drive-u/process/fApply4";
-    }
-
-    @GetMapping("/fApply5")
-    public String fApply5() {
-        return "drive-u/process/fApply5";
-    }
-
-    @GetMapping("/dApply1")
-    public String dApply1() {
-        return "drive-u/process/dApply1";
-    }
-
-    @GetMapping("/dApply2")
-    public String dApply2() {
-        return "drive-u/process/dApply2";
-    }
-
-    @GetMapping("/dApply3")
-    public String dApply3() {
-        return "drive-u/process/dApply3";
-    }
-
-    @GetMapping("/dApply4")
-    public String dApply4() {
-        return "drive-u/process/dApply4";
-    }
-
-    @GetMapping("/dApply5")
-    public String dApply5() {
-        return "drive-u/process/dApply5";
     }
 }
