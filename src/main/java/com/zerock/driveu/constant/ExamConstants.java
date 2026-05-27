@@ -16,8 +16,22 @@ public class ExamConstants {
             LocalTime.of(16, 0)
     );
 
-    // 응시 종별
-    public static final List<String> LICENSE_TYPES = List.of("1종 보통", "2종 보통");
+    // 학과시험 응시 종별
+    public static final List<String> WRITTEN_LICENSE_TYPES = List.of(
+            "1종 보통",
+            "2종 보통"
+    );
+
+    // 기능시험 응시 종별
+    public static final List<String> FUNCTION_LICENSE_TYPES = List.of(
+            "1종 대형",
+            "1종 보통",
+            "2종 보통",
+            "2종 소형"
+    );
+
+//    // 도로주행 응시 종별 (추후 추가)
+//    public static final List<String> DRIVE_LICENSE_TYPES = List.of()
 
     private ExamConstants() {}
 }

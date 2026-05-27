@@ -115,15 +115,18 @@ calendarBody.addEventListener('click', (e) => {
 
 
 //// AJAX 호출 (날짜·시험장 기준 일정 조회)
-const EXAM_TYPE = "WRITTEN";
+const EXAM_TYPE = "FUNCTION";
 
 async function loadSchedules() {
     if (!selectedDate) return;
     const testCenterId = centerSel.value;
     if (!testCenterId) return;
+    const licenseType = document.getElementById('licenseSelect').value;
+    if (!licenseType) return;
 
-    const url = `/drive-u/process/wApply2/schedules`
+    const url = `/drive-u/process/fApply2/schedules`
         + `?examType=${EXAM_TYPE}`
+        + `&licenseType=${encodeURIComponent(licenseType)}`
         + `&testCenterId=${testCenterId}`
         + `&examDate=${selectedDate}`;
 
@@ -248,3 +251,6 @@ document.getElementById('applyForm').addEventListener('submit', (e) => {
         return false;
     }
 });
+
+//// 응시 종별 변경 시 초기화
+document.getElementById('licenseSelect').addEventListener('change', resetSelection);

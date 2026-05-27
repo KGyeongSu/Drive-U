@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('시험장/날짜 선택')}"></head>
+<link rel="stylesheet" th:href="@{/css/process/wApply2.css}">
 <body>
 <header th:replace="~{fragments/layout :: header('process')}"></header>
 
@@ -18,36 +19,81 @@
             </div>
         </section>
 
-        <section class="apply-step-wrap"><a class="apply-step done" th:href="@{/drive-u/process/fApply1}"><span>1</span><p>약관동의</p></a><a class="apply-step current" th:href="@{/drive-u/process/fApply2}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply3}"><span>3</span><p>연락처등록</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply4}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply5}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
-    <div class="section-head"><h2>시험장/날짜 선택</h2><span>step 02.</span></div>
-    <div class="form-grid">
-        <label>응시 종별<select><option>1종 보통</option><option>2종 보통</option><option>1종 대형</option></select></label>
-        <label>시험 구분<input value="기능시험" readonly></label>
-        <label>지역<select><option>대전</option><option>서울</option><option>충북</option><option>부산</option></select></label>
-        <label>시험장<select><option>대전 운전면허시험장</option><option>청주 운전면허시험장</option><option>강남 운전면허시험장</option></select></label>
-    </div>
-    <div class="reservation-area">
-        <div class="calendar-card">
-            <div class="calendar-head"><button type="button">‹</button><strong>2026년 5월</strong><button type="button">›</button></div>
-            <table class="calendar"><thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead><tbody>
-            <tr><td></td><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td></tr>
-            <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
-            <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
-            <tr><td>18</td><td>19</td><td>20</td><td class="selected-day">21</td><td>22</td><td>23</td><td>24</td></tr>
-            </tbody></table>
-        </div>
-        <div class="time-list">
-            <button type="button" class="time-item">10:00 <span>예약인원 4 / 정원 8</span></button>
-            <button type="button" class="time-item selected">13:10 <span>예약인원 3 / 정원 6</span></button>
-            <button type="button" class="time-item">15:00 <span>예약인원 2 / 정원 6</span></button>
-        </div>
-    </div>
-    <div class="button-area"><a class="outline-btn sub" th:href="@{/drive-u/process/fApply1}">이전</a><a class="outline-btn" th:href="@{/drive-u/process/fApply3}">다음</a></div>
-</section>
+        <section class="apply-step-wrap">
+            <a class="apply-step done"><span>1</span><p>약관동의</p></a>
+            <a class="apply-step current"><span>2</span><p>시험장/날짜선택</p></a>
+            <a class="apply-step "><span>3</span><p>연락처등록</p></a>
+            <a class="apply-step "><span>4</span><p>결제</p></a>
+            <a class="apply-step "><span>5</span><p>접수완료</p></a>
+        </section>
+
+        <form th:action="@{/drive-u/process/fApply2}" method="post" id="applyForm">
+
+            <section class="apply-card">
+                <div class="section-head"><h2>시험장/날짜 선택</h2><span>step 02.</span></div>
+
+                <div class="form-grid">
+                    <label>응시 종별
+                        <select id="licenseSelect" name="licenseType">
+                            <option th:each="li : ${licenseTypes}" th:text="${li}"></option>
+                        </select>
+                    </label>
+
+                    <label>시험 구분<input value="기능시험" readonly></label>
+
+                    <label>지역
+                        <select id="regionSelect">
+                            <option th:each="region : ${regions}" th:text="${region}"></option>
+                        </select>
+                    </label>
+
+                    <label>시험장
+                        <select id="centerSelect">
+                            <option th:each="c : ${centers}"
+                                    th:value="${c.testCenterId}"
+                                    th:text="${c.centerName}"
+                                    th:data-region="${c.region}">
+                            </option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="reservation-area">
+                    <div class="calendar-card">
+                        <div class="calendar-head">
+                            <button type="button" id="prevMonthBtn">‹</button>
+                            <strong id="calendarTitle"></strong>
+                            <button type="button" id="nextMonthBtn">›</button>
+                        </div>
+                        <table class="calendar">
+                            <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
+                            <tbody id="calendarBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="time-list">
+                        <button type="button" class="time-item"
+                                th:each="time : ${examTimes}"
+                                th:data-time="${time}"
+                                th:text="${time}">
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="examScheduleId" id="examScheduleIdInput">
+
+                <div class="button-area">
+                    <a class="outline-btn sub" th:href="@{/drive-u/process/fApply1}">이전</a>
+                    <button type="submit" class="outline-btn">다음</button>
+                </div>
+            </section>
+
+        </form>
+
     </main>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/process/fApply2.js}"></script>
 </body>
 </html>

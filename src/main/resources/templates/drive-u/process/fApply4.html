@@ -18,19 +18,104 @@
             </div>
         </section>
 
-        <section class="apply-step-wrap"><a class="apply-step done" th:href="@{/drive-u/process/fApply1}"><span>1</span><p>약관동의</p></a><a class="apply-step done" th:href="@{/drive-u/process/fApply2}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step done" th:href="@{/drive-u/process/fApply3}"><span>3</span><p>연락처등록</p></a><a class="apply-step current" th:href="@{/drive-u/process/fApply4}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/drive-u/process/fApply5}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
-    <div class="section-head"><h2>결제</h2><span>step 04.</span></div>
-    <div class="apply-info-list">
-        <div class="apply-info-row"><strong>접수방법</strong><span>온라인접수</span></div>
-        <div class="apply-info-row"><strong>시험구분</strong><span>기능시험</span></div>
-        <div class="apply-info-row"><strong>시험장</strong><span>대전 운전면허시험장</span></div>
-        <div class="apply-info-row"><strong>응시일시</strong><span>2026년 05월 21일 13:10</span></div>
-    </div>
-    <div class="payment-box"><h3>지불방법 선택</h3><div class="pay-method"><strong>수수료</strong><span>25,000원</span></div><div class="pay-method"><strong>지불방법</strong><label><input type="radio" name="paymentMethod"> 신용카드</label><label><input type="radio" name="paymentMethod"> 계좌이체</label></div></div>
-    <div class="button-area"><a class="outline-btn sub" th:href="@{/drive-u/process/fApply3}">이전</a><button class="outline-btn" th:data-next="@{/drive-u/process/fApply5}" onclick="goPayment(this)">결제하기</button></div>
-</section>
+        <section class="apply-step-wrap"><a class="apply-step done"><span>1</span>
+            <p>약관동의</p></a><a class="apply-step done"><span>2</span>
+            <p>시험장/날짜선택</p></a><a class="apply-step done"><span>3</span>
+            <p>연락처등록</p></a><a class="apply-step current"><span>4</span>
+            <p>결제</p></a><a class="apply-step "><span>5</span>
+            <p>접수완료</p></a>
+        </section>
+        <section class="apply-card">
+        <div class="section-head"><h2>결제</h2><span>step 04.</span></div>
+        <div class="apply-info-list">
+            <div class="apply-info-row"><strong>접수방법</strong><span>온라인접수</span></div>
+            <div class="apply-info-row"><strong>시험구분</strong><span>기능시험</span></div>
+            <div class="apply-info-row"><strong>시험장</strong><span th:text="|[${applyData.region}] ${applyData.testCenterName}|"></span></div>
+            <div class="apply-info-row"><strong>응시일시</strong><span th:text="|${#temporals.format(applyData.examDate, 'yyyy년 MM월 dd일')} ${applyData.examTime}|"></span></div>
+        </div>
+        <div class="payment-box"><h3>지불방법 선택</h3>
+            <div class="pay-method"><strong>응시료</strong>
+                <span th:text="|${#numbers.formatInteger(fee, 3, 'COMMA')}원|"></span>
+            </div>
+            <div class="pay-method">
+                <strong>지불방법</strong>
+                <label><input type="radio" name="paymentMethod" value="CARD" checked> 신용카드</label>
+                <label><input type="radio" name="paymentMethod" value="TRANSFER"> 계좌이체</label>
+            </div>
+        </div>
+        <div class="button-area"><a class="outline-btn sub" th:href="@{/drive-u/process/fApply3}">이전</a>
+            <button id="payBtn"
+                    class="outline-btn"
+                    th:data-merchant-uid="${merchantUid}"
+                    th:data-fee="${fee}"
+                    style="background-color: #1f4fa8; color: #fff; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(31, 79, 168, 0.3);">결제하기
+            </button>
+        </div>
+    </section>
     </main>
 </div>
+
+<!-- 포트원 V2 SDK -->
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+
+<script th:inline="javascript">
+    // 서버에서 내려준 V2 결제 키
+    const STORE_ID = /*[[${storeId}]]*/ '';
+    const CHANNEL_KEY = /*[[${channelKey}]]*/ '';
+    const CUSTOMER_NAME  = /*[[${customerName}]]*/ '';
+    const CUSTOMER_PHONE = /*[[${customerPhone}]]*/ '';
+    const CUSTOMER_EMAIL = /*[[${customerEmail}]]*/ '';
+
+    async function requestPay(merchantUid, fee) {
+
+        // 1. 선택된 지불 방법 (CARD / TRANSFER)
+        const payMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        // 2. 포트원 V2 결제창 호출
+        const response = await PortOne.requestPayment({
+            storeId: STORE_ID,
+            channelKey: CHANNEL_KEY,
+            paymentId: merchantUid,                     // 우리가 만든
+            orderName: '기능시험 응시료',
+            totalAmount: fee,
+            currency: 'KRW',
+            payMethod: payMethod,
+            customer: {
+                fullName: CUSTOMER_NAME,
+                phoneNumber: CUSTOMER_PHONE,
+                email: CUSTOMER_EMAIL
+            },
+        });
+
+        // 3. 결제창 에러 (사용자 닫기 등)
+        if (response.code != null) {
+            alert('결제 실패: ' + response.message);
+            return;
+        }
+
+        // 4. 서버에 검증 요청
+        const verifyRes = await fetch('/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentId: response.paymentId })
+        });
+
+        const result = await verifyRes.json();
+
+        // 5. 결과 처리
+        if (result.success) {
+            location.href = '/drive-u/process/fApply5';
+        } else {
+            alert('결제 검증 실패: ' + result.status);
+        }
+
+    }
+    document.getElementById('payBtn').addEventListener('click', function() {
+        const merchantUid = this.dataset.merchantUid;
+        const fee = parseInt(this.dataset.fee);
+        requestPay(merchantUid, fee);
+    });
+</script>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
