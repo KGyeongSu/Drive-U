@@ -18,11 +18,44 @@
             </div>
         </section>
 
-        <section class="content-section"><h2 class="section-title">주요 기능</h2><div class="feature-grid"><article class="feature-card"><div class="icon">📝</div><h3>실전형 문제풀이</h3><p>제한시간 안에 CBT 방식으로 문제를 풉니다.</p></article><article class="feature-card"><div class="icon">📊</div><h3>결과 분석</h3><p>정답률과 취약 유형을 확인합니다.</p></article><article class="feature-card"><div class="icon">📌</div><h3>오답노트</h3><p>틀린 문제를 저장하고 다시 학습합니다.</p></article></div></section><section class="content-section"><h2 class="section-title">CBT 모의고사</h2><div class="cbt-box"><div class="cbt-head"><strong>문제 1 / 40</strong><span>남은 시간 39:58</span></div><p class="question">다음 중 교차로 진입 전 운전자가 가장 먼저 확인해야 할 사항은?</p><div class="answer-list"><label><input type="radio" name="answer"> 신호등과 보행자 유무</label><label><input type="radio" name="answer"> 차량 색상</label><label><input type="radio" name="answer"> 내비게이션 음량</label></div><div class="button-area"><button class="outline-btn">다음 문제</button></div></div></section>
+        <section class="content-section">
+            <h2 class="section-title">CBT 모의고사</h2>
+
+            <div class="cbt-box">
+                <div class="cbt-head">
+                    <strong id="questionCounter">문제 0 / 0</strong>
+                    <span id="timer">남은 시간 40:00</span>
+                </div>
+
+                <div id="loadingBox">
+                    문제를 불러오는 중입니다...
+                </div>
+
+                <div id="questionBox" style="display:none;">
+                    <p class="question" id="questionText"></p>
+
+                    <div id="questionImageBox" style="display:none;">
+                        <img id="questionImage" src="" alt="문제 이미지"
+                             style="max-width:100%; border-radius:16px; margin:16px 0;">
+                    </div>
+
+                    <div class="answer-list" id="answerList"></div>
+
+                    <div class="button-area">
+                        <button type="button" class="outline-btn" id="prevBtn">이전 문제</button>
+                        <button type="button" class="outline-btn" id="nextBtn">다음 문제</button>
+                        <button type="button" class="outline-btn" id="submitBtn">제출하기</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/cbt.js}"></script>
+
 </body>
 </html>

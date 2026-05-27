@@ -11,11 +11,6 @@ public class PageController {
         return "/index";
     }
 
-
-    @GetMapping("/drive-u/cbt")
-    public String cbt() {
-        return "drive-u/cbt";
-    }
     @GetMapping("/drive-u/Driving")
     public String Driving() {
         return "drive-u/Driving";
