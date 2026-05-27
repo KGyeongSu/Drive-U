@@ -15,16 +15,26 @@ public class ExamConstants {
             LocalTime.of(15, 0),
             LocalTime.of(16, 0)
     );
-    // 시험 종류
-    public static final String EXAM_WRITTEN = "WRITTEN";
-    public static final String EXAM_SKILL   = "SKILL";
-    public static final String EXAM_ROAD    = "ROAD";
-    // 시험 응시료
-    public static final int FEE_WRITTEN = 10000;
-    public static final int FEE_SKILL   = 22000;
-    public static final int FEE_ROAD    = 25000;
-    // 응시 종별
-    public static final List<String> LICENSE_TYPES = List.of("1종 보통", "2종 보통");
+
+    // 학과시험 응시 종별
+    public static final List<String> WRITTEN_LICENSE_TYPES = List.of(
+            "1종 보통",
+            "2종 보통"
+    );
+
+    // 기능시험 응시 종별
+    public static final List<String> FUNCTION_LICENSE_TYPES = List.of(
+            "1종 대형",
+            "1종 보통",
+            "2종 보통",
+            "2종 소형"
+    );
+
+    // 도로주행 응시 종별 (추후 추가)
+    public static final List<String> DRIVE_LICENSE_TYPES = List.of(
+            "1종 보통",
+            "2종 보통"
+    );
 
     private ExamConstants() {}
 }

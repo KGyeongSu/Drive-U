@@ -57,6 +57,8 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
                     socialMember.getName(),
                     oAuth2User.getAttributes(),
                     true
+                    socialMember.getSeq(),
+                    "SOCIAL"
             );
 
             SecurityContextHolder.getContext().setAuthentication(
