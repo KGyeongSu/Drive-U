@@ -30,8 +30,11 @@ public class ExamConstants {
             "2종 소형"
     );
 
-//    // 도로주행 응시 종별 (추후 추가)
-//    public static final List<String> DRIVE_LICENSE_TYPES = List.of()
+    // 도로주행 응시 종별 (추후 추가)
+    public static final List<String> DRIVE_LICENSE_TYPES = List.of(
+            "1종 보통",
+            "2종 보통"
+    );
 
     private ExamConstants() {}
 }
