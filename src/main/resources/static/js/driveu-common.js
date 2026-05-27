@@ -249,3 +249,31 @@ function scrollChatBottom () {
     chatBody.scrollTop = chatBody.scrollHeight;
 
 }
+
+// alert
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 성공 메시지 처리
+    if (window.successMsg && window.successMsg.trim() !== '') {
+
+        Swal.fire({
+            icon: 'success',
+            title: '알림',
+            text: window.successMsg,
+            confirmButtonColor: '#3085d6'
+        });
+
+    }
+
+    // 에러 메시지 처리
+    if (window.errorMsg && window.errorMsg.trim() !== '') {
+
+        Swal.fire({
+            icon: 'error',
+            title: '오류',
+            text: window.errorMsg,
+            confirmButtonColor: '#d33'
+        });
+
+    }
+});

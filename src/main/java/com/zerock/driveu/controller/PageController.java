@@ -45,11 +45,6 @@ public class PageController {
         return "drive-u/userInfo";
     }
 
-    @GetMapping("/drive-u/userInfo/question")
-    public String question() {
-        return "drive-u/userInfo/question";
-    }
-
     @GetMapping("/drive-u/userInfo/law")
     public String userInfoLaw() {
         return "drive-u/userInfo/law";

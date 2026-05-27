@@ -366,6 +366,23 @@ button, input, select, textarea {
     margin-top: 42px;
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝으로 배치 */
+    align-items: center;            /* 수직 중앙 정렬 */
+    margin-bottom: 20px;
+}
+
+/* 제목 아래 기본 간격 유지 */
+.section-header .section-title {
+    margin: 0; /* flex 컨테이너 내에서 간격 조정 */
+}
+
+/* 문의하기 버튼의 불필요한 마진 제거 */
+.section-header .outline-btn {
+    margin-top: 0;
+}
+
 .section-title {
     margin: 0 0 20px;
     color: #111827;
@@ -2230,4 +2247,98 @@ button, input, select, textarea {
 /* 버튼에 마우스 올렸을 때 효과 */
 .chat-input-area button:hover {
     background-color: #0056b3;
+}
+
+/* 문의사항 pagination */
+.custom-pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 답변 예정 (PENDING) 스타일 */
+.status-pending {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 20px;
+    color: #fff;
+    background-color: #ff9500; /* 오렌지색 */
+}
+
+/* 답변 완료 (COMPLETED) 스타일 */
+.status-completed {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-right: 20px;
+    color: #fff;
+    background-color: #14cf19; /* 녹색 */
+}
+
+/* 기본 버튼 스타일 */
+.page-nav-btn, .page-num-btn {
+    padding: 8px 14px;
+    border: 1px solid #e0e6ed;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    color: #4a5568;
+}
+
+/* 마우스 올렸을 때 효과 */
+.page-nav-btn:hover:not(:disabled), .page-num-btn:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+/* 현재 페이지 활성화 스타일 */
+.page-num-btn.active {
+    background-color: #3182ce;
+    color: white;
+    border-color: #3182ce;
+    font-weight: bold;
+}
+
+/* 비활성화 버튼 */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #edf2f7;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: #333;
+}
+
+.list-item strong {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 20px;
+    white-space: nowrap;
+
+}
+
+.meta-info {
+    display: flex;
+    gap: 15px;
+    color: #666;
+    font-size: 14px;
+    flex-shrink: 0;
+    width: 250px;
+    justify-content: flex-end;
 }

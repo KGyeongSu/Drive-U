@@ -113,6 +113,8 @@ public class MemberController {
                 memberDTO.getEmail(),
                 memberDTO.getName(),
                 memberDTO.getPhone(),
+                // if문 축약 > 소셜 유저인 경우에는 true, 로컬 유저인 경우에는 false
+                (socialUser != null)
                 // seq,type추가
                 seq,
                 memberType

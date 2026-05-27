@@ -6,6 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/driveu-common.css}">
     <link rel="stylesheet" th:href="@{/css/driveu-menu-fix.css}">
     <link rel="stylesheet" th:href="@{/css/driveu-map.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
 
@@ -75,7 +76,7 @@
 
             <div class="mega-column">
                 <a th:href="@{/drive-u/userInfo}">공지사항</a>
-                <a th:href="@{/drive-u/userInfo/question}">문의사항</a>
+                <a th:href="@{/drive-u/userInfo/questionHome}">문의사항</a>
                 <a th:href="@{/drive-u/userInfo/law}">최신법규</a>
                 <a th:href="@{/drive-u/userInfo/location}">길 안내</a>
             </div>
@@ -164,8 +165,8 @@
                 <ul>
                     <li><a th:href="@{/drive-u/userInfo}"
                            th:classappend="${currentPage == 'notice'} ? ' selected'">공지사항</a></li>
-                    <li><a th:href="@{/drive-u/userInfo/question}"
-                           th:classappend="${currentPage == 'question'} ? ' selected'">문의사항</a></li>
+                    <li><a th:href="@{/drive-u/userInfo/questionHome}"
+                           th:classappend="${currentPage == 'questionHome'} ? ' selected'">문의사항</a></li>
                     <li><a th:href="@{/drive-u/userInfo/law}" th:classappend="${currentPage == 'law'} ? ' selected'">최신법규</a>
                     </li>
                     <li><a th:href="@{/drive-u/userInfo/location}"
@@ -222,10 +223,17 @@
             <button onclick="sendManualQuestion()">전송</button>
         </div>
     </div>
-    <button type="button" class="top-button btn-qna" onclick="location.href='/drive-u/userInfo/question'">문의</button>
+    <button type="button" class="top-button btn-qna" onclick="location.href='/drive-u/userInfo/questionHome'">문의</button>
     <button type="button" class="top-button btn-chat" onclick="toggleChat()">챗봇</button>
     <button type="button" class="top-button" onclick="scrollTopSmooth()">↑</button>
     <script th:src="@{/js/driveu-common.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:inline="javascript">
+
+        window.successMsg = /*[[${successMsg}]]*/ null;
+        window.errorMsg = /*[[${errorMsg}]]*/ null;
+
+    </script>
 </th:block>
 
 </body>
