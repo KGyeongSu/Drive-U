@@ -18,19 +18,121 @@
             </div>
         </section>
 
-        <section class="apply-step-wrap"><a class="apply-step done" th:href="@{/license/road-exam}"><span>1</span><p>약관동의</p></a><a class="apply-step done" th:href="@{/license/road-exam/schedule}"><span>2</span><p>시험장/날짜선택</p></a><a class="apply-step current" th:href="@{/license/road-exam/contact}"><span>3</span><p>연락처등록</p></a><a class="apply-step " th:href="@{/license/road-exam/payment}"><span>4</span><p>결제</p></a><a class="apply-step " th:href="@{/license/road-exam/complete}"><span>5</span><p>접수완료</p></a></section><section class="apply-card">
-    <div class="section-head"><h2>연락처 등록</h2><span>step 03.</span></div>
-    <div class="apply-info-list">
-        <div class="apply-info-row"><strong>이름</strong><span>전**</span></div>
-        <div class="apply-info-row"><strong>휴대전화번호</strong><span><input value="010-0000-0000"></span></div>
-        <div class="apply-info-row"><strong>이메일</strong><span class="email-row"><input placeholder="이메일아이디"><b>@</b><input placeholder="직접입력"><select><option>직접입력</option><option>gmail.com</option><option>naver.com</option></select></span></div>
-    </div>
-    <div class="button-area"><a class="outline-btn sub" th:href="@{/license/road-exam/schedule}">이전</a><a class="outline-btn" th:href="@{/license/road-exam/payment}">다음</a></div>
-</section>
+        <section class="apply-step-wrap"><a class="apply-step done"><span>1</span>
+            <p>약관동의</p></a><a class="apply-step done"><span>2</span>
+            <p>시험장/날짜선택</p></a><a class="apply-step current"><span>3</span>
+            <p>연락처등록</p></a><a class="apply-step "><span>4</span>
+            <p>결제</p></a><a class="apply-step "><span>5</span>
+            <p>접수완료</p></a>
+        </section>
+        <form th:action="@{/drive-u/process/dApply3}" method="post" id="contactForm">
+            <section class="apply-card">
+                <div class="section-head">
+                    <h2>연락처 등록</h2>
+                    <span>step 03.</span>
+                </div>
+                <div class="apply-info-list">
+
+                    <!-- 이름 수정불가. 이메일,연락처 기입 -->
+                    <div class="apply-info-row">
+                        <strong>이름</strong>
+                        <span>
+                        <input type="text" th:value="${member.name}" readonly>
+                    </span>
+                    </div>
+                    <div class="apply-info-row">
+                        <strong>휴대전화번호</strong>
+                        <span>
+                        <input type="tel" name="contactPhone"
+                               th:value="${member.phone}"
+                               pattern="010-\d{4}-\d{4}"
+                               placeholder="010-0000-0000"
+                               required>
+                    </span>
+                    </div>
+                    <div class="apply-info-row">
+                        <strong>이메일</strong>
+                        <span>
+                        <input type="text" id="emailId" placeholder="이메일아이디" required>
+                        <b>@</b>
+                        <input type="text" id="emailDomain" placeholder="직접입력" required>
+
+                        <select id="emailDomainSelect">
+                            <option value="">
+                                직접입력
+                            </option>
+                            <option value="gmail.com">
+                                gmail.com
+                            </option>
+                            <option value="naver.com">
+                                naver.com
+                            </option>
+                            <option value="daum.net">
+                                daum.net
+                            </option>
+                        </select>
+                        <input type="hidden" name="contactEmail" id="contactEmail">
+                    </span>
+                    </div>
+
+                    <!-- 안내문구 -->
+                    <p class="apply-info-notice" style="margin-left:
+                14px; margin-top: 8px; font-size: 13px; color: #888;">
+                        ※ 입력하신 연락처는 이번 신청건에만 적용됩니다.<br>
+                        회원정보는 변경되지 않으며, 필요 시 수정 가능합니다.
+                    </p>
+
+                </div>
+                <div class="button-area">
+                    <a class="outline-btn sub" th:href="@{/drive-u/process/dApply2}">이전</a>
+                    <button type="submit" class="outline-btn">다음</button>
+                </div>
+            </section>
+        </form>
     </main>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<script th:inline="javascript">
+    (function () {
+        const defaultEmail = /*[[${member.email}]]*/ '';
+
+        const emailIdInput     = document.getElementById('emailId');
+        const emailDomainInput = document.getElementById('emailDomain');
+        const emailDomainSel   = document.getElementById('emailDomainSelect');
+        const contactEmailHidden = document.getElementById('contactEmail');
+        const form = document.getElementById('contactForm');
+
+        // 1. 회원 기본 이메일을 아이디/도메인 두 칸에 분리해서 채움
+        if (defaultEmail && defaultEmail.includes('@')) {
+            const [id, domain] = defaultEmail.split('@');
+            emailIdInput.value = id;
+            emailDomainInput.value = domain;
+        }
+
+        // 2. select에서 도메인 고르면 input에 자동 반영
+        emailDomainSel.addEventListener('change', function () {
+            if (this.value) {
+                emailDomainInput.value = this.value;
+                emailDomainInput.readOnly = true;
+            } else {
+                emailDomainInput.readOnly = false;
+                emailDomainInput.value = '';
+                emailDomainInput.focus();
+            }
+        });
+
+        // 3. submit 직전에 합쳐서 hidden에 세팅
+        form.addEventListener('submit', function () {
+            const id     = emailIdInput.value.trim();
+            const domain = emailDomainInput.value.trim();
+            contactEmailHidden.value = id + '@' + domain;
+        });
+    })();
+</script>
+
 </body>
 </html>
+
