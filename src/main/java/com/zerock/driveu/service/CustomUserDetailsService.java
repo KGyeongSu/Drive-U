@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 member.getEmail(),
                 member.getName(),
                 member.getPhone(),
-                false
+                false,
                 // seq,type 추가
                 member.getSeq(),
                 "MEMBER"
