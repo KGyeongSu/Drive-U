@@ -97,7 +97,9 @@ public class MemberController {
                 List.of(new SimpleGrantedAuthority("ROLE_USER")),
                 memberDTO.getEmail(),
                 memberDTO.getName(),
-                memberDTO.getPhone()
+                memberDTO.getPhone(),
+                // if문 축약 > 소셜 유저인 경우에는 true, 로컬 유저인 경우에는 false
+                (socialUser != null)
         );
 
         Authentication auth = new UsernamePasswordAuthenticationToken(

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="list" id="ajax-update-area">
+    <div class="board-list" >
+        <div th:if="${questionPage.totalElements == 0}" class="empty-msg" style="padding: 20px; text-align: center; color: #888;">
+            등록된 문의사항이 없습니다.
+        </div>
+
+        <a th:each="question : ${questionPage.content}"
+           th:href="@{/drive-u/userInfo/questionDetail(id=${question.id})}" class="list-item">
+
+            <span th:class="(${question.status.name() == 'COMPLETED'} ? 'status-completed' : 'status-pending')"
+                  th:text="${question.status.description}">
+            </span>
+
+            <strong th:text="${question.title}"></strong>
+
+            <div class="meta-info">
+                <span th:text="${#temporals.format(question.regDate, 'yyyy-MM-dd')}"></span>
+                <span th:text="|${#strings.substring(question.writerName, 0, 1)}*${#strings.substring(question.writerName, 2, 3)}|"></span>
+            </div>
+        </a>
+    </div>
+    <div class="custom-pagination" id="pagination-container">
+        <button class="page-nav-btn" th:onclick="|loadPage(0)|" th:disabled="${questionPage.first}">&laquo;</button>
+
+        <button class="page-nav-btn" th:onclick="|loadPage(${questionPage.number - 1})|" th:disabled="${questionPage.first}">이전</button>
+
+        <span th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <button class="page-num-btn"
+                    th:onclick="|loadPage(${page - 1})|"
+                    th:text="${page}"
+                    th:classappend="${page == nowPage ? 'active' : ''}"></button>
+        </span>
+
+        <button class="page-nav-btn" th:onclick="|loadPage(${questionPage.number + 1})|" th:disabled="${questionPage.last}">다음</button>
+
+        <button class="page-nav-btn" th:onclick="|loadPage(${questionPage.totalPages - 1})|" th:disabled="${questionPage.last}">&raquo;</button>
+    </div>
+</div>
+</html>
