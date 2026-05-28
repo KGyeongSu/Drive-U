@@ -35,7 +35,7 @@ public class PaymentService {
     // wApply4 진입 시점에 호출됨
     // 같은 회원·같은 시험에 미결제건 있으면 CANCELLED 처리 후 새 신청건 생성
     @Transactional
-    public Application createApplication(ApplySessionDTO dto, Long memberId, String memberType) {
+    public Application createApplication(ApplySessionDTO dto, Long userSeq, String memberType) {
 
         // 1. 시험 일정 조회 (FK 매핑용)
         ExamSchedule schedule = examScheduleRepository.findById(dto.getExamScheduleId())
@@ -43,8 +43,8 @@ public class PaymentService {
 
         // 2. 기존 미결제건 정리 (있으면 CANCELLED)
         applicationRepository
-                .findByMemberIdAndMemberTypeAndExamSchedule_ScheduleIdAndStatus(
-                        memberId,
+                .findByUserSeqAndMemberTypeAndExamSchedule_ScheduleIdAndStatus(
+                        userSeq,
                         memberType,
                         dto.getExamScheduleId(),
                         ApplicationStatus.WAITING_PAYMENT
@@ -61,7 +61,7 @@ public class PaymentService {
         int fee = examType.getFee();
 
         Application application = Application.builder()
-                .memberId(memberId)
+                .userSeq(userSeq)
                 .memberType(memberType)
                 .examSchedule(schedule)
                 .examType(examType)

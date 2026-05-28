@@ -21,7 +21,7 @@ public class Application {
 
     // 회원 FK
     @Column(nullable = false)
-    private Long memberId;
+    private Long userSeq;
 
     @Column(nullable = false, length = 20)
     private String memberType;          // "MEMBER" / "SOCIAL"

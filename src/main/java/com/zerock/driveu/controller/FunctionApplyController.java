@@ -175,11 +175,11 @@ public class FunctionApplyController {
         }
 
         // 2. 회원 식별자 꺼내기
-        Long memberId = authUser.getSeq();
+        Long userSeq = authUser.getSeq();
         String memberType = authUser.getMemberType();
 
         // 3. Application INSERT (기존 미결제건 있으면 CANCELLED 처리)
-        Application application = paymentService.createApplication(applyData, memberId, memberType);
+        Application application = paymentService.createApplication(applyData, userSeq, memberType);
 
         // 4. model에 담기
         model.addAttribute("applyData", applyData);
@@ -209,13 +209,13 @@ public class FunctionApplyController {
         }
 
         // 2. 회원 정보
-        Long memberId = authUser.getSeq();
+        Long userSeq = authUser.getSeq();
         String memberType = authUser.getMemberType();
 
         // 3. 가장 최근 Completed 조회
         Application application = applicationRepository
-                .findFirstByMemberIdAndMemberTypeAndStatusOrderByCreatedAtDesc(
-                        memberId,
+                .findFirstByUserSeqAndMemberTypeAndStatusOrderByCreatedAtDesc(
+                        userSeq,
                         memberType,
                         ApplicationStatus.COMPLETED)
                 .orElseThrow(() -> new IllegalStateException("완료된 신청건 없음."));
