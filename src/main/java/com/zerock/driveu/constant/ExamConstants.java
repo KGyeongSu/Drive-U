@@ -36,5 +36,11 @@ public class ExamConstants {
             "2종 보통"
     );
 
+    // 연습면허 발급 가능 종별 (도로주행으로 가능 종별만 - 1종대형/2종소형은 기능합격으로 종결)
+    public static final List<String> PRACTICE_LICENSE_TYPES = List.of(
+            "1종 보통",
+            "2종 보통"
+    );
+
     private ExamConstants() {}
 }

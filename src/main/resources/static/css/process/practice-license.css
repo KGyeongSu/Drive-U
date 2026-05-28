@@ -1,0 +1,75 @@
+/* ===== 스텝바 4단계 override (pLicense1~4 공통) ===== */
+.apply-step-wrap { grid-template-columns: repeat(4, 1fr); }
+.apply-step-wrap::before { left: 12.5%; right: 12.5%; }
+
+/* ===== 연습면허증 카드 (pLicense4) ===== */
+.license-cert {
+    max-width: 560px;
+    margin: 0 auto;
+    border: 2px solid #1f4fa8;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    font-family: "Malgun Gothic", sans-serif;
+}
+.license-cert .cert-head {
+    background: #1f4fa8;
+    color: #fff;
+    padding: 16px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.license-cert .cert-head h2 { margin: 0; font-size: 19px; letter-spacing: 2px; }
+.license-cert .cert-head .cert-org { font-size: 13px; opacity: .9; }
+.license-cert .cert-body { padding: 24px 28px; }
+.license-cert .cert-row {
+    display: flex;
+    padding: 11px 0;
+    border-bottom: 1px dashed #d1d5db;
+    font-size: 15px;
+}
+.license-cert .cert-row:last-child { border-bottom: none; }
+.license-cert .cert-row .label { width: 130px; color: #6b7280; font-weight: 700; }
+.license-cert .cert-row .value { flex: 1; color: #111827; font-weight: 700; }
+.license-cert .cert-no { font-size: 20px; letter-spacing: 0.5px; white-space: nowrap; color: #1f4fa8; }
+.license-cert .cert-foot {
+    padding: 14px 28px 22px;
+    font-size: 12px; color: #6b7280; line-height: 1.6;
+}
+
+/* 절취선 */
+.cut-line {
+    max-width: 560px;
+    margin: 14px auto 0;
+    border-top: 2px dashed #9ca3af;
+    position: relative;
+    text-align: center;
+}
+.cut-line span {
+    position: relative;
+    top: -11px;
+    background: #fff;
+    padding: 0 10px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* ===== 인쇄 시: 면허증·절취선만 남기고 숨김 ===== */
+@media print {
+    /* 안 찍을 영역들만 콕 집어 제거 */
+    .site-header,
+    .side-menu,
+    footer,
+    .breadcrumb,
+    .hero-card,
+    .apply-step-wrap,
+    .button-area,
+    #chatbotWindow,
+    .top-button { display: none !important; }
+
+    /* 면허증만 종이 상단에 */
+    .license-cert { margin: 0 auto; }
+
+    @page { margin: 12mm; }
+}
