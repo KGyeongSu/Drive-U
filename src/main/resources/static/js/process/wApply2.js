@@ -229,6 +229,7 @@ document.querySelectorAll('.time-item').forEach(btn => {
             .forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         selectedScheduleId = btn.dataset.scheduleId;
+        document.getElementById('examScheduleIdInput').value = selectedScheduleId;
     });
 });
 
@@ -239,14 +240,11 @@ centerSel.addEventListener('change', resetSelection);
 filterCenters();
 
 
-//// 시간버튼 클릭 처리
-document.querySelectorAll('.time-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (btn.disabled) return;
-        document.querySelectorAll('.time-item.selected')
-            .forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedScheduleId = btn.dataset.scheduleId;
-        document.getElementById('examScheduleIdInput').value = selectedScheduleId;  // ← 추가
-    });
+//// 폼 제출 시 일정 선택 여부 검증
+document.getElementById('applyForm').addEventListener('submit', (e) => {
+    if (!selectedScheduleId) {
+        e.preventDefault();
+        alert('시험 일정을 선택해주세요.');
+        return false;
+    }
 });

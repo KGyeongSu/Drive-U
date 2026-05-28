@@ -4,6 +4,7 @@ import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.dto.MemberDTO;
 import com.zerock.driveu.dto.SocialUserDTO;
 import com.zerock.driveu.repository.MemberRepository;
+import com.zerock.driveu.repository.SocialMemberRepository;
 import com.zerock.driveu.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,7 +30,9 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    // 필드 2개 추가(경수)
     private final MemberRepository memberRepository;
+    private final SocialMemberRepository socialMemberRepository;
 
     // [핵심] 모든 요청마다 세션에서 socialUser를 꺼내 모델에 자동으로 담아줍니다.
     @ModelAttribute("socialUser")
@@ -97,6 +100,16 @@ public class MemberController {
             session.removeAttribute("socialUser");
         }
 
+        // 회원 seq 조회(경수추가)
+        Long seq;
+        String memberType;
+        if (socialUser != null) {
+            seq = socialMemberRepository.findBySocialKey(loginUsername).orElseThrow().getSeq();
+            memberType = "SOCIAL";
+        } else {
+            seq = memberRepository.findById(loginUsername).orElseThrow().getSeq();
+            memberType = "MEMBER";
+        }
         // 3. 인증 객체 생성
         AuthUserDTO authUser = new AuthUserDTO(
                 loginUsername,
@@ -106,7 +119,12 @@ public class MemberController {
                 memberType,
                 memberDTO.getEmail(),
                 memberDTO.getName(),
-                memberDTO.getPhone()
+                memberDTO.getPhone(),
+                // if문 축약 > 소셜 유저인 경우에는 true, 로컬 유저인 경우에는 false
+                (socialUser != null),
+                // seq,type추가
+                seq,
+                memberType
         );
 
         Authentication auth = new UsernamePasswordAuthenticationToken(

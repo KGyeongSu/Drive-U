@@ -1,5 +1,6 @@
 package com.zerock.driveu.domain;
 
+import com.zerock.driveu.service.QuestionWriterService;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Member {
+public class Member implements QuestionWriterService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -45,5 +46,19 @@ public class Member {
     public void changeAddress(String address) {
         this.address = address;
     }
-}
 
+    // 문의사항 작성자 가져올 때 필요한 method
+    @Override
+    public String getWriterName() {
+
+        return this.name;
+
+    }
+
+    @Override
+    public String getWriterEmail() {
+
+        return this.email;
+
+    }
+}

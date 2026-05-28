@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('문의사항')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('userInfo')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('userInfo', 'questionHome')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 문의사항</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">INQUIRY LIST</p>
+                <h1>문의사항</h1>
+                <p>문의사항에 대한 답변을 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">최근 문의</h2>
+                <a href="/drive-u/userInfo/question"
+                   th:if="${!#authorization.expression('hasRole(''ADMIN'')')}"
+                   class="outline-btn">문의하기</a>
+            </div>
+            <div id="ajax-update-area">
+                <div th:replace="~{fragments/questionList :: list}"></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/questionHome.js}"></script>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+</body>
+</html>

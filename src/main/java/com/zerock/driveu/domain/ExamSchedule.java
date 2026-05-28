@@ -1,6 +1,7 @@
 package com.zerock.driveu.domain;
 
 
+import com.zerock.driveu.domain.enums.ExamType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,9 @@ public class ExamSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String examType;            // 학과,기능,도로주행 종류
+    private ExamType examType;            // 학과,기능,도로주행 종류
 
     @Column(length = 30)
     private String licenseType;         // 면허종류 (학과/도로:null, 기능만 구분)
@@ -38,9 +40,6 @@ public class ExamSchedule {
 
     @Column(nullable = false)
     private int maxCount;               // 총 정원
-
-    @Column(nullable = false)
-    private int currentCount;           // 현재 정원
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;    // 데이터가 언제 만들어졌는지

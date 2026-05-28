@@ -11,10 +11,6 @@ public class PageController {
         return "/index";
     }
 
-    @GetMapping("/drive-u/cbt")
-    public String cbt() {
-        return "drive-u/cbt";
-    }
     @GetMapping("/drive-u/Driving")
     public String Driving() {
         return "drive-u/Driving";
@@ -49,18 +45,8 @@ public class PageController {
         return "drive-u/userInfo";
     }
 
-    @GetMapping("/drive-u/userInfo/question")
-    public String question() {
-        return "drive-u/userInfo/question";
-    }
-
     @GetMapping("/drive-u/userInfo/law")
     public String userInfoLaw() {
         return "drive-u/userInfo/law";
-    }
-
-    @GetMapping("/drive-u/userInfo/location")
-    public String location() {
-        return "drive-u/userInfo/location";
     }
 }
