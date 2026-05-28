@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="~{fragments/layout :: head('결제 및 신청 완료')}"></head>
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header('card')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('card', ${type})}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 면허증 카드 &gt; 신규 발급 &gt; 3단계 결제</div>
+
+        <div class="step-indicator" style="display: flex; justify-content: space-between; margin-bottom: 40px; padding: 0 100px;">
+            <div class="step" style="text-align: center; color: #94a3b8;">1단계</div>
+            <div class="step" style="text-align: center; color: #94a3b8;">2단계</div>
+            <div class="step" style="text-align: center; color: #2563eb; font-weight: bold;">3단계 완료</div>
+        </div>
+
+        <section class="content-section" style="background: white; padding: 40px; text-align: center; border-radius: 12px;">
+            <h2 style="margin-bottom: 20px;">수수료 결제</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">발급 수수료 15,000원을 결제하시면 신청이 최종 완료됩니다.</p>
+
+            <button type="button" id="btnPayment"
+                    style="padding: 20px 60px; background-color: #FEE500; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">
+                카카오페이로 결제하기
+            </button>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<script th:inline="javascript">
+    const type = /*[[${type}]]*/ 'new';
+    const impCode = /*[[${impCode}]]*/ 'default_code';
+
+    IMP.init(impCode);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnPayment = document.getElementById('btnPayment');
+        if (btnPayment) {
+            btnPayment.addEventListener('click', requestPay);
+        }
+    });
+
+    async function requestPay() {
+        try {
+            const response = await fetch('/drive-u/card/' + type + '/check-duplicate');
+            const data = await response.json();
+
+            if (data.isApplied) {
+                alert("이미 해당 면허를 신청하셨습니다.");
+                return;
+            }
+        } catch (err) {
+            console.error("중복 체크 중 오류 발생:", err);
+            alert("중복 체크에 실패했습니다. 다시 시도해주세요.");
+            return;
+        }
+
+        IMP.request_pay({
+            pg: 'kakaopay',
+            pay_method: 'card',
+            merchant_uid: 'mid_' + new Date().getTime(),
+            name: '면허증 발급 수수료',
+            amount: 15000,
+            buyer_email: 'user@example.com',
+            buyer_name: /*[[${#authentication.principal.realName}]]*/ '홍길동'
+        }, function (rsp) {
+            if (rsp.success) {
+                const appData = JSON.parse(sessionStorage.getItem("applicationData"));
+
+                if (!appData) {
+                    alert("신청서 정보가 만료되었습니다. 다시 작성해주세요.");
+                    return;
+                }
+
+                const paymentData = {
+                    imp_uid: rsp.imp_uid,
+                    merchant_uid: rsp.merchant_uid,
+                    amount: 15000,
+                    receiveLocation: appData.receiveLocation,
+                    receiveDate: appData.receiveDate
+                };
+
+                fetch('/drive-u/card/' + type + '/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => { throw new Error(data.error); });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.redirectUrl) {
+                            sessionStorage.removeItem("applicationData");
+                            window.location.href = data.redirectUrl;
+                        }
+                    })
+                    .catch(err => {
+                        alert(err.message || "통신 중 오류가 발생했습니다.");
+                    });
+
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
+    }
+</script>
+</body>
+</html>

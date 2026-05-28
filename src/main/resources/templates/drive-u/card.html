@@ -18,33 +18,57 @@
             </div>
         </section>
 
-        <section class="content-section"><h2 class="section-title">주요 기능</h2>
+        <section class="content-section">
+            <h2 class="section-title">주요 기능</h2>
             <div class="feature-grid">
                 <article class="feature-card">
                     <div class="icon">💳</div>
                     <h3>신청 안내</h3>
-                    <p>시험 합격 후 운전면허증 신규 발급 절차를 확인합니다.</p></article>
+                    <p>시험 합격 후 운전면허증 신규 발급 절차를 확인합니다.</p>
+                </article>
                 <article class="feature-card">
                     <div class="icon">📄</div>
                     <h3>준비물</h3>
-                    <p>신분증과 필요 서류를 확인합니다.</p></article>
+                    <p>신분증과 필요 서류를 확인합니다.</p>
+                </article>
                 <article class="feature-card">
                     <div class="icon">📍</div>
                     <h3>수령 안내</h3>
-                    <p>시험장 방문 또는 수령 절차를 확인합니다.</p></article>
+                    <p>시험장 방문 또는 수령 절차를 확인합니다.</p>
+                </article>
             </div>
         </section>
-        <section class="content-section"><h2 class="section-title">상세 안내</h2>
+
+        <section class="content-section">
+            <h2 class="section-title">상세 안내</h2>
             <div class="info-table">
                 <div class="info-row"><strong>대상</strong><span>면허증 발급 또는 관리 대상자</span></div>
                 <div class="info-row"><strong>준비물</strong><span>신분증, 신청서</span></div>
                 <div class="info-row"><strong>처리 방식</strong><span>온라인 안내 후 방문 또는 발급 신청</span></div>
             </div>
         </section>
+
+        <section class="cta-section" style="text-align: center; margin-top: 50px; padding: 30px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h3 style="font-size: 1.3rem; color: #1e293b; margin-bottom: 10px; font-weight: 600;">운전면허 합격 데이터를 실시간으로 조회합니다</h3>
+            <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 25px;">도로교통공단 API 연동 검증 및 수수료 결제 단계로 진행합니다.</p>
+
+            <a th:href="@{/drive-u/card/new/step1}" class="btn-apply"
+               style="display: inline-block; padding: 15px 40px; background-color: #2563eb; color: #ffffff; font-size: 1.1rem; font-weight: bold; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">
+                신규 면허 발급 신청하기 ➔
+            </a>
+        </section>
     </main>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<style>
+    .btn-apply:hover {
+        background-color: #1d4ed8 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3) !important;
+    }
+</style>
 </body>
 </html>

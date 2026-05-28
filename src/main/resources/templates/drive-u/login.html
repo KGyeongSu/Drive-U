@@ -29,6 +29,10 @@
                 <input type="password" name="pwd" placeholder="비밀번호를 입력하세요" required>
             </div>
 
+            <div th:if="${param.error}" style="color: #dc3545; background-color: #fff5f5; border: 1px solid #ffc9c9; padding: 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; text-align: center;">
+                아이디 또는 비밀번호가 일치하지 않습니다.
+            </div>
+
             <div class="login-btn-group">
                 <button type="submit" class="btn-action btn-login">로그인</button>
                 <a th:href="@{/login/signUp}" class="btn-action btn-signup">회원가입</a>
@@ -59,7 +63,6 @@
                     </svg>
                 </div>
                 <span class="social-text">Kakao로 시작하기</span>
-            </a>
             </a>
         </div>
     </section>

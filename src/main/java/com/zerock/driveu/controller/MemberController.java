@@ -81,7 +81,6 @@ public class MemberController {
                 return "drive-u/login/signup";
             }
         } else {
-
             if (bindingResult.hasFieldErrors("name") ||
                     bindingResult.hasFieldErrors("phone")) {
                 return "drive-u/login/signup";
@@ -90,6 +89,12 @@ public class MemberController {
 
         // 2. 서비스 로직 호출
         String loginUsername = memberService.registerMember(memberDTO, socialUser);
+
+        Long realSeq = memberRepository.findById(loginUsername)
+                .map(member -> member.getSeq())
+                .orElse(1L);
+
+        String memberType = (socialUser != null) ? "SOCIAL" : "MEMBER";
 
         if (socialUser != null) {
             session.removeAttribute("socialUser");
@@ -110,6 +115,8 @@ public class MemberController {
                 loginUsername,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_USER")),
+                realSeq,
+                memberType,
                 memberDTO.getEmail(),
                 memberDTO.getName(),
                 memberDTO.getPhone(),
