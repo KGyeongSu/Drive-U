@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('연습면허 발급')}"></head>
+<style>
+    /* 이 페이지에서만 스텝바를 4단계로 (공통 CSS 안 건드림) */
+    .apply-step-wrap {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .apply-step-wrap::before {
+        left: 12.5%;
+        right: 12.5%;
+    }
+</style>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'pLicense')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 > 연습면허 발급</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">PRACTICE LICENSE</p>
+                <h1>연습면허 발급</h1>
+                <p>기능시험 합격자는 연습면허를 발급받아 도로주행 연습을 시작할 수 있습니다.</p>
+            </div>
+        </section>
+
+        <div class="notice-phy">
+            연습면허는 학과시험·기능시험에 모두 합격한 제1·2종 보통 응시자만 발급 가능하며, 도로주행 시험 응시의 선행 조건입니다.
+        </div>
+
+        <br>
+
+        <section class="apply-step-wrap"><a class="apply-step current">
+            <span>1</span><p>자격확인</p></a><a class="apply-step ">
+            <span>2</span><p>정보확인</p></a><a class="apply-step ">
+            <span>3</span><p>결제</p></a><a class="apply-step ">
+            <span>4</span><p>발급완료</p></a>
+        </section>
+        <section class="apply-card">
+            <div class="section-head"><h2>연습면허 발급 안내</h2><span>step 01.</span></div>
+            <div class="notice-box">
+                <p>연습면허 발급 전 아래 내용을 확인해 주세요.</p>
+                <ul>
+                    <li>연습면허는 학과시험과 장내 기능시험에 <strong>모두 합격</strong>한 제1·2종 보통 응시자만 발급받을 수 있습니다.</li>
+                    <li>연습면허는 <strong>제1종 보통 / 제2종 보통</strong>에 한해 발급됩니다. (1종 대형·2종 소형은 기능시험 합격으로 취득이 완료되어 대상이 아닙니다.)</li>
+                    <li>연습면허의 유효기간은 <strong>발급일로부터 1년</strong>이며, <strong>연장은 불가능</strong>합니다. (도로교통법 제81조)</li>
+                    <li>유효기간 내에 도로주행 시험에 합격하지 못하면 효력을 잃으며, 신체검사부터 다시 응시해야 합니다.</li>
+                    <li>도로 주행 연습 시에는 운전 경력 2년 이상인 사람을 동승시키고, 자동차 앞뒤에 '주행연습' 표지를 부착해야 합니다.</li>
+                    <li>인적 피해 교통사고, 음주·약물 운전 등의 경우 연습면허가 취소될 수 있습니다.</li>
+                    <li>발급 수수료 결제 완료 후 즉시 발급되며 출력이 가능합니다.</li>
+                </ul>
+            </div>
+            <label class="agree-line"><input type="checkbox" id="agreeYn"><span>위 내용을 확인하였으며, 연습면허 발급 약관에 동의합니다.</span></label>
+            <div class="button-area">
+                <button type="button" class="outline-btn" th:data-next="@{/drive-u/process/pLicense2}" onclick="goTermsNext(this)">다음</button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('연습면허 결제')}"></head>
+<style>
+  /* 이 페이지에서만 스텝바 4단계 (공통 CSS 안 건드림) */
+  .apply-step-wrap { grid-template-columns: repeat(4, 1fr); }
+  .apply-step-wrap::before { left: 12.5%; right: 12.5%; }
+</style>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+  <aside th:replace="~{fragments/layout :: side('process', 'pLicense')}"></aside>
+
+  <main class="content">
+    <div class="breadcrumb">홈 > 연습면허 결제</div>
+
+    <section class="hero-card">
+      <div class="hero-text">
+        <p class="eyebrow">PRACTICE LICENSE</p>
+        <h1>결제</h1>
+        <p>발급 내역을 확인하고 결제를 진행합니다.</p>
+      </div>
+    </section>
+
+    <section class="apply-step-wrap"><a class="apply-step done"><span>1</span><p>자격확인</p></a><a class="apply-step done"><span>2</span><p>정보확인</p></a><a class="apply-step current"><span>3</span><p>결제</p></a><a class="apply-step "><span>4</span><p>발급완료</p></a></section>
+
+    <section class="apply-card">
+      <div class="section-head"><h2>결제</h2><span>step 03.</span></div>
+      <div class="apply-info-list">
+        <div class="apply-info-row"><strong>발급구분</strong><span>연습면허 발급</span></div>
+        <div class="apply-info-row"><strong>면허종별</strong><span th:text="${licenseType}"></span></div>
+        <div class="apply-info-row"><strong>유효기간</strong><span>발급일로부터 1년</span></div>
+      </div>
+
+      <div class="payment-box">
+        <h3>지불방법 선택</h3>
+        <div class="pay-method">
+          <strong>발급수수료</strong>
+          <span th:text="|${#numbers.formatInteger(fee, 3, 'COMMA')}원|"></span>
+        </div>
+        <div class="pay-method">
+          <strong>지불방법</strong>
+          <label><input type="radio" name="paymentMethod" value="CARD" checked> 신용카드</label>
+          <label><input type="radio" name="paymentMethod" value="TRANSFER"> 계좌이체</label>
+        </div>
+      </div>
+
+      <div class="button-area">
+        <a class="outline-btn sub" th:href="@{/drive-u/process/pLicense2}">이전</a>
+        <button id="payBtn"
+                class="outline-btn"
+                th:data-merchant-uid="${merchantUid}"
+                th:data-fee="${fee}"
+                style="background-color:#1f4fa8; color:#fff; border:none; font-weight:600; cursor:pointer; box-shadow:0 2px 8px rgba(31,79,168,.3);">결제하기
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 포트원 V2 SDK -->
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+
+<script th:inline="javascript">
+  const STORE_ID = /*[[${storeId}]]*/ '';
+  const CHANNEL_KEY = /*[[${channelKey}]]*/ '';
+  const CUSTOMER_NAME  = /*[[${customerName}]]*/ '';
+  const CUSTOMER_PHONE = /*[[${customerPhone}]]*/ '';
+  const CUSTOMER_EMAIL = /*[[${customerEmail}]]*/ '';
+
+  async function requestPay(merchantUid, fee) {
+    const payMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+    // 포트원 V2 결제창 호출
+    const response = await PortOne.requestPayment({
+      storeId: STORE_ID,
+      channelKey: CHANNEL_KEY,
+      paymentId: merchantUid,
+      orderName: '연습면허 발급수수료',
+      totalAmount: fee,
+      currency: 'KRW',
+      payMethod: payMethod,
+      customer: {
+        fullName: CUSTOMER_NAME,
+        phoneNumber: CUSTOMER_PHONE,
+        email: CUSTOMER_EMAIL
+      },
+    });
+
+    // 결제창 에러 (사용자 닫기 등)
+    if (response.code != null) {
+      alert('결제 실패: ' + response.message);
+      return;
+    }
+
+    // 서버 검증 요청 (★ 연습면허 전용 엔드포인트)
+    const verifyRes = await fetch('/payment/verify/practice-license', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentId: response.paymentId })
+    });
+
+    const result = await verifyRes.json();
+
+    if (result.success) {
+      location.href = '/drive-u/process/pLicense4';
+    } else {
+      alert('결제 검증 실패: ' + result.status);
+    }
+  }
+
+  document.getElementById('payBtn').addEventListener('click', function() {
+    const merchantUid = this.dataset.merchantUid;
+    const fee = parseInt(this.dataset.fee);
+    requestPay(merchantUid, fee);
+  });
+</script>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

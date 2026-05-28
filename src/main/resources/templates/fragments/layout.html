@@ -62,10 +62,11 @@
 
             <div class="mega-column">
                 <a th:href="@{/drive-u/process}">취득절차안내</a>
-                <a th:href="@{/drive-u/process/checking}">신체검사 안내</a>
+                <a th:href="@{/drive-u/process/checking}">신체검사안내</a>
                 <a th:href="@{/drive-u/process/wApply1}">학과시험</a>
                 <a th:href="@{/drive-u/process/fApply1}">기능시험</a>
-                <a th:href="@{/drive-u/process/dApply1}">도로주행</a>
+                <a th:href="@{/drive-u/process/pLicense1}">연습면허발급</a>
+                <a th:href="@{/drive-u/process/dApply1}">도로주행시험</a>
             </div>
 
             <div class="mega-column">
@@ -132,13 +133,15 @@
                     <li><a th:href="@{/drive-u/process}" th:classappend="${currentPage == 'process'} ? ' selected'">취득절차안내</a>
                     </li>
                     <li><a th:href="@{/drive-u/process/checking}"
-                           th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사 안내</a></li>
+                           th:classappend="${currentPage == 'checking'} ? ' selected'">신체검사안내</a></li>
                     <li><a th:href="@{/drive-u/process/wApply1}"
                            th:classappend="${currentPage == 'wApply'} ? ' selected'">학과시험</a></li>
                     <li><a th:href="@{/drive-u/process/fApply1}"
                            th:classappend="${currentPage == 'fApply'} ? ' selected'">기능시험</a></li>
+                    <li><a th:href="@{/drive-u/process/pLicense1}"
+                           th:classappend="${currentPage == 'pLicense'} ? ' selected'">연습면허발급</a></li>
                     <li><a th:href="@{/drive-u/process/dApply1}"
-                           th:classappend="${currentPage == 'dApply'} ? ' selected'">도로주행</a></li>
+                           th:classappend="${currentPage == 'dApply'} ? ' selected'">도로주행시험</a></li>
                 </ul>
             </div>
         </div>

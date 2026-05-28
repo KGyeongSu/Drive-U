@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('연습면허 발급완료')}"></head>
+<link rel="stylesheet" th:href="@{/css/process/practice-license.css}">
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'pLicense')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 > 연습면허 발급완료</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">PRACTICE LICENSE</p>
+                <h1>발급완료</h1>
+                <p>연습면허가 발급되었습니다. 아래 면허증을 출력하여 보관하세요.</p>
+            </div>
+        </section>
+
+        <section class="apply-step-wrap"><a class="apply-step done"><span>1</span><p>자격확인</p></a><a class="apply-step done"><span>2</span><p>정보확인</p></a><a class="apply-step done"><span>3</span><p>결제</p></a><a class="apply-step current"><span>4</span><p>발급완료</p></a></section>
+
+        <!-- ===== 연습면허증 ===== -->
+        <div class="license-cert">
+            <div class="cert-head">
+                <h2>연 습 운 전 면 허 증</h2>
+                <span class="cert-org">도로교통공단</span>
+            </div>
+            <div class="cert-body">
+                <div class="cert-row">
+                    <span class="label">연습면허번호</span>
+                    <span class="value cert-no" th:text="${license.licenseNumber}"></span>
+                </div>
+                <div class="cert-row">
+                    <span class="label">성명</span>
+                    <span class="value" th:text="${memberName}"></span>
+                </div>
+                <div class="cert-row">
+                    <span class="label">면허종별</span>
+                    <span class="value" th:text="${license.licenseType}"></span>
+                </div>
+                <div class="cert-row">
+                    <span class="label">발급일</span>
+                    <span class="value" th:text="${#temporals.format(license.issuedDate, 'yyyy년 MM월 dd일')}"></span>
+                </div>
+                <div class="cert-row">
+                    <span class="label">유효기간</span>
+                    <span class="value" th:text="${#temporals.format(license.expiryDate, 'yyyy년 MM월 dd일') + ' 까지'}"></span>
+                </div>
+            </div>
+            <div class="cert-foot">
+                ※ 본 연습운전면허는 발급일부터 1년간 효력을 가지며 연장이 불가능합니다.<br>
+                ※ 도로주행 연습 시 운전 경력 2년 이상인 사람을 동승시켜야 합니다.
+            </div>
+        </div>
+
+        <div class="button-area" style="margin-top:28px;">
+            <a class="outline-btn sub" th:href="@{/drive-u/myPage}">마이페이지</a>
+            <button type="button" class="outline-btn" onclick="window.print()"
+                    style="background:#1f4fa8; color:#fff; border:none; font-weight:600; cursor:pointer;">면허증 출력</button>
+        </div>
+    </main>
+</div>
+
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
