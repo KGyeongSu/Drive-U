@@ -39,6 +39,9 @@ public class SecurityConfig {
                                 "/drive-u/cbt",
                                 "/drive-u/Driving",
                                 "/drive-u/process",
+                                "/drive-u/process/wApply1",
+                                "/drive-u/process/fApply1",
+                                "/drive-u/process/dApply1",
                                 "/drive-u/process/checking",
                                 "/drive-u/userInfo",
                                 "/drive-u/userInfo/law",
@@ -59,6 +62,8 @@ public class SecurityConfig {
                         .loginProcessingUrl("/drive-u/login")
                         .usernameParameter("id")             //HTML input id name 매칭
                         .passwordParameter("pwd")            //HTML input pwd name 매칭
+                        .failureUrl("/drive-u/login?error")
+                        .successHandler(successHandler)
                         .permitAll()
                 )
                 //소셜 로그인도 이 페이지 사용하게 설정

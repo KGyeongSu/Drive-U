@@ -3,6 +3,7 @@ package com.zerock.driveu.controller;
 import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.dto.MemberDTO;
 import com.zerock.driveu.dto.SocialUserDTO;
+import com.zerock.driveu.repository.MemberRepository;
 import com.zerock.driveu.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +29,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     // [핵심] 모든 요청마다 세션에서 socialUser를 꺼내 모델에 자동으로 담아줍니다.
     @ModelAttribute("socialUser")
@@ -76,7 +78,6 @@ public class MemberController {
                 return "drive-u/login/signup";
             }
         } else {
-
             if (bindingResult.hasFieldErrors("name") ||
                     bindingResult.hasFieldErrors("phone")) {
                 return "drive-u/login/signup";
@@ -85,6 +86,12 @@ public class MemberController {
 
         // 2. 서비스 로직 호출
         String loginUsername = memberService.registerMember(memberDTO, socialUser);
+
+        Long realSeq = memberRepository.findById(loginUsername)
+                .map(member -> member.getSeq())
+                .orElse(1L);
+
+        String memberType = (socialUser != null) ? "SOCIAL" : "MEMBER";
 
         if (socialUser != null) {
             session.removeAttribute("socialUser");
@@ -95,6 +102,8 @@ public class MemberController {
                 loginUsername,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_USER")),
+                realSeq,
+                memberType,
                 memberDTO.getEmail(),
                 memberDTO.getName(),
                 memberDTO.getPhone()

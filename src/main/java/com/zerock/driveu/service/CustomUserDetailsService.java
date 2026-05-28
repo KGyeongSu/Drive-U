@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -20,21 +19,21 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username)throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 회원입니다." + username));
 
-        String roleName = "ROLE_" + member.getRole().name(); //권한을 담은 변수
+        String roleName = "ROLE_" + member.getRole().name(); // 권한을 담은 변수
 
         return new AuthUserDTO(
                 member.getId(),
                 member.getPwd(),
-                List.of(new SimpleGrantedAuthority(roleName)),// 변수로 권한 찾게
+                List.of(new SimpleGrantedAuthority(roleName)),
+                member.getSeq(),
+                "MEMBER",
                 member.getEmail(),
                 member.getName(),
                 member.getPhone()
         );
     }
-
-
 }

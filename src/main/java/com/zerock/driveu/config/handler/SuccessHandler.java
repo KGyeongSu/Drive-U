@@ -33,40 +33,44 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         org.springframework.security.core.Authentication authentication) throws IOException, ServletException {
 
-        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
-        String provider = token.getAuthorizedClientRegistrationId();
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        // 1. 일반 로그인(UsernamePassword)일 경우의 처리
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            response.sendRedirect("/drive-u"); // 또는 원하시는 경로
+            return;
+        }
 
-        SocialUserDTO socialUserDTO = socialUserOAuth2Service.getSocialUserdto(provider, oAuth2User);
+        // 2. 소셜 로그인(OAuth2)일 경우의 처리 (기존 로직)
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
+            String provider = token.getAuthorizedClientRegistrationId();
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String searchKey = socialUserDTO.getSocialKey();
+            SocialUserDTO socialUserDTO = socialUserOAuth2Service.getSocialUserdto(provider, oAuth2User);
+            String searchKey = socialUserDTO.getSocialKey();
 
-        log.info("▶ [SuccessHandler] 검증 키: " + searchKey);
+            Optional<SocialMember> result = socialMemberRepository.findBySocialKey(searchKey);
 
-        Optional<SocialMember> result = socialMemberRepository.findBySocialKey(searchKey);
+            if (result.isPresent()) {
+                SocialMember socialMember = result.get();
+                AuthUserDTO authUserDTO = new AuthUserDTO(
+                        socialMember.getSocialKey(),
+                        "1111",
+                        List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER")),
+                        socialMember.getSeq(),
+                        "SOCIAL",
+                        socialMember.getEmail(),
+                        socialMember.getName(),
+                        oAuth2User.getAttributes()
+                );
 
-        if (result.isPresent()) {
-            log.info("▶ [SuccessHandler] 기존 회원 로그인 성공");
-            SocialMember socialMember = result.get();
-
-            AuthUserDTO authUserDTO = new AuthUserDTO(
-                    socialMember.getSocialKey(),
-                    "1111",
-                    List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_USER")),
-                    socialMember.getEmail(),
-                    socialMember.getName(),
-                    oAuth2User.getAttributes()
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(
-                    new UsernamePasswordAuthenticationToken(authUserDTO, null, authUserDTO.getAuthorities())
-            );
-
-            response.sendRedirect("/");
-        } else {
-            log.info("▶ [SuccessHandler] 신규 회원 감지 -> 가입 폼 이동");
-            request.getSession().setAttribute("socialUser", socialUserDTO);
-            response.sendRedirect("/login/signUp");
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(authUserDTO, null, authUserDTO.getAuthorities())
+                );
+                response.sendRedirect("/");
+            } else {
+                request.getSession().setAttribute("socialUser", socialUserDTO);
+                response.sendRedirect("/login/signUp");
+            }
         }
     }
 }

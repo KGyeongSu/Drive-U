@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="new">
+    <p style="color: #64748b; margin-bottom: 20px;">* 신규 면허 발급 대상자입니다.</p>
+</div>
+
+<div th:fragment="reissue">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px;">재발급 사유</label>
+        <select class="extra-info-input" name="extraInfo" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <option value="LOST">분실</option>
+            <option value="DAMAGED">훼손</option>
+        </select>
+    </div>
+</div>
+
+<div th:fragment="renewal">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px;">기존 면허 번호</label>
+        <input type="text" class="extra-info-input" placeholder="예: 00-00-000000-00" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+    </div>
+</div>
+
+</html>
