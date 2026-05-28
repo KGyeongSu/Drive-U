@@ -94,8 +94,6 @@ public class MemberController {
                 .map(member -> member.getSeq())
                 .orElse(1L);
 
-        String memberType = (socialUser != null) ? "SOCIAL" : "MEMBER";
-
         if (socialUser != null) {
             session.removeAttribute("socialUser");
         }
@@ -115,15 +113,11 @@ public class MemberController {
                 loginUsername,
                 "",
                 List.of(new SimpleGrantedAuthority("ROLE_USER")),
-                realSeq,
-                memberType,
                 memberDTO.getEmail(),
                 memberDTO.getName(),
                 memberDTO.getPhone(),
-                // if문 축약 > 소셜 유저인 경우에는 true, 로컬 유저인 경우에는 false
                 (socialUser != null),
-                // seq,type추가
-                seq,
+                realSeq,
                 memberType
         );
 

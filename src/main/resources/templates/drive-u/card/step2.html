@@ -8,7 +8,7 @@
     <aside th:replace="~{fragments/layout :: side('card', ${type})}"></aside>
 
     <main class="content">
-        <div class="breadcrumb" th:text="홈 > 면허증 카드 > ${type.toUpperCase()} 발급 > 2단계 신청서 작성"></div>
+        <div class="breadcrumb" th:text="'홈 > 면허증 카드 > ' + ${type.toUpperCase()} + ' 발급 > 2단계 신청서 작성'"></div>
 
         <div class="step-indicator" style="display: flex; justify-content: space-between; margin-bottom: 40px; padding: 0 100px;">
             <div class="step" style="text-align: center; color: #94a3b8;"><span style="display: block; width: 30px; height: 30px; line-height: 30px; background: #94a3b8; color: white; border-radius: 50%; margin: 0 auto 5px;">1</span>자격검증</div>

@@ -29,13 +29,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 member.getId(),
                 member.getPwd(),
                 List.of(new SimpleGrantedAuthority(roleName)),
-                member.getSeq(),
-                "MEMBER",
                 member.getEmail(),
                 member.getName(),
                 member.getPhone(),
                 false,
-                // seq,type 추가
                 member.getSeq(),
                 "MEMBER"
         );
