@@ -1,5 +1,6 @@
 package com.zerock.driveu.service;
 
+import com.zerock.driveu.constant.CourseType;
 import com.zerock.driveu.domain.enums.ExamType;
 import com.zerock.driveu.repository.ExamPassRepository;
 import com.zerock.driveu.repository.PracticeLicenseRepository;
@@ -91,7 +92,8 @@ public class LicenseStageValidatorImpl implements LicenseStageValidator {
     private boolean isDuCompleted(Long userSeq, String memberType) {
 
         return videoProgressRepository
-                .existsByUserSeqAndMemberType(userSeq, memberType);
+                .existsByUserSeqAndMemberTypeAndCourse_CourseTypeAndFinalCompletedYn
+                        (userSeq, memberType, CourseType.DU, "Y");
     }
 
     private boolean isWrittenPassedAny(Long userSeq, String memberType) {

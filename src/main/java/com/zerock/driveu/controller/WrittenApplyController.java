@@ -18,6 +18,7 @@ import com.zerock.driveu.repository.TestCenterRepository;
 import com.zerock.driveu.service.LicenseStageValidator;
 import com.zerock.driveu.service.PaymentService;
 import com.zerock.driveu.service.PracticeLicenseService;
+import com.zerock.driveu.service.ProcessStatusService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -45,9 +46,18 @@ public class WrittenApplyController {
     private final PortoneProperties portoneProperties;
     private final ApplicationRepository applicationRepository;
     private final LicenseStageValidator licenseStageValidator;
+    private final ProcessStatusService processStatusService;
+
 
     @GetMapping
-    public String process() {
+    public String process(@AuthenticationPrincipal AuthUserDTO authUser, Model model) {
+        // 로그인 사용자만 본인 진행상태 계산 (비로그인이면 미전달 → 화면은 전부 평범한 카드)
+        if (authUser != null) {
+            model.addAttribute("statusMap",
+                    processStatusService.getStatusMap(authUser.getSeq(), authUser.getMemberType()));
+            model.addAttribute("currentStage",
+                    processStatusService.getCurrentStage(authUser.getSeq(), authUser.getMemberType()));
+        }
         return "drive-u/process";
     }
     @GetMapping("/checking")
