@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 "/drive-u",
                                 "/drive-u/login",
                                 "/drive-u/lVideo",
-                                "/drive-u/cbt",
+                                /*"/drive-u/cbt",*/ //인수 변경
                                 "/drive-u/Driving",
                                 "/drive-u/process",
                                 "/drive-u/process/checking",
