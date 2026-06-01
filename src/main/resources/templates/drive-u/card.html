@@ -5,7 +5,7 @@
 <header th:replace="~{fragments/layout :: header('card')}"></header>
 
 <div class="layout">
-    <aside th:replace="~{fragments/layout :: side('card', 'card')}"></aside>
+    <aside th:replace="~{fragments/layout :: side('card', 'new')}"></aside>
 
     <main class="content">
         <div class="breadcrumb">홈 &gt; 신규 발급</div>
@@ -49,8 +49,8 @@
         </section>
 
         <section class="cta-section" style="text-align: center; margin-top: 50px; padding: 30px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <h3 style="font-size: 1.3rem; color: #1e293b; margin-bottom: 10px; font-weight: 600;">운전면허 합격 데이터를 실시간으로 조회합니다</h3>
-            <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 25px;">도로교통공단 API 연동 검증 및 수수료 결제 단계로 진행합니다.</p>
+            <h3 style="font-size: 1.3rem; color: #1e293b; margin-bottom: 10px; font-weight: 600;">운전면허 합격을 조회합니다</h3>
+            <p style="font-size: 0.95rem; color: #64748b; margin-bottom: 25px;">발급 신청하시려면 아래 버튼을 클릭하세요.</p>
 
             <a th:href="@{/drive-u/card/new/step1}" class="btn-apply"
                style="display: inline-block; padding: 15px 40px; background-color: #2563eb; color: #ffffff; font-size: 1.1rem; font-weight: bold; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">

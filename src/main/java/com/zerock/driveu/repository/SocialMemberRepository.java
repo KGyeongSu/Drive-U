@@ -14,4 +14,7 @@ public interface SocialMemberRepository extends JpaRepository<SocialMember, Long
 
     // 작성자 이메일을 통해 찾기 위함
     Optional<SocialMember> findByEmail(String email);
+
+    // 소셜 회원 테이블에 이메일이 존재하는지 확인
+    boolean existsByEmail(String email);
 }
