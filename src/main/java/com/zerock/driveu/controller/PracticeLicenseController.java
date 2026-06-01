@@ -6,6 +6,7 @@ import com.zerock.driveu.constant.SessionConst;
 import com.zerock.driveu.domain.PracticeLicense;
 import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.repository.PracticeLicenseRepository;
+import com.zerock.driveu.service.LicenseStageValidator;
 import com.zerock.driveu.service.PracticeLicenseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class PracticeLicenseController {
     private final PracticeLicenseService practiceLicenseService;
     private final PracticeLicenseRepository practiceLicenseRepository;
     private final PortoneProperties portoneProperties;
+    private final LicenseStageValidator licenseStageValidator;
 
     // ── pLicense1 : 자격검증 + 안내 ──
     @GetMapping("/pLicense1")
@@ -40,15 +42,21 @@ public class PracticeLicenseController {
 
     // ── pLicense2 : 정보확인 (회원정보 표시 + 종별 선택) ──
     @GetMapping("/pLicense2")
-    public String pLicense2(@AuthenticationPrincipal AuthUserDTO authUser, Model model) {
+    public String pLicense2(@AuthenticationPrincipal AuthUserDTO authUser,
+                            Model model, RedirectAttributes rttr) {
+
+        // GET 진입 게이트 (종별 무관) — 기능 합격(종별 불문)했나
+        if (!licenseStageValidator.canEnterPracticeLicense(
+                authUser.getSeq(), authUser.getMemberType())) {
+            rttr.addFlashAttribute("errorMessage", "기능시험 합격 후 발급 가능합니다.");
+            return "redirect:/drive-u/process";
+        }
 
         Map<String, Object> member = new HashMap<>();
         member.put("name", authUser.getRealName());
-
         model.addAttribute("member", member);
 
-        // TODO: (임시: 종별 직접 선택 (1종보통/2종보통))
-        // → validator 붙일 때 기능시험 합격 종별 자동 주입으로 교체 예정 (선택 제거)
+        // TODO: (임시: 종별 직접 선택) → 기능 합격 종별 자동 주입으로 교체 예정
         model.addAttribute("licenseTypes", ExamConstants.PRACTICE_LICENSE_TYPES);
 
         return "drive-u/process/pLicense2";
@@ -56,16 +64,24 @@ public class PracticeLicenseController {
 
     @PostMapping("/pLicense2")
     public String pLicense2Submit(@RequestParam String licenseType,
+                                  @AuthenticationPrincipal AuthUserDTO authUser,   // ← 추가
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
 
-        // 종별 방어: 허용 목록에 없으면 되돌림
+        // 종별 입력값 방어 (연습면허 발급 가능 종별인지)
         if (!ExamConstants.PRACTICE_LICENSE_TYPES.contains(licenseType)) {
             redirectAttributes.addFlashAttribute("errorMessage", "연습면허 발급 가능 종별이 아닙니다.");
             return "redirect:/drive-u/process/pLicense2";
         }
 
-        // 세션에 종별 저장 (wApply의 APPLY_DATA와 별도 키)
+        // 발급 게이트 (종별 일치) — 고른 종별로 기능 합격했나
+        if (!licenseStageValidator.canIssuePracticeLicense(
+                authUser.getSeq(), authUser.getMemberType(), licenseType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "해당 종별 발급 자격이 없습니다.");
+            return "redirect:/drive-u/process";
+        }
+
+        // 세션에 종별 저장
         session.setAttribute(SessionConst.PRACTICE_LICENSE_TYPE, licenseType);
 
         return "redirect:/drive-u/process/pLicense3";

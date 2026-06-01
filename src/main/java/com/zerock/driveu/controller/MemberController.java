@@ -90,10 +90,6 @@ public class MemberController {
         // 2. 서비스 로직 호출
         String loginUsername = memberService.registerMember(memberDTO, socialUser);
 
-        Long realSeq = memberRepository.findById(loginUsername)
-                .map(member -> member.getSeq())
-                .orElse(1L);
-
         if (socialUser != null) {
             session.removeAttribute("socialUser");
         }
@@ -117,7 +113,7 @@ public class MemberController {
                 memberDTO.getName(),
                 memberDTO.getPhone(),
                 (socialUser != null),
-                realSeq,
+                seq,
                 memberType
         );
 

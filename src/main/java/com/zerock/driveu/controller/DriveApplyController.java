@@ -14,6 +14,7 @@ import com.zerock.driveu.dto.ExamScheduleDTO;
 import com.zerock.driveu.repository.ApplicationRepository;
 import com.zerock.driveu.repository.ExamScheduleRepository;
 import com.zerock.driveu.repository.TestCenterRepository;
+import com.zerock.driveu.service.LicenseStageValidator;
 import com.zerock.driveu.service.PaymentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -41,13 +42,22 @@ public class DriveApplyController {
     private final ApplicationRepository applicationRepository;
     private final PaymentService paymentService;
     private final PortoneProperties portoneProperties;
+    private final LicenseStageValidator licenseStageValidator;
 
 
     @GetMapping("/dApply1")
     public String dApply1() { return "drive-u/process/dApply1"; }
 
     @GetMapping("/dApply2")
-    public String dApply2(Model model) {
+    public String dApply2(@AuthenticationPrincipal AuthUserDTO authUser,
+                          Model model, RedirectAttributes rttr) {
+
+        // GET 진입 게이트 (종별 무관) — 기능 합격 + 유효 연습면허
+        if (!licenseStageValidator.canEnter(
+                authUser.getSeq(), authUser.getMemberType(), ExamType.DRIVE)) {
+            rttr.addFlashAttribute("errorMessage", "기능시험 합격 및 연습면허 발급 후 신청 가능합니다.");
+            return "redirect:/drive-u/process";
+        }
 
         model.addAttribute("licenseTypes", ExamConstants.DRIVE_LICENSE_TYPES);
         model.addAttribute("regions", testCenterRepository.findDistinctRegions());
@@ -84,6 +94,7 @@ public class DriveApplyController {
     @PostMapping("/dApply2")
     public String dApply2Submit(@RequestParam String licenseType,
                                 @RequestParam(required = false) Long examScheduleId,
+                                @AuthenticationPrincipal AuthUserDTO authUser,   // ← 추가
                                 HttpSession session,
                                 RedirectAttributes redirectAttributes){
 
@@ -91,6 +102,19 @@ public class DriveApplyController {
         if(examScheduleId == null){
             redirectAttributes.addFlashAttribute("errorMessage", "시험 일정을 선택해주세요.");
             return "redirect:/drive-u/process/dApply2";
+        }
+
+        // 종별 입력값 방어 (도로주행 허용 종별인지)
+        if (!ExamConstants.DRIVE_LICENSE_TYPES.contains(licenseType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "도로주행 응시 가능 종별이 아닙니다.");
+            return "redirect:/drive-u/process/dApply2";
+        }
+
+        // 신청 게이트 (종별 일치) — 고른 종별로 기능 합격 + 같은 종별 유효 연습면허
+        if (!licenseStageValidator.canApply(
+                authUser.getSeq(), authUser.getMemberType(), ExamType.DRIVE, licenseType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "해당 종별 신청 자격이 없습니다.");
+            return "redirect:/drive-u/process";
         }
 
         // 1. ExamSchedule 조회 (실제 존재하는지 검증)
