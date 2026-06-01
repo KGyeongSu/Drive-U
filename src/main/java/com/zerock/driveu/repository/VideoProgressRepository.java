@@ -7,6 +7,10 @@ import java.util.Optional;
 
 public interface VideoProgressRepository extends JpaRepository<VideoProgress, Long> {
 
+    boolean existsByUserSeqAndMemberType(
+            Long userSeq,
+            String memberType);
+
     Optional<VideoProgress> findByUserSeqAndMemberTypeAndCourse_CourseId(
             Long userSeq,
             String memberType,
