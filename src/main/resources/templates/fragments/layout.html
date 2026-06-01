@@ -149,15 +149,15 @@
                 <button type="button" class="side-title">면허증</button>
                 <ul>
                     <li>
-                        <a th:href="@{/drive-u/card/new/step1}"
+                        <a th:href="@{/drive-u/card}"
                            th:classappend="${currentPage == 'new'} ? ' selected'">신규발급</a>
                     </li>
                     <li>
-                        <a th:href="@{/drive-u/card/reissue/step1}"
+                        <a th:href="@{/drive-u/card/re}"
                            th:classappend="${currentPage == 'reissue'} ? ' selected'">재발급</a>
                     </li>
                     <li>
-                        <a th:href="@{/drive-u/card/renewal/step1}"
+                        <a th:href="@{/drive-u/card/up}"
                            th:classappend="${currentPage == 'renewal'} ? ' selected'">갱신</a>
                     </li>
                 </ul>

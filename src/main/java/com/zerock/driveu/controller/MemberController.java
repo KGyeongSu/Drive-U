@@ -74,25 +74,37 @@ public class MemberController {
             bindingResult.rejectValue("id", "duplicate", "이미 사용 중인 아이디입니다.");
         }
 
-        // 1. 유효성 검사 분기 처리
+        // 1. 시스템(일반+소셜) 내에 이메일 중복이 있는지 먼저 확인
+        boolean isEmailDuplicate = memberRepository.existsByEmail(memberDTO.getEmail())
+                || socialMemberRepository.existsByEmail(memberDTO.getEmail());
+
+        if (isEmailDuplicate) {
+            if (socialUser == null) {
+                //일반 가입자는 email이 중복일 경우  가입을 완전히 막아버림
+                bindingResult.rejectValue("email", "duplicate", "이미 존재하는 이메일입니다.");
+            } else {
+                // 소셜는 그냥 튕겨내지 않고, 이미 해당 이메일로 일반 계정이 있으니 로컬 로그인을 권유
+                bindingResult.rejectValue("email", "duplicate", "해당 이메일로 가입된 일반 계정이 이미 존재합니다. 일반 로그인을 이용해 주세요.");
+            }
+        }
+
+        // 유효성 검사
         if (socialUser == null) {
-            // 로컬 회원가입: 모든 에러 체크
+            // 로컬 회원가입 모든 에러Id, Email 중복 및 @Valid 기본 에러 전체 체크
             if (bindingResult.hasErrors()) {
                 return "drive-u/login/signup";
             }
         } else {
+            // 소셜 회원가입 유효성  name, phone, email 중복체크
             if (bindingResult.hasFieldErrors("name") ||
-                    bindingResult.hasFieldErrors("phone")) {
+                    bindingResult.hasFieldErrors("phone") ||
+                    bindingResult.hasFieldErrors("email")) {
                 return "drive-u/login/signup";
             }
         }
 
         // 2. 서비스 로직 호출
         String loginUsername = memberService.registerMember(memberDTO, socialUser);
-
-        Long realSeq = memberRepository.findById(loginUsername)
-                .map(member -> member.getSeq())
-                .orElse(1L);
 
         if (socialUser != null) {
             session.removeAttribute("socialUser");
@@ -117,7 +129,7 @@ public class MemberController {
                 memberDTO.getName(),
                 memberDTO.getPhone(),
                 (socialUser != null),
-                realSeq,
+                seq,
                 memberType
         );
 
@@ -139,5 +151,25 @@ public class MemberController {
     @ResponseBody // HTML이 아니라 결과값(true/false)만 반환하겠다는 선언
     public boolean checkId(@RequestParam("id") String id) {
         return memberService.checkIdDuplicate(id);
+    }
+
+    // 이메일 중복 확인 요청을 받는 컨트롤러 메서드
+    @GetMapping("/login/checkEmail")
+    @ResponseBody
+    public String checkEmail(@RequestParam("email") String email) {
+        String trimmedEmail = (email != null) ? email.trim() : "";
+
+        // 일반 회원 테이블에서 검색
+        boolean isLocalExist = memberRepository.existsByEmail(trimmedEmail);
+
+        //소셜 회원 테이블에서 검색
+        boolean isSocialExist = socialMemberRepository.existsByEmail(trimmedEmail);
+
+        //둘 중 하나라도 이미 존재한다면 가입 불가 처리
+        if (isLocalExist || isSocialExist) {
+            return "DUPLICATE";
+        }
+
+        return "AVAILABLE";
     }
 }

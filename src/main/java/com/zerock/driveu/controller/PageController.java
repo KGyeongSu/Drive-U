@@ -25,21 +25,6 @@ public class PageController {
         return "drive-u/driving/rDriving";
     }
 
-    @GetMapping("/drive-u/card")
-    public String card() {
-        return "drive-u/card";
-    }
-
-    @GetMapping("/drive-u/card/re")
-    public String cardRe() {
-        return "drive-u/card/re";
-    }
-
-    @GetMapping("/drive-u/card/up")
-    public String cardUp() {
-        return "drive-u/card/up";
-    }
-
     @GetMapping("/drive-u/userInfo")
     public String userInfo() {
         return "drive-u/userInfo";

@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 "/drive-u/userInfo/location",
                                 "/login/signUp",
                                 "/login/checkId",
+                                "/login/checkEmail",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
                 // 관리자 권한
