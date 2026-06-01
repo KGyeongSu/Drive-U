@@ -4,9 +4,17 @@ import com.zerock.driveu.domain.enums.ExamType;
 
 public interface LicenseStageValidator {
 
-    // 판단용 (로드맵 활성화 + 차단 양쪽에서 재사용)
-    boolean canApply(Long userSeq, String memberType, ExamType examType);
+    // ── GET용 : 종별 무관 (직전 단계를 '아무 종별이라도' 통과했나) ──
+    boolean canEnter(Long userSeq, String memberType, ExamType examType);
+    void validateEnter(Long userSeq, String memberType, ExamType examType);
 
-    // 자격 없으면 예외 -> Apply 진입 차단용
-    void validate(Long userSeq, String memberType, ExamType examType);
+    // ── POST용 : 종별 일치 (고른 종별로 직전 단계를 통과했나) ──
+    boolean canApply(Long userSeq, String memberType, ExamType examType, String licenseType);
+    void validateApply(Long userSeq, String memberType, ExamType examType, String licenseType);
+
+    // ── 연습면허 (ExamType 밖) ──
+    boolean canEnterPracticeLicense(Long userSeq, String memberType);                          // GET용
+    void validateEnterPracticeLicense(Long userSeq, String memberType);
+    boolean canIssuePracticeLicense(Long userSeq, String memberType, String licenseType);      // POST용
+    void validateIssuePracticeLicense(Long userSeq, String memberType, String licenseType);
 }

@@ -1,8 +1,10 @@
 package com.zerock.driveu.repository;
 
 import com.zerock.driveu.domain.PracticeLicense;
+import com.zerock.driveu.domain.enums.ExamType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PracticeLicenseRepository extends JpaRepository<PracticeLicense, Long> {
@@ -15,4 +17,12 @@ public interface PracticeLicenseRepository extends JpaRepository<PracticeLicense
             Long userSeq,
             String memberType,
             String status);
+
+    // 종별 무관 (GET용)
+    boolean existsByUserSeqAndMemberTypeAndStatusAndExpiryDateAfter(
+            Long userSeq, String memberType, String status, LocalDate date);
+
+    // 종별 일치 (POST용)
+    boolean existsByUserSeqAndMemberTypeAndLicenseTypeAndStatusAndExpiryDateAfter(
+            Long userSeq, String memberType, String licenseType, String status, LocalDate date);
 }

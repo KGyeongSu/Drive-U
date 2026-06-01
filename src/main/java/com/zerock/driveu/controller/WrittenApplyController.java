@@ -15,7 +15,9 @@ import com.zerock.driveu.dto.ExamScheduleDTO;
 import com.zerock.driveu.repository.ApplicationRepository;
 import com.zerock.driveu.repository.ExamScheduleRepository;
 import com.zerock.driveu.repository.TestCenterRepository;
+import com.zerock.driveu.service.LicenseStageValidator;
 import com.zerock.driveu.service.PaymentService;
+import com.zerock.driveu.service.PracticeLicenseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,6 +44,7 @@ public class WrittenApplyController {
     private final PaymentService paymentService;
     private final PortoneProperties portoneProperties;
     private final ApplicationRepository applicationRepository;
+    private final LicenseStageValidator licenseStageValidator;
 
     @GetMapping
     public String process() {
@@ -58,7 +61,16 @@ public class WrittenApplyController {
     }
 
     @GetMapping("/wApply2")
-    public String wApply2(Model model) {
+    public String wApply2(@AuthenticationPrincipal AuthUserDTO authUser,
+                          Model model, RedirectAttributes rttr) {
+
+        // GET 진입 게이트 (종별 무관)
+        if (!licenseStageValidator.canEnter(
+                authUser.getSeq(), authUser.getMemberType(), ExamType.WRITTEN)) {
+            rttr.addFlashAttribute("errorMessage", "교통안전교육 이수 후 신청 가능합니다.");
+            return "redirect:/drive-u/process";
+        }
+
         model.addAttribute("licenseTypes", ExamConstants.WRITTEN_LICENSE_TYPES);
         model.addAttribute("regions", testCenterRepository.findDistinctRegions());
         model.addAttribute("centers", testCenterRepository.findAll());
@@ -94,12 +106,26 @@ public class WrittenApplyController {
     @PostMapping("/wApply2")
     public String wApply2Submit(@RequestParam String licenseType,
                                 @RequestParam(required = false) Long examScheduleId,
+                                @AuthenticationPrincipal AuthUserDTO authUser,   // ← 추가
                                 HttpSession session,
                                 RedirectAttributes redirectAttributes) {
 
         // 일정 미선택 방어
         if (examScheduleId == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "시험 일정을 선택해주세요.");
+            return "redirect:/drive-u/process/wApply2";
+        }
+
+        // 신청 게이트 (종별 일치) — 학과는 종별 무관이지만 흐름 일관성 위해 호출
+        if (!licenseStageValidator.canApply(
+                authUser.getSeq(), authUser.getMemberType(), ExamType.WRITTEN, licenseType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "신청 자격이 없습니다.");
+            return "redirect:/drive-u/process";
+        }
+
+        // 종별 입력값 방어 (학과 허용 종별인지)
+        if (!ExamConstants.WRITTEN_LICENSE_TYPES.contains(licenseType)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "학과시험 응시 가능 종별이 아닙니다.");
             return "redirect:/drive-u/process/wApply2";
         }
 
