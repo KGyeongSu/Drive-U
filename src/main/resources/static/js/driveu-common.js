@@ -277,3 +277,83 @@ document.addEventListener("DOMContentLoaded", function() {
 
     }
 });
+
+// 파일 업로드
+let fileListArray = [];
+
+// 폼 제출 시 실행할 함수
+function syncFilesBeforeSubmit() {
+
+    const fileInput = document.getElementById('fileInput');
+    const dataTransfer = new DataTransfer();
+
+    // JS 배열에 있는 파일들을 DataTransfer에 담기
+    fileListArray.forEach(file => dataTransfer.items.add(file));
+
+    // 브라우저의 공식 input에 파일들 넣어주기
+    fileInput.files = dataTransfer.files;
+
+    return true;
+
+}
+
+function handleFileChange(input) {
+
+    const files = Array.from(input.files);
+
+    // 3개 제한 로직
+    if (fileListArray.length + files.length > 3) {
+
+        alert("파일은 최대 3개까지만 업로드할 수 있습니다.");
+        input.value = '';
+        return;
+
+    }
+
+    files.forEach(file => {
+
+        fileListArray.push(file);
+
+    });
+
+    renderFileList();
+    input.value = '';
+
+}
+
+function removeFile(event, index) {
+
+    event.stopPropagation();
+    event.preventDefault();
+
+    fileListArray.splice(index, 1);
+    renderFileList();
+
+}
+
+function renderFileList() {
+
+    const fileListDiv = document.getElementById('fileList');
+    fileListDiv.innerHTML = '';
+
+    if (fileListArray.length === 0) {
+
+        fileListDiv.innerHTML = '<span style="color: #999; font-size: 0.9em;">파일을 클릭하여 선택하세요 (최대 3개)</span>';
+        return;
+
+    }
+
+    fileListArray.forEach((file, index) => {
+
+        const fileItem = document.createElement('div');
+        fileItem.style.display = 'flex';
+        fileItem.style.justifyContent = 'space-between';
+        fileItem.style.padding = '5px 0';
+        fileItem.innerHTML = `
+            <span>✅ ${file.name}</span>
+            <span onclick="removeFile(event, ${index})" 
+                  style="color: red; cursor: pointer; font-weight: bold; padding: 0 10px;">X</span>
+        `;
+        fileListDiv.appendChild(fileItem);
+    });
+}

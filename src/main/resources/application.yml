@@ -64,3 +64,9 @@ logging:
       springframework: info
     com:
       zerock: debug
+
+file:
+  upload:
+    root-path: C:/drive-u/upload/
+    notice: notice/
+    law: law/

@@ -3,6 +3,7 @@ package com.zerock.driveu.controller;
 import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.dto.QuestionRequestDTO;
 import com.zerock.driveu.service.QuestionService;
+import com.zerock.driveu.util.PageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -34,43 +35,37 @@ public class QuestionController {
 
         var questionPage = questionService.getList(pageable);
 
-        int nowPage = questionPage.getNumber() + 1;
-        int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, questionPage.getTotalPages());
-
+        PageUtils.addPageAttributes(model, questionPage);
+        model.addAttribute("listUrl", "/drive-u/userInfo/listFragment");
+        model.addAttribute("detailUrl", "/drive-u/userInfo/questionDetail");
 
         log.info("문의 리스트 페이지 호출 - 페이지 번호 : " + pageable.getPageNumber());
 
         // 서비스에서 Page <QuestionListDTO> 를 받아 모델에 넣어 넘겨주기
-        model.addAttribute("questionPage", questionPage);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
+        model.addAttribute("dataPage", questionPage);
 
         return "drive-u/userInfo/questionHome";
 
     }
 
     // 비동기로 페이징 처리하기
-    @GetMapping("/questionListFragment")
+    @GetMapping("/listFragment")
     public String questionListFragment(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
 
-        // 서비서에서 데이터 받아오기
+        // 서비스에서 데이터 받아오기
         var questionPage = questionService.getList(pageable);
 
-        // 페이지네이션 블록 계산
-        int nowPage = questionPage.getNumber() + 1;
-        int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, questionPage.getTotalPages());
+        PageUtils.addPageAttributes(model, questionPage);
+
+        // 주소 날아감 방지
+        model.addAttribute("listUrl", "/drive-u/userInfo/listFragment");
+        model.addAttribute("detailUrl", "/drive-u/userInfo/questionDetail");
 
         log.info("비동기로 paging - 페이지 번호 : " + pageable.getPageNumber());
 
-        model.addAttribute("questionPage", questionPage);
-        model.addAttribute("nowPage", nowPage);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
+        model.addAttribute("dataPage", questionPage);
 
-        return "fragments/questionList :: list";
+        return "fragments/pagination :: list";
 
     }
 

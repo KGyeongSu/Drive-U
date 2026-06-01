@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="list">
+    <div class="board-list" >
+        <div th:if="${dataPage.totalElements == 0}" class="empty-msg" style="padding: 20px; text-align: center; color: #888;">
+            등록된 내용이 없습니다.
+        </div>
+
+        <a th:each="item : ${dataPage.content}"
+           th:href="@{${detailUrl}(id=${item.id})}" class="list-item">
+
+            <span th:if="${item.class.simpleName == 'QuestionListDTO' && item.status != null}"
+                  th:class="(${item.status.name() == 'COMPLETED'} ? 'status-completed' : 'status-pending')"
+                  th:text="${item.status.description}">
+            </span>
+
+            <strong th:text="${item.title}"></strong>
+
+            <div class="meta-info">
+                <span th:text="${#temporals.format(item.regDate, 'yyyy-MM-dd')}"></span>
+                <span th:if="${item.class.simpleName == 'QuestionListDTO' && item.writerName != null}" th:text="|${#strings.substring(item.writerName, 0, 1)}*${#strings.substring(item.writerName, 2, 3)}|"></span>
+            </div>
+        </a>
+    </div>
+
+    <div class="custom-pagination" id="pagination-container">
+        <button class="page-nav-btn"
+                th:data-url="${listUrl}"
+                th:onclick="loadPage(this.getAttribute('data-url'), 0)"
+                th:disabled="${dataPage.first}">&laquo;</button>
+
+        <button class="page-nav-btn"
+                th:data-url="${listUrl}"
+                th:onclick="loadPage(this.getAttribute('data-url'), [[${dataPage.number - 1}]])"
+                th:disabled="${dataPage.first}">이전</button>
+
+        <span th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <button class="page-num-btn"
+                    th:data-url="${listUrl}"
+                    th:onclick="loadPage(this.getAttribute('data-url'), [[${page - 1}]])"
+                    th:text="${page}"
+                    th:classappend="${page == nowPage ? 'active' : ''}"></button>
+        </span>
+
+        <button class="page-nav-btn"
+                th:data-url="${listUrl}"
+                th:onclick="loadPage(this.getAttribute('data-url'), [[${dataPage.number + 1}]])"
+                th:disabled="${dataPage.last}">다음</button>
+
+        <button class="page-nav-btn"
+                th:data-url="${listUrl}"
+                th:onclick="loadPage(this.getAttribute('data-url'), [[${dataPage.totalPages - 1}]])"
+                th:disabled="${dataPage.last}">&raquo;</button>
+    </div>
+</div>
+</html>
