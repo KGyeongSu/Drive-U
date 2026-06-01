@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
         name = "chapter_progress",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_chapter_progress_member_chapter",
-                        columnNames = {"member_seq", "chapter_id"}
+                        name = "uk_chapter_progress_user_chapter",
+                        columnNames = {"user_seq", "member_type", "chapter_id"}
                 )
         }
 )
@@ -27,9 +27,11 @@ public class ChapterProgress {
     @Column(name = "chapter_progress_id")
     private Long chapterProgressId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_seq", nullable = false)
-    private Member member;
+    @Column(name = "user_seq", nullable = false)
+    private Long userSeq;
+
+    @Column(name = "member_type", nullable = false, length = 20)
+    private String memberType; // MEMBER / SOCIAL
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id", nullable = false)
@@ -55,27 +57,16 @@ public class ChapterProgress {
 
     @PrePersist
     public void prePersist() {
-        if (this.watchedSec == null) {
-            this.watchedSec = 0;
-        }
+        if (watchedSec == null) watchedSec = 0;
+        if (maxWatchedSec == null) maxWatchedSec = 0;
+        if (completedYn == null) completedYn = "N";
+        if (quizPassedYn == null) quizPassedYn = "N";
 
-        if (this.maxWatchedSec == null) {
-            this.maxWatchedSec = 0;
-        }
-
-        if (this.completedYn == null) {
-            this.completedYn = "N";
-        }
-
-        if (this.quizPassedYn == null) {
-            this.quizPassedYn = "N";
-        }
-
-        this.updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 }

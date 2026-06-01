@@ -46,6 +46,7 @@
 
     async function requestPay() {
         try {
+            // 🎯 주소 확인: /drive-u/card/{type}/check-duplicate
             const response = await fetch('/drive-u/card/' + type + '/check-duplicate');
             const data = await response.json();
 
@@ -84,6 +85,7 @@
                     receiveDate: appData.receiveDate
                 };
 
+                // 🎯 [핵심 수정]: 컨트롤러의 @PostMapping("/{type}/complete") 경로와 정확히 매핑시킵니다.
                 fetch('/drive-u/card/' + type + '/complete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

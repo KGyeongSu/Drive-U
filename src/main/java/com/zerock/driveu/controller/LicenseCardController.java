@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/drive-u/card/{type}")
+@RequestMapping("/drive-u/card")
 @RequiredArgsConstructor
 public class LicenseCardController {
 
@@ -28,22 +28,21 @@ public class LicenseCardController {
     @Value("${iamport.imp-code}")
     private String impCode;
 
-    // 1단계: 자격 검증 (모든 타입 공통)
-    @GetMapping("/step1")
+
+    @GetMapping("/{type}/step1")
     public String step1(@PathVariable String type, Model model) {
         model.addAttribute("type", type);
         return "drive-u/card/step1";
     }
 
-    // 2단계: 신청서 작성 (이제 단일 경로로 통일)
-    @GetMapping("/step2")
+    @GetMapping("/{type}/step2")
     public String step2(@PathVariable String type, Model model) {
-        model.addAttribute("type", type); // Fragment 분기를 위해 반드시 필요
+        model.addAttribute("type", type);
         return "drive-u/card/step2";
     }
 
-    // 3단계: 결제 및 완료
-    @GetMapping("/step3")
+
+    @GetMapping("/{type}/step3")
     public String step3(@PathVariable String type,
                         @AuthenticationPrincipal AuthUserDTO authUser,
                         Model model) {
@@ -60,8 +59,7 @@ public class LicenseCardController {
         return "drive-u/card/step3";
     }
 
-    // 결제 및 완료 처리 (AJAX 호출용)
-    @PostMapping("/complete")
+    @PostMapping("/{type}/complete")
     @ResponseBody
     public ResponseEntity<Map<String, String>> completeProcess(
             @PathVariable String type,
@@ -104,15 +102,14 @@ public class LicenseCardController {
         }
     }
 
-    // 성공 페이지
-    @GetMapping("/success")
+
+    @GetMapping("/{type}/success")
     public String successPage(@PathVariable String type, Model model) {
         model.addAttribute("type", type);
         return "drive-u/card/success";
     }
 
-    // 중복 체크 (AJAX)
-    @GetMapping("/check-duplicate")
+    @GetMapping("/{type}/check-duplicate")
     @ResponseBody
     public ResponseEntity<Map<String, Boolean>> checkDuplicate(
             @PathVariable String type,
@@ -126,8 +123,7 @@ public class LicenseCardController {
         return ResponseEntity.ok(result);
     }
 
-    // 자격 검증 확인 (AJAX)
-    @GetMapping("/check")
+    @GetMapping("/{type}/check")
     @ResponseBody
     public ResponseEntity<Map<String, Boolean>> checkEligibility(
             @PathVariable String type,
@@ -137,5 +133,25 @@ public class LicenseCardController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("eligible", isEligible);
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping(value = "", produces = "text/html")
+    public String card(Model model) {
+        model.addAttribute("type", "new");
+        return "drive-u/card";
+    }
+
+
+    @GetMapping(value = "/re", produces = "text/html")
+    public String cardRe(Model model) {
+        model.addAttribute("type", "reissue");
+        return "drive-u/card/re";
+    }
+
+    @GetMapping(value = "/up", produces = "text/html")
+    public String cardUp(Model model) {
+        model.addAttribute("type", "renewal");
+        return "drive-u/card/up";
     }
 }
