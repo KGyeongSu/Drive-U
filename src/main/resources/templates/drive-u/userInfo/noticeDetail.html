@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('공지사항')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('userInfo')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('userInfo', 'noticeHome')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 공지사항</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow" th:text="${noticeDetail == null ? 'NOTICE REGISTER' : 'NOTICE DETAIL'}"></p>
+                <h1 th:text="${noticeDetail == null ? '공지사항 작성' : '공지사항 상세 보기'}"></h1>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title" th:text="${noticeDetail == null ? '공지사항 작성' : '공지사항'}"></h2>
+
+            <form id="noticeForm"
+                  th:action="${noticeDetail == null ? '/drive-u/userInfo/noticeHome/noticeRegister' : '/drive-u/userInfo/noticeHome/noticeModify'}"
+                  method="post" enctype="multipart/form-data" class="form-box" onsubmit="return syncFilesBeforeSubmit()">
+
+                <input type="hidden" name="id" th:if="${noticeDetail != null}" th:value="${noticeDetail.id}">
+
+                <div class="form-grid">
+                    <label class="full">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>제목</span>
+
+                            <div th:if="${noticeDetail != null and noticeDetail.files != null and !noticeDetail.files.isEmpty()}" style="display: flex; gap: 10px;">
+                                <a th:each="file : ${noticeDetail.files}"
+                                   th:href="@{${file.fileUrl}}"
+                                   th:text="'📎 ' + ${file.fileName}"
+                                   style="font-size: 0.85em; color: #007bff; text-decoration: none; border: 1px solid #007bff; padding: 4px 8px; border-radius: 4px;"
+                                   onmouseover="this.style.backgroundColor='#e7f1ff'"
+                                   onmouseout="this.style.backgroundColor='transparent'">
+                                </a>
+                            </div>
+                        </div>
+
+                        <input id="title" name="title"
+                               th:value="${noticeDetail != null ? noticeDetail.title : ''}"
+                               placeholder="공지사항 제목을 입력하세요"
+                               th:readonly="${!#authorization.expression('hasRole(''ADMIN'')')}">
+                    </label>
+
+                    <label class="full" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                        <span th:text="${noticeDetail == null ? '파일 등록' : '파일 수정 (새로 등록 시 기존 파일 교체)'}"></span>
+
+                        <label for="fileInput" style="cursor: pointer; display: block; width: 100%;">
+                            <div id="fileList" style="margin-top: 10px; padding: 10px; border: 1px dashed #ccc; border-radius: 8px; background: #f9f9f9; min-height: 40px;">
+                                <span style="color: #999; font-size: 0.9em;">파일을 클릭하여 선택하세요</span>
+                            </div>
+                        </label>
+
+                        <input type="file" name="files" id="fileInput" multiple accept=".pdf,.doc,.docx,.hwp"
+                               style="display: none;" onchange="handleFileChange(this)">
+
+                        <small style="color: gray;">* 최대 3개까지 업로드 가능합니다.</small>
+                    </label>
+
+                    <label class="full">
+                        내용
+                        <textarea id="content" name="content"
+                                  th:placeholder="${noticeDetail == null} ? '공지사항 내용을 입력하세요' : ''"
+                                  th:text="${noticeDetail != null ? noticeDetail.content : ''}"
+                                  th:readonly="${!#authorization.expression('hasRole(''ADMIN'')')}"></textarea>
+                    </label>
+                </div>
+
+                <div class="button-area">
+                    <button th:if="${#authorization.expression('hasRole(''ADMIN'')') and noticeDetail == null}"
+                            type="submit" class="outline-btn">공지 등록</button>
+
+                    <th:block th:if="${#authorization.expression('hasRole(''ADMIN'')') and noticeDetail != null}">
+                        <button type="submit" class="outline-btn">공지 수정</button>
+                        <button type="button" class="outline-btn" onclick="confirmDelete()">공지 삭제</button>
+                    </th:block>
+
+                    <a href="/drive-u/userInfo/noticeHome" class="outline-btn">목록으로</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/pagination.js}"></script>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

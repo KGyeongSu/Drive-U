@@ -26,7 +26,7 @@
                    class="outline-btn">문의하기</a>
             </div>
             <div id="ajax-update-area">
-                <div th:replace="~{fragments/questionList :: list}"></div>
+                <div th:replace="~{fragments/pagination :: list(dataPage=${dataPage}, listUrl='/drive-u/userInfo/listFragment', detailUrl='/drive-u/userInfo/questionDetail')}"></div>
             </div>
         </section>
     </main>
@@ -34,7 +34,7 @@
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
-<script th:src="@{/js/questionHome.js}"></script>
+<script th:src="@{/js/pagination.js}"></script>
 
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 
