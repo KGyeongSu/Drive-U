@@ -6,20 +6,20 @@ import com.zerock.driveu.domain.ChapterQuiz;
 import com.zerock.driveu.domain.ChapterQuizChoice;
 import com.zerock.driveu.domain.VideoChapter;
 import com.zerock.driveu.domain.VideoCourse;
-import com.zerock.driveu.dto.ChapterQuizDTO;
-import com.zerock.driveu.dto.QuizChoiceDTO;
+import com.zerock.driveu.dto.*;
 import com.zerock.driveu.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.zerock.driveu.domain.*;
-import com.zerock.driveu.dto.QuizAnswerSubmitDTO;
-import com.zerock.driveu.dto.QuizSubmitDTO;
-import com.zerock.driveu.dto.QuizSubmitResultDTO;
 import com.zerock.driveu.repository.*;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,8 +30,8 @@ public class DuService {
     private final VideoChapterRepository videoChapterRepository;
     private final ChapterQuizRepository chapterQuizRepository;
     private final ChapterQuizChoiceRepository chapterQuizChoiceRepository;
+    private final VideoProgressRepository videoProgressRepository;
 
-    private final MemberRepository memberRepository;
     private final ChapterQuizSubRepository chapterQuizSubRepository;
     private final ChapterQuizAnswerRepository chapterQuizAnswerRepository;
     private final ChapterProgressRepository chapterProgressRepository;
@@ -132,14 +132,10 @@ public class DuService {
 
 
     // 퀴즈
-
     @Transactional
-    public QuizSubmitResultDTO submitQuiz(QuizSubmitDTO dto) {
-
-        Long memberSeq = dto.getMemberSeq() != null ? dto.getMemberSeq() : 1L;
-
-        Member member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
+    public QuizSubmitResultDTO submitQuiz( QuizSubmitDTO dto,
+                                           Long userSeq,
+                                           String memberType) {
 
         VideoChapter chapter = videoChapterRepository.findById(dto.getChapterId())
                 .orElseThrow(() -> new IllegalArgumentException("챕터 정보가 없습니다."));
@@ -159,8 +155,9 @@ public class DuService {
         int totalCount = answers.size();
         int correctCount = 0;
 
-        ChapterQuizSubmission submission = ChapterQuizSubmission.builder()
-                .member(member)
+        ChapterQuizSubmission  submission = ChapterQuizSubmission.builder()
+                .userSeq(userSeq)
+                .memberType(memberType)
                 .chapter(chapter)
                 .totalCount(totalCount)
                 .correctCount(0)
@@ -203,7 +200,7 @@ public class DuService {
         savedSubmission.setScore(score);
         savedSubmission.setPassYn(passed ? "Y" : "N");
 
-        updateChapterProgress(member, chapter, passed);
+        updateChapterProgress(userSeq, memberType, chapter, passed);
 
         return QuizSubmitResultDTO.builder()
                 .passed(passed)
@@ -216,11 +213,13 @@ public class DuService {
                 .build();
     }
 
-    private void updateChapterProgress(Member member, VideoChapter chapter, boolean passed) {
+    private void updateChapterProgress(Long userSeq,
+                                       String memberType, VideoChapter chapter, boolean passed) {
         ChapterProgress progress = chapterProgressRepository
-                .findByMember_SeqAndChapter_ChapterId(member.getSeq(), chapter.getChapterId())
+                .findByUserSeqAndMemberTypeAndChapter_ChapterId(userSeq, memberType, chapter.getChapterId())
                 .orElseGet(() -> ChapterProgress.builder()
-                        .member(member)
+                        .userSeq(userSeq)
+                        .memberType(memberType)
                         .chapter(chapter)
                         .watchedSec(0)
                         .maxWatchedSec(0)
@@ -231,6 +230,8 @@ public class DuService {
         if (passed) {
             progress.setCompletedYn("Y");
             progress.setQuizPassedYn("Y");
+            progress.setCompletedAt(LocalDateTime.now());
+            updateVideoProgressFinal(userSeq, memberType, chapter.getCourse());
         } else {
             progress.setCompletedYn("N");
             progress.setQuizPassedYn("N");
@@ -240,5 +241,95 @@ public class DuService {
         }
 
         chapterProgressRepository.save(progress);
+    }
+
+    public List<ChapterMenuDTO> getChapterMenus(Long userSeq, String memberType) {
+        List<VideoChapter> chapters = getDuChapters();
+
+        List<ChapterProgress> completedProgressList =
+                chapterProgressRepository.findByUserSeqAndMemberTypeAndCompletedYn(
+                        userSeq,
+                        memberType,
+                        "Y"
+                );
+
+        Set<Long> completedChapterIds = completedProgressList.stream()
+                .map(progress -> progress.getChapter().getChapterId())
+                .collect(Collectors.toSet());
+
+        int maxAccessibleOrder = 1;
+
+        for (VideoChapter chapter : chapters) {
+            if (completedChapterIds.contains(chapter.getChapterId())) {
+                maxAccessibleOrder = Math.max(
+                        maxAccessibleOrder,
+                        chapter.getChapterOrder() + 1
+                );
+            }
+        }
+
+        int finalMaxAccessibleOrder = maxAccessibleOrder;
+
+        return chapters.stream()
+                .map(chapter -> ChapterMenuDTO.builder()
+                        .chapterId(chapter.getChapterId())
+                        .chapterOrder(chapter.getChapterOrder())
+                        .chapterTitle(chapter.getChapterTitle())
+                        .completed(completedChapterIds.contains(chapter.getChapterId()))
+                        .accessible(chapter.getChapterOrder() <= finalMaxAccessibleOrder)
+                        .build())
+                .toList();
+    }
+
+    //url 접근 제한
+    public boolean canAccessChapter(Long userSeq, String memberType, Long chapterId) {
+        return getChapterMenus(userSeq, memberType).stream()
+                .anyMatch(menu ->
+                        menu.getChapterId().equals(chapterId)
+                                && menu.isAccessible()
+                );
+    }
+
+
+    private void updateVideoProgressFinal(
+            Long userSeq,
+            String memberType,
+            VideoCourse course
+    ) {
+        long totalChapterCount = videoChapterRepository.countByCourse_CourseId(
+                course.getCourseId()
+        );
+
+        long completedChapterCount = chapterProgressRepository.countCompletedChaptersByCourse(
+                userSeq,
+                memberType,
+                course.getCourseId()
+        );
+
+        boolean finalCompleted = totalChapterCount > 0
+                && completedChapterCount >= totalChapterCount;
+
+        VideoProgress videoProgress = videoProgressRepository
+                .findByUserSeqAndMemberTypeAndCourse_CourseId(
+                        userSeq,
+                        memberType,
+                        course.getCourseId()
+                )
+                .orElseGet(() -> VideoProgress.builder()
+                        .userSeq(userSeq)
+                        .memberType(memberType)
+                        .course(course)
+                        .finalCompletedYn("N")
+                        .build());
+
+        videoProgress.setFinalCompletedYn(finalCompleted ? "Y" : "N");
+
+        if (finalCompleted) {
+            videoProgress.setCompletedAt(LocalDateTime.now());
+        } else {
+            videoProgress.setCompletedAt(null);
+        }
+
+        videoProgressRepository.save(videoProgress);
     }
 }

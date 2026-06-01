@@ -63,17 +63,18 @@
                 <div class="chapter-panel">
                     <h3>챕터 목록</h3>
                     <a class="chapter"
-                       th:each="item : ${chapters}"
+                       th:each="item : ${chapterMenus}"
                        th:href="@{/drive-u/du/{chapterId}(chapterId=${item.chapterId})}"
-                       th:classappend="${chapter != null and item.chapterId == chapter.chapterId} ? ' selected'">
+                       th:classappend="${chapter != null and item.chapterId == chapter.chapterId} ? ' selected' :
+            (${item.accessible} ? '' : ' locked')">
+
                         <span th:text="|${item.chapterOrder}. ${item.chapterTitle}|">
                                  1. 운전자가 되는 첫걸음
                          </span>
+
+                        <small th:if="${!item.accessible}" class="chapter-status lock">🔒</small>
                     </a>
-                    <p class="empty-message"
-                       th:if="${chapters == null or chapters.isEmpty()}">
-                        등록된 챕터가 없습니다.
-                    </p>
+
                 </div>
 
                 <!-- 퀴즈 영역 -->

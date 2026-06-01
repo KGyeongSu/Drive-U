@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface ChapterQuizSubRepository extends JpaRepository<ChapterQuizSubmission, Long> {
 
-    List<ChapterQuizSubmission> findByMember_SeqAndChapter_ChapterIdOrderBySubmittedAtDesc(
-            Long seq,
+    List<ChapterQuizSubmission> findByUserSeqAndMemberTypeAndChapter_ChapterIdOrderBySubmittedAtDesc(
+            Long userSeq,
+            String memberType,
             Long chapterId
     );
 }

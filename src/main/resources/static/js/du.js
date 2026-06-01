@@ -1,4 +1,4 @@
-const DU_TEST_MODE = false;
+const DU_TEST_MODE = true;
 
 let player;
 let maxWatchedSec = 0;
@@ -214,11 +214,27 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify({
                 chapterId: Number(chapterId),
-                memberSeq: Number(memberSeq),
                 answers: answers
             })
         })
             .then(function (response) {
+                console.log('submit status:', response.status);
+                console.log('submit redirected:', response.redirected);
+                console.log('submit url:', response.url);
+
+                if (response.redirected) {
+                    throw new Error('로그인 또는 권한 문제로 다른 페이지로 이동되었습니다.');
+                }
+
+                const contentType = response.headers.get('content-type');
+
+                if (!contentType || !contentType.includes('application/json')) {
+                    return response.text().then(function (text) {
+                        console.log('JSON이 아닌 응답:', text);
+                        throw new Error('서버가 JSON이 아닌 HTML을 반환했습니다.');
+                    });
+                }
+
                 if (!response.ok) {
                     throw new Error('퀴즈 제출 중 오류가 발생했습니다.');
                 }
