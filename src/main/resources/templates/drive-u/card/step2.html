@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('발급 신청서 작성')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('card')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('card', ${type})}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb" th:text="'홈 > 면허증 카드 > ' + ${type.toUpperCase()} + ' 발급 > 2단계 신청서 작성'"></div>
+
+        <div class="step-indicator" style="display: flex; justify-content: space-between; margin-bottom: 40px; padding: 0 100px;">
+            <div class="step" style="text-align: center; color: #94a3b8;"><span style="display: block; width: 30px; height: 30px; line-height: 30px; background: #94a3b8; color: white; border-radius: 50%; margin: 0 auto 5px;">1</span>자격검증</div>
+            <div class="step" style="text-align: center; color: #2563eb; font-weight: bold;"><span style="display: block; width: 30px; height: 30px; line-height: 30px; background: #2563eb; color: white; border-radius: 50%; margin: 0 auto 5px;">2</span>신청서작성</div>
+            <div class="step" style="text-align: center; color: #94a3b8;"><span style="display: block; width: 30px; height: 30px; line-height: 30px; background: #94a3b8; color: white; border-radius: 50%; margin: 0 auto 5px;">3</span>결제/완료</div>
+        </div>
+
+        <section class="content-section" style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            <h2 style="font-size: 1.5rem; margin-bottom: 30px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">발급 신청서 정보 입력</h2>
+
+            <form id="applicationForm">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">성명</label>
+                    <input type="text" th:value="${#authentication.principal.realName}" readonly style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 6px;">
+                </div>
+
+                <div id="typeSpecificForm" th:replace="~{drive-u/card/fragments/forms :: ${type}}"></div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #f1f5f9;">
+
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">수령 장소 선택</label>
+                    <select id="location" name="location" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                        <option value="">-- 수령하실 기관을 선택하세요 --</option>
+                        <option value="대전 운전면허시험장">대전 운전면허시험장</option>
+                        <option value="대전 서부 경찰서">대전 서부 경찰서</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 35px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">수령 희망 날짜</label>
+                    <input type="date" id="pickUpDate" name="pickUpDate" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                </div>
+
+                <div style="text-align: center; margin-top: 50px;">
+                    <button type="button" id="btnNext" style="padding: 15px 60px; background: #2563eb; color: white; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;">
+                        신청 내용 확인 및 결제하기 ➔
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script th:inline="javascript">
+    document.getElementById('btnNext').addEventListener('click', function() {
+        const location = document.getElementById('location').value;
+        const date = document.getElementById('pickUpDate').value;
+        const extraInfoElement = document.querySelector('.extra-info-input');
+        const extraValue = extraInfoElement ? extraInfoElement.value : null;
+
+        if (!location || !date) {
+            alert("모든 필수 항목을 입력해주세요.");
+            return;
+        }
+
+        // 데이터를 브라우저 저장소에만 저장하고 페이지 이동
+        const data = {
+            receiveLocation: location,
+            receiveDate: date,
+            extraInfo: extraValue
+        };
+        sessionStorage.setItem("applicationData", JSON.stringify(data));
+
+        const type = /*[[${type}]]*/ 'new';
+        window.location.href = `/drive-u/card/${type}/step3`;
+    });
+</script>
+</body>
+</html>

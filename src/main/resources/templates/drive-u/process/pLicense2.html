@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('연습면허 정보확인')}"></head>
+<style>
+    /* 이 페이지에서만 스텝바 4단계 (공통 CSS 안 건드림) */
+    .apply-step-wrap { grid-template-columns: repeat(4, 1fr); }
+    .apply-step-wrap::before { left: 12.5%; right: 12.5%; }
+</style>
+<body>
+<header th:replace="~{fragments/layout :: header('process')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('process', 'pLicense')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 > 연습면허 정보확인</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">PRACTICE LICENSE</p>
+                <h1>정보확인</h1>
+                <p>발급 정보를 확인하고 면허 종별을 선택합니다.</p>
+            </div>
+        </section>
+
+        <section class="apply-step-wrap"><a class="apply-step done"><span>1</span><p>자격확인</p></a><a class="apply-step current"><span>2</span><p>정보확인</p></a><a class="apply-step "><span>3</span><p>결제</p></a><a class="apply-step "><span>4</span><p>발급완료</p></a></section>
+
+        <section class="apply-card">
+            <div class="section-head"><h2>발급 정보 확인</h2><span>step 02.</span></div>
+
+            <form th:action="@{/drive-u/process/pLicense2}" method="post">
+                <div class="apply-info-list">
+                    <div class="apply-info-row">
+                        <strong>성명</strong>
+                        <span th:text="${member.name}"></span>
+                    </div>
+                    <div class="apply-info-row">
+                        <strong>면허 종별</strong>
+                        <span>
+                            <select name="licenseType" required>
+                                <option value="" disabled selected>종별을 선택하세요</option>
+                                <option th:each="type : ${licenseTypes}"
+                                        th:value="${type}" th:text="${type}"></option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="notice-box" style="margin-top:24px;">
+                    <p>아래 사항을 확인해 주세요.</p>
+                    <ul>
+                        <li>선택한 종별은 기능시험에 합격한 종별과 일치해야 합니다.</li>
+                        <li>연습면허 유효기간은 발급일로부터 1년이며 연장이 불가합니다.</li>
+                    </ul>
+                </div>
+
+                <div class="button-area">
+                    <a class="outline-btn sub" th:href="@{/drive-u/process/pLicense1}">이전</a>
+                    <button type="submit" class="outline-btn">다음</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
