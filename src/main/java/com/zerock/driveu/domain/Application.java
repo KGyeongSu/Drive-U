@@ -33,7 +33,7 @@ public class Application {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ExamType examType;          // WRITTEN / SKILL / ROAD
+    private ExamType examType;          // WRITTEN / FUNCTION / RIDE
 
     @Column(nullable = false, length = 30)
     private String licenseType;         // "1종 보통" 등
