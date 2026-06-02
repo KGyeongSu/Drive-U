@@ -1,6 +1,65 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('최신법규')}"></head>
+<style>
+    /* 💡 법규 상세 보기 모달 스타일 */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        position: relative;
+        text-align: left;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 20px; color: #333; margin: 0; }
+    .close-btn {
+        background: none; border: none; font-size: 24px; cursor: pointer; color: #999;
+    }
+    .close-btn:hover { color: #333; }
+
+    /* 비교 테이블 및 하이라이트 */
+    .law-compare-table {
+        width: 100%; border-collapse: collapse; margin: 15px 0;
+    }
+    .law-compare-table th, .law-compare-table td {
+        border: 1px solid #e0e0e0; padding: 12px; font-size: 14px; text-align: left;
+    }
+    .law-compare-table th { background-color: #f8f9fa; color: #555; }
+    .badge-change {
+        background-color: #ff3b30; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;
+        margin-right: 5px; display: inline-block; vertical-align: middle;
+    }
+    .badge-info {
+        background-color: #007bff; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold;
+        margin-right: 5px; display: inline-block; vertical-align: middle;
+    }
+    .danger-box {
+        background-color: #fff5f5; border-left: 4px solid #ff3b30; padding: 15px; border-radius: 4px; margin-top: 15px;
+    }
+    .danger-box h4 { margin: 0 0 8px 0; color: #cb241b; }
+    .danger-box ul { margin: 0; padding-left: 20px; font-size: 14px; color: #444; line-height: 1.6; }
+</style>
 <body>
 <header th:replace="~{fragments/layout :: header('userInfo')}"></header>
 
@@ -14,15 +73,241 @@
             <div class="hero-text">
                 <p class="eyebrow">TRAFFIC LAW</p>
                 <h1>최신법규</h1>
-                <p>도로교통법 변경사항과 CBT 반영 내용을 확인합니다.</p>
+                <p>도로교통법 변경사항을 확인합니다.</p>
             </div>
         </section>
-
-        <section class="content-section"><h2 class="section-title">주요 기능</h2><div class="feature-grid"><article class="feature-card"><div class="icon">⚖️</div><h3>최신 법규</h3><p>도로교통법 변경사항을 확인합니다.</p></article><article class="feature-card"><div class="icon">🔔</div><h3>반영 알림</h3><p>CBT 문제 반영 여부를 확인합니다.</p></article><article class="feature-card"><div class="icon">📚</div><h3>학습 연결</h3><p>관련 문제와 학습영상으로 이동합니다.</p></article></div></section><section class="content-section"><h2 class="section-title">법규 변경 목록</h2><div class="board-list"><a href="#"><strong>2026년 시험 운영 안내</strong><span>2026-05-12</span></a><a href="#"><strong>시스템 점검 안내</strong><span>2026-05-08</span></a><a href="#"><strong>접수 가능 시험장 변경 안내</strong><span>2026-05-01</span></a></div></section>
+        <section class="content-section">
+            <h2 class="section-title">법규 변경 목록</h2>
+            <div class="board-list">
+                <!-- 📅 최신 날짜 순(내림차순) 정렬 완료 -->
+                <a href="#" class="law-item" data-id="law27">
+                    <strong><span class="badge-change">중요</span> 보행자의 안전 보장 의무 규정 변경</strong>
+                    <span>2026-05-26</span>
+                </a>
+                <a href="#" class="law-item" data-id="drugDrive2026">
+                    <strong><span class="badge-change">중요</span> 마약·약물운전 처벌 및 '측정 불응죄' 신설 안내</strong>
+                    <span>2026-04-15</span>
+                </a>
+                <a href="#" class="law-item" data-id="fakeDrink2026">
+                    <strong><span class="badge-change">중요</span> 음주운전 단속 방해 '술타기' 수법 형사처벌 규정 안내</strong>
+                    <span>2026-03-20</span>
+                </a>
+                <a href="#" class="law-item" data-id="visitTraining2026">
+                    <strong><span class="badge-info">안내</span> 합법적 '찾아가는 도로 연수' 도입 및 편의성 제고</strong>
+                    <span>2026-02-18</span>
+                </a>
+                <a href="#" class="law-item" data-id="lawRenewal2026">
+                    <strong><span class="badge-info">안내</span> 운전면허 적성검사 및 갱신 기간 '생일 기준' 변경 안내</strong>
+                    <span>2026-01-01</span>
+                </a>
+            </div>
+        </section>
     </main>
+</div>
+
+<div class="modal-overlay" id="lawModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">⚖️ 법규 상세 안내</h2>
+            <button class="close-btn" id="closeModalBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+        </div>
+    </div>
 </div>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<script>
+    // 1. 게시글별 모달 데이터 바인딩 객체 (불필요한 공지 3종 제거 완료)
+    const lawMockData = {
+        "law27": {
+            title: "⚖️ 도로교통법 제27조 제1항 변경사항 안내 (CBT 반영)",
+            content: `
+                <h3>개정 취지</h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">
+                    보행자의 안전을 최우선으로 확보하기 위해 횡단보도 앞 일시정지 의무가 보행자가 '통행하고 있을 때'뿐만 아니라 <strong>'통행하려고 하는 때'</strong>까지 대폭 확대되었습니다.
+                </p>
+                <table class="law-compare-table">
+                    <thead>
+                        <tr><th style="width: 50%;">개정 전</th><th style="width: 50%; color: #ff3b30;">개정 후 (현재 시행)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>보행자가 횡단보도를 <strong>통행하고 있을 때</strong> 일시정지</td>
+                            <td>보행자가 횡단보도를 통행하고 있거나 <strong>'통행하려고 하는 때'</strong>에도 일시정지 의무화</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="danger-box">
+                    <h4>⚠️ 운전면허 시험 시 주의해야 할 점 (실격 방지)</h4>
+                    <ul>
+                        <li><strong>보행자가 디디려고 할 때:</strong> 인도 끝에서 건너려는 제스처를 취하거나 기다리는 사람이 보이면 무조건 '정지선 전 일시정지'해야 합니다.</li>
+                        <li><strong>우회전 감점 방지:</strong> 우회전 직후 만나는 횡단보도에서는 좌우 인도를 명확히 고개 돌려 확인하는 태도를 보여야 감점을 피합니다.</li>
+                        <li><strong>CBT 필기시험 출제:</strong> 위반 시 범칙금(승용차 6만 원) 및 벌점(10점) 부과 기준 문제가 빈출됩니다.</li>
+                    </ul>
+                </div>
+            `
+        },
+        "drugDrive2026": {
+            title: "⚖️ 마약·약물운전 처벌 강화 및 측정 불응죄 신설",
+            content: `
+                <h3>개정 취지</h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">
+                    마약 및 향정신성 의약품 복용 후 운전으로 인한 대형 사고를 예방하기 위해, 법정형을 대폭 상향하고 단속의 실효성을 확보하고자 현장 측정 거부 행위 처벌 조항을 신설했습니다.
+                </p>
+                <table class="law-compare-table">
+                    <thead>
+                        <tr><th style="width: 50%;">주요 단속 항목</th><th style="width: 50%; color: #ff3b30;">개정 후 처벌 수위 (2026. 4 시행)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>약물운전 적발 시</strong></td>
+                            <td>최대 <strong>징역 5년</strong> 또는 <strong>벌금 2,000만 원</strong>으로 법정형 상향</td>
+                        </tr>
+                        <tr>
+                            <td><strong>약물 검사 거부 시</strong></td>
+                            <td><strong>'약물운전 측정 불응죄'</strong> 신설 (현장 검사 거부 불가)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="danger-box">
+                    <h4>⚠️ 학과시험(CBT) 및 수험생 참고사항</h4>
+                    <ul>
+                        <li><strong>단속 대상 의약품 범위:</strong> 치료 목적의 의사 처방 약물이라 하더라도 환각 성분이나 운전 능력 저하를 유발하는 향정신성의약품 성분이 포함되어 있다면 처벌 대상이 될 수 있습니다.</li>
+                        <li><strong>시험 출제 경향:</strong> 새로 신설된 '약물운전 측정 불응죄'의 개념과 형사처벌 수위를 묻는 문제가 신규 문항으로 출제되므로 명확히 숙지해야 합니다.</li>
+                    </ul>
+                </div>
+            `
+        },
+        "fakeDrink2026": {
+            title: "⚖️ 음주측정 방해 행위('술타기' 수법) 전격 금지 및 처벌",
+            content: `
+                <h3>개정 취지</h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">
+                    음주운전 단속을 회피할 목적으로 단속 직후 술을 추가로 마셔 정확한 혈중알코올농도 측정을 방해하는 법망 교란 행위('술타기')를 원천 차단하기 위해 신설된 규정입니다.
+                </p>
+                <table class="law-compare-table">
+                    <thead>
+                        <tr><th style="width: 50%;">행위 구분</th><th style="width: 50%; color: #ff3b30;">처벌 및 행정처분 기준</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>고의적 추가 음주 행위</strong><br>(알코올 농도 희석 목적)</td>
+                            <td><strong>음주측정 거부와 동일 수위 처벌</strong><br>- 징역 1년 ~ 5년 또는 벌금 500만 ~ 2,000만 원<br>- <strong>운전면허 취소 처분</strong> 행정제재 병과</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="danger-box">
+                    <h4>⚠️ 필수 유의사항</h4>
+                    <ul>
+                        <li><strong>단속 시 정당한 의무:</strong> 사고 유발 혹은 단속 시점 이후 추가 음주 행위는 측정 방해 의도가 있는 것으로 간주하여 즉시 형사 입건 처리가 이루어집니다. 필기시험 과목에서도 매우 중요하게 다뤄지는 개정 법안입니다.</li>
+                    </ul>
+                </div>
+            `
+        },
+        "visitTraining2026": {
+            title: "📢 합법적 '찾아가는 도로 연수' 제도 도입 안내",
+            content: `
+                <h3>개정 취지</h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">
+                    기존의 불법 음성 도로연수 앱 및 업체를 근절하고, 초보 운전자들이 검증된 정식 학원 강사에게 안전하게 맞춤형 연수를 받을 수 있도록 규제를 완화하고 제도를 양성화했습니다.
+                </p>
+                <table class="law-compare-table">
+                    <thead>
+                        <tr><th style="width: 50%;">기존 방식</th><th style="width: 50%; color: #007bff;">변경 방식 (합법화)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>지정된 운전학원 장내 및 학원 주변 코스 내에서만 교육 가능</td>
+                            <td>교육생이 직접 신청한 장소(예: 자택 앞, 회사 등)로 <strong>학원 강사가 직접 방문하여 연수 진행 가능</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="danger-box">
+                    <h4>💡 수험생 및 초보 운전자 혜택</h4>
+                    <ul>
+                        <li><strong>안전성 확보:</strong> 종합보험에 가입되고 안전 장치(보조 브레이크 등)가 장착된 공식 학원 차량으로 원하는 코스에서 안전하게 주행 연습이 가능합니다.</li>
+                    </ul>
+                </div>
+            `
+        },
+        "lawRenewal2026": {
+            title: "⚖️ 운전면허 적성검사 및 갱신 기간 변경 상세 안내",
+            content: `
+                <h3>개정 취지</h3>
+                <p style="font-size: 14px; color: #666; line-height: 1.5;">
+                    2026년 1월 1일 자 도로교통법 개정으로 기존 연말에 대기 인원이 과도하게 집중되던 불편을 해소하고, 수험생 및 면허 소지자의 편의를 높이기 위해 갱신 기간 산정 방식이 대폭 변경되었습니다.
+                </p>
+                <table class="law-compare-table">
+                    <thead>
+                        <tr><th style="width: 50%;">개정 전</th><th style="width: 50%; color: #ff3b30;">개정 후 (2026년 시행)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>갱신 연도의 <strong>1월 1일 ~ 12월 31일</strong> (연 단위 일괄 적용)</td>
+                            <td>본인 <strong>생일 전 6개월 ~ 생일 후 6개월</strong> (총 12개월간 유효)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="danger-box">
+                    <h4>⚠️ 주요 변경 사항 및 안내 (수험생 필수 숙지)</h4>
+                    <ul>
+                        <li><strong>면허증 표기일 유의:</strong> 기존 면허증에 만료일이 12월 31일로 인쇄되어 있더라도, 법적인 실제 갱신 타임라인은 변경된 <strong>생일 전후 6개월</strong>로 우선 적용됩니다.</li>
+                        <li><strong>첫 갱신자 한정 유예:</strong> 개정 후 처음으로 적성검사 대상이 된 분들은 혼란을 막기 위해 기존 '연 단위 기간'과 신설된 '생일 기준 기간' 중 본인에게 <strong>더 유리한 일정</strong>을 수험생이 직접 선택할 수 있습니다.</li>
+                        <li><strong>미갱신 시 불이익 처분:</strong><br>
+                            - 1종 면허: 기간 경과 시 <strong>과태료 3만 원</strong> 부과 (만료 후 1년 경과 시 <strong>면허 취소</strong>)<br>
+                            - 2종 면허: 기간 경과 시 <strong>과태료 2만 원</strong> 부과
+                        </li>
+                    </ul>
+                </div>
+            `
+        }
+    };
+
+    // 2. 이벤트 리스너 통합 바인딩
+    window.addEventListener('load', () => {
+        const modal = document.getElementById('lawModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const lawItems = document.querySelectorAll('.law-item');
+
+        if (lawItems.length > 0 && modal && closeBtn) {
+
+            // 모든 목록 아이템에 클릭 이벤트 부여
+            lawItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    const dataId = item.getAttribute('data-id');
+                    const targetData = lawMockData[dataId];
+
+                    if (targetData) {
+                        // 모달 제목과 본문을 클릭한 데이터로 교체
+                        modalTitle.innerText = targetData.title;
+                        modalBody.innerHTML = targetData.content;
+
+                        // 모달 열기
+                        modal.style.display = 'flex';
+                    }
+                });
+            });
+
+            // 닫기 버튼 이벤트
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // 바깥 어두운 영역 클릭 시 닫기
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
