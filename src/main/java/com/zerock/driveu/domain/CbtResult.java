@@ -18,9 +18,11 @@ public class CbtResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long resultId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @Column(name = "user_seq", nullable = false)
+    private Long userSeq;
+
+    @Column(name = "member_type", nullable = false, length = 20)
+    private String memberType; // MEMBER / SOCIAL
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id", nullable = false)

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('관리자 대시보드')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="admin-layout">
+    <aside th:replace="~{fragments/admin-layout :: adminSide('dashboard')}"></aside>
+
+    <main class="admin-content">
+        <section class="admin-hero compact">
+            <div>
+                <p class="eyebrow">ADMIN DASHBOARD</p>
+                <h1>관리자 대시보드</h1>
+                <p>사용자 현황과 시험 합격자를 조회하고, 접수·교육 진행 상태를 관리합니다.</p>
+            </div>
+        </section>
+
+        
+<section class="admin-search-card" id="searchArea">
+    <div class="section-head">
+        <h2>사용자 조회</h2>
+        <span>search form</span>
+    </div>
+
+    <form class="admin-search-form">
+        <label>검색구분
+            <select>
+                <option>전체</option>
+                <option>이름</option>
+                <option>아이디</option>
+                <option>휴대전화</option>
+                <option>시험접수번호</option>
+            </select>
+        </label>
+
+        <label class="search-keyword">검색어
+            <input type="text" placeholder="이름, 아이디, 연락처를 입력하세요">
+        </label>
+
+        <label>시험구분
+            <select>
+                <option>전체</option>
+                <option>필기</option>
+                <option>기능</option>
+                <option>도로주행</option>
+            </select>
+        </label>
+
+        <label>상태
+            <select>
+                <option>전체</option>
+                <option>접수완료</option>
+                <option>교육이수</option>
+                <option>합격</option>
+                <option>불합격</option>
+            </select>
+        </label>
+
+        <button type="button" class="admin-search-btn">조회</button>
+    </form>
+</section>
+
+<section class="admin-tab-card">
+    <div class="admin-tab-head">
+        <button type="button" class="admin-tab active" data-target="statusPanel">현황</button>
+        <button type="button" class="admin-tab" data-target="passerPanel">합격자</button>
+    </div>
+
+    <div class="admin-panel active" id="statusPanel">
+        <div class="admin-summary-grid">
+            <article><span>전체 회원</span><strong>1,248</strong><p>전일 대비 +18</p></article>
+            <article><span>교통안전교육 이수</span><strong>842</strong><p>이수율 67.4%</p></article>
+            <article><span>시험 접수</span><strong>316</strong><p>이번 달 기준</p></article>
+            <article><span>합격자</span><strong>187</strong><p>필기·기능·주행 합산</p></article>
+        </div>
+
+        <div class="admin-table-card">
+            <div class="table-title">
+                <h3>사용자 진행 현황</h3>
+                <span>최근 접수순</span>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>회원명</th>
+                    <th>아이디</th>
+                    <th>교육</th>
+                    <th>필기</th>
+                    <th>기능</th>
+                    <th>주행</th>
+                    <th>최근 변경일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>전인수</td>
+                    <td>jeoninsu0118</td>
+                    <td><span class="state done">이수</span></td>
+                    <td><span class="state pass">합격</span></td>
+                    <td><span class="state progress">접수</span></td>
+                    <td><span class="state wait">대기</span></td>
+                    <td>2026-05-14</td>
+                </tr>
+                <tr>
+                    <td>김도윤</td>
+                    <td>driver02</td>
+                    <td><span class="state done">이수</span></td>
+                    <td><span class="state progress">응시예정</span></td>
+                    <td><span class="state wait">대기</span></td>
+                    <td><span class="state wait">대기</span></td>
+                    <td>2026-05-13</td>
+                </tr>
+                <tr>
+                    <td>박서연</td>
+                    <td>road2026</td>
+                    <td><span class="state done">이수</span></td>
+                    <td><span class="state pass">합격</span></td>
+                    <td><span class="state pass">합격</span></td>
+                    <td><span class="state progress">접수</span></td>
+                    <td>2026-05-12</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="passerPanel">
+        <div class="admin-table-card">
+            <div class="table-title">
+                <h3>합격자 조회</h3>
+                <span>시험별 합격자 목록</span>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>합격일</th>
+                    <th>회원명</th>
+                    <th>생년월일</th>
+                    <th>시험구분</th>
+                    <th>면허종별</th>
+                    <th>시험장</th>
+                    <th>점수</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>2026-05-14</td>
+                    <td>박서연</td>
+                    <td>1998-03-12</td>
+                    <td>기능</td>
+                    <td>2종 보통</td>
+                    <td>대전 운전면허시험장</td>
+                    <td>90</td>
+                </tr>
+                <tr>
+                    <td>2026-05-13</td>
+                    <td>이하준</td>
+                    <td>1997-11-08</td>
+                    <td>필기</td>
+                    <td>1종 보통</td>
+                    <td>청주 운전면허시험장</td>
+                    <td>86</td>
+                </tr>
+                <tr>
+                    <td>2026-05-12</td>
+                    <td>정민지</td>
+                    <td>2000-09-21</td>
+                    <td>도로주행</td>
+                    <td>2종 보통</td>
+                    <td>대전 운전면허시험장</td>
+                    <td>합격</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<header class="site-header" th:fragment="header(activeMenu)">
+    <div class="header-inner">
+        <a th:href="@{/drive-u}" class="brand">
+            <span class="brand-text">
+                <strong>Drive-Ü</strong>
+                <em>운전면허 교육 LMS</em>
+            </span>
+        </a>
+
+        <nav class="user-menu">
+        <span class="hello">
+            안녕하세요
+            <b th:text="${#authentication.principal instanceof T(com.zerock.driveu.dto.AuthUserDTO)
+                ? #authentication.principal.realName : '사용자'}"></b>님
+        </span>
+                <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
+                    <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+                </form>
+            </th:block>
+        </nav>
+    </div>
+</header>
+<body>
+
+<aside class="admin-side-menu" th:fragment="adminSide(currentPage)">
+    <h2>관리자</h2>
+
+    <div class="admin-side-group">
+        <a th:href="@{/drive-u/admin}"
+           class="admin-side-link"
+           th:classappend="${currentPage == 'dashboard'} ? ' active'">
+            사용자 교육 이수 현황 확인
+        </a>
+
+        <div class="admin-side-folder"
+             th:classappend="${currentPage == 'duVideo' or currentPage == 'lVideo'} ? ' active'">
+            <a th:href="@{/drive-u/admin/video}" class="admin-side-link">
+                영상 등록
+            </a>
+
+            <div class="admin-side-depth">
+                <a th:href="@{/drive-u/admin/video/du}"
+                   th:classappend="${currentPage == 'duVideo'} ? ' active'">
+                    교통 안전 교육
+                </a>
+                <a th:href="@{/drive-u/admin/video/lVideo}"
+                   th:classappend="${currentPage == 'lVideo'} ? ' active'">
+                    학습 영상
+                </a>
+            </div>
+        </div>
+
+        <a th:href="@{/drive-u/admin/cbt}"
+           class="admin-side-link"
+           th:classappend="${currentPage == 'cbt'} ? ' active'">
+            CBT 등록
+        </a>
+
+        <a th:href="@{/drive-u/admin/examSchedule}"
+           class="admin-side-link"
+           th:classappend="${currentPage == 'examSchedule'} ? ' active'">
+            시험 일정 등록
+        </a>
+    </div>
+</aside>
+
+</body>
+</html>
