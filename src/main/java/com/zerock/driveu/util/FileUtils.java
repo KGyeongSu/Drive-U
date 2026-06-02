@@ -54,7 +54,7 @@ public class FileUtils {
             fileEntities.add(UploadFileDTO.builder()
                     .fileName(file.getOriginalFilename())
                     // 절대경로는 DB에 저장 X -> 환경 이동성 및 보안 문제
-                    // 경로 조합 용이 목적으로 "/" 넣어줌
+                    // 경로 조합 용이 목적으로 "/" 넣어줌 -> yaml에 존재
                     .filePath(subPath + savedFileName)
                     .uuid(uuid)
                     .build());

@@ -1,6 +1,7 @@
 package com.zerock.driveu.controller;
 
 import com.zerock.driveu.dto.NoticeRequestDTO;
+import com.zerock.driveu.dto.NoticeResponseDTO;
 import com.zerock.driveu.service.NoticeService;
 import com.zerock.driveu.util.PageUtils;
 import lombok.RequiredArgsConstructor;
@@ -99,7 +100,9 @@ public class NoticeController {
     @GetMapping("/modifyForm")
     public String questionModify (@RequestParam("id") Long id, Model model) {
 
-        model.addAttribute("noticeDetail", noticeService.getOne(id));
+        NoticeResponseDTO dto = noticeService.getOne(id);
+        System.out.println("컨트롤러 확인 - 파일개수: " + (dto.getFiles() != null ? dto.getFiles().size() : "null"));
+        model.addAttribute("noticeDetail", dto);
 
         return "drive-u/userInfo/noticeDetail";
 
@@ -107,9 +110,9 @@ public class NoticeController {
 
     // 공지사항 수정 등록
     @PostMapping("/noticeModify")
-    public String modify (@RequestParam("id") Long id, NoticeRequestDTO noticeRequestDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files,  RedirectAttributes redirectAttributes) throws IOException {
+    public String modify (@RequestParam("id") Long id, NoticeRequestDTO noticeRequestDTO, @RequestParam(value = "files", required = false) List<MultipartFile> newFiles, @RequestParam(value = "deleteIds", required = false) List<Long> deleteIds, RedirectAttributes redirectAttributes) throws IOException {
 
-        noticeService.updateNotice(id, noticeRequestDTO, files);
+        noticeService.updateNotice(id, noticeRequestDTO, newFiles, deleteIds);
 
         redirectAttributes.addFlashAttribute("successMsg", "공지사항 수정이 완료되었습니다.");
         redirectAttributes.addAttribute("id", id);

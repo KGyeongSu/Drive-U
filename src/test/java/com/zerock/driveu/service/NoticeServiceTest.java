@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -61,6 +62,8 @@ class NoticeServiceTest {
     public void updateNotice () throws IOException {
 
         Long id = 20L;
+        List<Long> keepFiles = Arrays.asList(3L);
+        List<MultipartFile> newFiles = new ArrayList<>();
 
         List <MultipartFile> files = new ArrayList<>();
         files.add(new MockMultipartFile("files", "수정된파일.pdf", "application/pdf", "data".getBytes()));
@@ -70,7 +73,7 @@ class NoticeServiceTest {
                 .content("수정된 공지사항 컨텐츠 임돠")
                 .build();
 
-        noticeService.updateNotice(id, updateDTO, files);
+        noticeService.updateNotice(id, updateDTO, newFiles, keepFiles);
 
         NoticeResponseDTO result = noticeService.getOne(id);
 

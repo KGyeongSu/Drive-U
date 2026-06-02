@@ -7,13 +7,15 @@ import com.zerock.driveu.repository.NoticeRepository;
 import com.zerock.driveu.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,35 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final FileUtils fileUtils;
+
+    // 메인 홈페이지에 최신 리스트 7개 미리보기
+    public List <MainNewsDTO> getMainNotice(int limit) {
+
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("regDate").descending());
+
+        return noticeRepository.findAll(pageable).getContent().stream()
+                .map(n -> {
+
+                    String shortContent = n.getContent();
+                    if (shortContent != null && shortContent.length() > 50) {
+
+                        shortContent = shortContent.substring(0, 50) + "...";
+
+
+                        }
+
+                    return MainNewsDTO.builder()
+                            .category("notice")
+                            .id(n.getId())
+                            .title(n.getTitle())
+                            .content(shortContent)
+                            .date(n.getRegDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+                            .build();
+                })
+
+                .collect(Collectors.toList());
+
+    }
 
     // 리스트 가져오기
     public Page<NoticeListDTO> getList (Pageable pageable) {
@@ -100,47 +131,46 @@ public class NoticeService {
 
     // 공지사항 수정
     @Transactional
-    public void updateNotice (Long id, NoticeRequestDTO noticeRequestDTO, List<MultipartFile> files) throws IOException {
+    public void updateNotice (Long id, NoticeRequestDTO noticeRequestDTO, List<MultipartFile> newFiles, List<Long> deleteIds) throws IOException {
 
         // 공지사항 존재 여부 확인
         NoticeBoard n = noticeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공지사항을 찾을 수 없습니다."));
 
-        // 새로운 파일 리스트 담을 식별자
-        List <NoticeFile> newFile = new ArrayList<>();
+        // 사용자가 삭제한 파일 추출 및 실제 서버 폴더에서 삭제
+        if (deleteIds != null && !deleteIds.isEmpty()) {
 
-        // 파일이 새로 들어온 경우
-        if (files != null && !files.isEmpty()) {
+            List <NoticeFile> removeFile = n.getFileList().stream()
+                            .filter(f -> deleteIds.contains(f.getId()))
+                                    .collect(Collectors.toList());
 
-            // 기존 파일 경로 전달
-            List <String> oldFile = n.getFileList().stream()
-                    .map(NoticeFile::getFilePath)
-                    .collect(Collectors.toList());
+            List <String> removeFilePath = removeFile.stream()
+                            .map(NoticeFile :: getFilePath).collect(Collectors.toList());
 
-            // 수정하는 경우에는 clear되기 때문에 리스트 새로 필요 - 폴더에 저장되는 곳
-            List <UploadFileDTO> result = fileUtils.uploadFiles(files, "notice");
+            fileUtils.deleteFile(removeFilePath);
 
-            // 폴더에 저장된 곳을 디비 저장용에다가 정보 넣어줌
-            newFile = result.stream()
-                    .map(r -> NoticeFile.builder()
-                            .fileName(r.getFileName())
-                            .filePath(r.getFilePath())
-                            .uuid(r.getUuid())
-                            .build())
-                    .collect(Collectors.toList());
-
-            // 공지사항 수정
-            n.updateNotice(noticeRequestDTO.getTitle(), noticeRequestDTO.getContent(), newFile);
-
-            // 수정 성공 시 실제 파일 삭제
-            fileUtils.deleteFile(oldFile);
-
-        } else {
-
-            // 글만 수정된 경우
-            n.updateTextOnly(noticeRequestDTO.getTitle(), noticeRequestDTO.getContent());
+            // entity에서도 삭제
+            n.getFileList().removeAll(removeFile);
 
         }
+
+        // 파일이 새로 들어온 경우
+        if (newFiles != null && !newFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(newFiles, "notice");
+
+            result.forEach(r -> {
+                n.addFile(NoticeFile.builder()
+                        .fileName(r.getFileName())
+                        .filePath(r.getFilePath())
+                        .uuid(r.getUuid())
+                        .build());
+            });
+
+        }
+
+        // 글 수정
+        n.updateTextOnly(noticeRequestDTO.getTitle(), noticeRequestDTO.getContent());
 
     }
 
