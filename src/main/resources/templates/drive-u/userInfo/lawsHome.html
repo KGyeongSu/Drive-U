@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('법규 및 안내')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header('userInfo')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/layout :: side('userInfo', 'lawsHome')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">홈 &gt; 법규 및 안내</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">LAWS</p>
+                <h1>법규 및 안내</h1>
+                <p>도로교통법 및 최신 법규 정보를 확인합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">법규 목록</h2>
+                <a href="/drive-u/userInfo/lawsHome/registerForm"
+                   th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                   class="outline-btn">법규등록</a>
+            </div>
+
+            <div id="ajax-update-area">
+                <div th:replace="~{fragments/pagination :: list(
+                        dataPage=${dataPage},
+                        listUrl='/drive-u/userInfo/lawsHome/listFragment',
+                        detailUrl='/drive-u/userInfo/lawsHome/lawsDetail'
+                     )}"></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/pagination.js}"></script>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+</body>
+</html>

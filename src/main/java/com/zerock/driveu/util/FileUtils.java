@@ -43,14 +43,18 @@ public class FileUtils {
         for (MultipartFile file : files) {
 
             String uuid = UUID.randomUUID().toString();
-            String savedFileName = uuid + "_" + file.getOriginalFilename();
+            String savedFileName = file.getOriginalFilename() + "_" + uuid;
 
             // 실제 파일 저장
-            file.transferTo(new File(fullPath + savedFileName));
+            // ,로 부모경로와 파일명을 분리 > OS 호환
+            File saveFile = new File(fullPath, savedFileName);
+            file.transferTo(saveFile);
 
             // 파일 정보 저장
             fileEntities.add(UploadFileDTO.builder()
                     .fileName(file.getOriginalFilename())
+                    // 절대경로는 DB에 저장 X -> 환경 이동성 및 보안 문제
+                    // 경로 조합 용이 목적으로 "/" 넣어줌
                     .filePath(subPath + savedFileName)
                     .uuid(uuid)
                     .build());
@@ -83,7 +87,7 @@ public class FileUtils {
     public Resource downFile (String filePath) throws IOException {
 
         // Path : 파일 경로, Paths : 객체 생성
-        Path path = Paths.get(filePath);
+        Path path = Paths.get(rootPath, filePath);
 
         return new InputStreamResource(Files.newInputStream(path));
 
