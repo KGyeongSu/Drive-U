@@ -1,5 +1,6 @@
 package com.zerock.driveu.config;
 
+import com.zerock.driveu.config.handler.FailureHandler;
 import com.zerock.driveu.config.handler.SuccessHandler;
 import com.zerock.driveu.service.CustomUserDetailsService;
 import com.zerock.driveu.service.SocialLoginProcessorService;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
@@ -25,10 +27,23 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    @Bean //세션 이벤트 감지
+    public HttpSessionEventPublisher httpSessionEventPublisher(){
+        return new HttpSessionEventPublisher();
+    }
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable());
+
+        //세션 관리 (로그인 브라우저 1개 로 제한)
+        http.sessionManagement(session -> session
+                .maximumSessions(1) // 동시 접속 1개 제한
+                .maxSessionsPreventsLogin(false) // true : 새로운 로그인 차단 ,false : 기존 세션 만료
+                .expiredUrl("/drive-u/login?expired=true")
+        );
+
 
         http.authorizeHttpRequests(auth -> auth
                 //비로그인 유저
@@ -44,7 +59,7 @@ public class SecurityConfig {
                                 "/drive-u/process/dApply1",
                                 "/drive-u/process/checking",
                                 "/drive-u/userInfo",
-                                "/drive-u/userInfo/law",
+                                "/drive-u/userInfo/laws",
                                 "/drive-u/userInfo/location",
                                 "/login/signUp",
                                 "/login/checkId",
@@ -65,6 +80,7 @@ public class SecurityConfig {
                         .passwordParameter("pwd")            //HTML input pwd name 매칭
                         .failureUrl("/drive-u/login?error")
                         .successHandler(successHandler)
+                        .failureHandler(new FailureHandler())
                         .permitAll()
                 )
                 //소셜 로그인도 이 페이지 사용하게 설정
@@ -74,6 +90,7 @@ public class SecurityConfig {
                                 .userService(socialLoginProcessorService)
                         )
                         .successHandler(successHandler)
+                        .failureHandler(new FailureHandler())
                 )
                 .logout(logout -> logout
                         .logoutUrl("/drive-u/logout")
@@ -81,7 +98,9 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)// 서버 메모리상의 HTTP 세션 무효화
                         .deleteCookies("JSESSIONID")// 브라우저에 저장된 로그인 쿠키 삭제
                 );
+
         http.userDetailsService(customUserDetailsService);
         return http.build();
     }
+
 }

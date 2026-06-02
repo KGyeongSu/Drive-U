@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('CBT 등록')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="admin-layout">
+    <aside th:replace="~{fragments/admin-layout :: adminSide('cbt')}"></aside>
+
+    <main class="admin-content">
+        <section class="admin-hero compact">
+            <div>
+                <p class="eyebrow">CBT MANAGEMENT</p>
+                <h1>CBT 문제 등록</h1>
+                <p>학과시험 CBT 문제와 보기를 등록하고 정답을 관리합니다.</p>
+            </div>
+        </section>
+
+        
+<section class="admin-form-card">
+    <div class="section-head">
+        <h2>CBT 문제 등록</h2>
+        <span>문제은행</span>
+    </div>
+
+    <form class="admin-form-grid">
+        <label>시험 세트
+            <select>
+                <option>1세트</option>
+                <option>2세트</option>
+                <option>3세트</option>
+                <option>4세트</option>
+                <option>5세트</option>
+            </select>
+        </label>
+        <label>문제 유형
+            <select>
+                <option>SINGLE</option>
+                <option>MULTI</option>
+            </select>
+        </label>
+        <label class="full">문제 내용
+            <textarea placeholder="문제 내용을 입력하세요"></textarea>
+        </label>
+        <label class="full">보기 1
+            <input type="text" placeholder="보기 내용을 입력하세요">
+        </label>
+        <label class="full">보기 2
+            <input type="text" placeholder="보기 내용을 입력하세요">
+        </label>
+        <label class="full">보기 3
+            <input type="text" placeholder="보기 내용을 입력하세요">
+        </label>
+        <label class="full">보기 4
+            <input type="text" placeholder="보기 내용을 입력하세요">
+        </label>
+        <label>정답
+            <input type="text" placeholder="예: 1 또는 1,3">
+        </label>
+        <label>사용여부
+            <select>
+                <option>Y</option>
+                <option>N</option>
+            </select>
+        </label>
+    </form>
+
+    <div class="button-area">
+        <button type="button" class="admin-small-btn">문제 저장</button>
+        <button type="button" class="admin-small-btn sub">초기화</button>
+    </div>
+</section>
+
+<section class="admin-table-card">
+    <div class="table-title">
+        <h3>최근 등록 문제</h3>
+        <span>문제은행</span>
+    </div>
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>세트</th>
+            <th>유형</th>
+            <th>문제</th>
+            <th>정답</th>
+            <th>사용</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1세트</td>
+            <td>SINGLE</td>
+            <td>교차로 진입 전 확인해야 할 사항은?</td>
+            <td>1</td>
+            <td><span class="state done">Y</span></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

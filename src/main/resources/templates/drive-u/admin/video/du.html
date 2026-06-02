@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('교통 안전 교육 영상 등록')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="admin-layout">
+    <aside th:replace="~{fragments/admin-layout :: adminSide('duVideo')}"></aside>
+
+    <main class="admin-content">
+        <section class="admin-hero compact">
+            <div>
+                <p class="eyebrow">SAFETY VIDEO</p>
+                <h1>교통 안전 교육 영상 등록</h1>
+                <p>필수 교육 챕터 영상, 재생시간, 챕터 퀴즈를 등록합니다.</p>
+            </div>
+        </section>
+
+        
+<section class="admin-form-card">
+    <div class="section-head">
+        <h2>교통 안전 교육 영상 등록</h2>
+        <span>필수 교육용</span>
+    </div>
+
+    <form class="admin-form-grid">
+        <label>교육명
+            <input type="text" value="교통안전교육">
+        </label>
+        <label>챕터 번호
+            <select>
+                <option>1챕터</option>
+                <option>2챕터</option>
+                <option>3챕터</option>
+                <option>4챕터</option>
+            </select>
+        </label>
+        <label class="full">챕터 제목
+            <input type="text" placeholder="예: 운전자가 되는 첫걸음">
+        </label>
+        <label class="full">YouTube URL
+            <input type="text" placeholder="https://youtu.be/...">
+        </label>
+        <label>재생시간
+            <input type="text" placeholder="00:15:00">
+        </label>
+        <label>사용여부
+            <select>
+                <option>Y</option>
+                <option>N</option>
+            </select>
+        </label>
+        <label class="full">챕터 퀴즈
+            <textarea placeholder="퀴즈 문항과 정답을 입력하세요"></textarea>
+        </label>
+    </form>
+
+    <div class="button-area">
+        <button type="button" class="admin-small-btn">저장</button>
+        <a th:href="@{/drive-u/admin/video}" class="admin-small-btn sub">목록</a>
+    </div>
+</section>
+
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

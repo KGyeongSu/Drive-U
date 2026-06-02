@@ -33,6 +33,10 @@
                 아이디 또는 비밀번호가 일치하지 않습니다.
             </div>
 
+            <div th:if="${param.expired}" style="color: #084298; background-color: #e7f1ff; border: 1px solid #b6d4fe; padding: 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; text-align: center;">
+                다른 기기 또는 브라우저에 로그인 되어 있어 접속이 종료되었습니다.
+            </div>
+
             <div class="login-btn-group">
                 <button type="submit" class="btn-action btn-login">로그인</button>
                 <a th:href="@{/login/signUp}" class="btn-action btn-signup">회원가입</a>

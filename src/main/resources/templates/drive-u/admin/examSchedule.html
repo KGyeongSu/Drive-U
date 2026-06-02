@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('시험 일정 등록')}"></head>
+<body>
+<link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="admin-layout">
+    <aside th:replace="~{fragments/admin-layout :: adminSide('examSchedule')}"></aside>
+
+    <main class="admin-content">
+        <section class="admin-hero compact">
+            <div>
+                <p class="eyebrow">EXAM SCHEDULE</p>
+                <h1>시험 일정 등록</h1>
+                <p>필기·기능·도로주행 시험 일정과 정원을 등록합니다.</p>
+            </div>
+        </section>
+
+        
+<section class="admin-form-card">
+    <div class="section-head">
+        <h2>시험 일정 등록</h2>
+        <span>필기·기능·도로주행</span>
+    </div>
+
+    <form class="admin-form-grid">
+        <label>시험구분
+            <select>
+                <option>필기</option>
+                <option>기능</option>
+                <option>도로주행</option>
+            </select>
+        </label>
+        <label>면허종별
+            <select>
+                <option>1종 보통</option>
+                <option>2종 보통</option>
+                <option>1종 대형</option>
+            </select>
+        </label>
+        <label>지역
+            <select>
+                <option>대전</option>
+                <option>서울</option>
+                <option>충북</option>
+                <option>부산</option>
+            </select>
+        </label>
+        <label>시험장
+            <select>
+                <option>대전 운전면허시험장</option>
+                <option>청주 운전면허시험장</option>
+                <option>강남 운전면허시험장</option>
+            </select>
+        </label>
+        <label>시험일
+            <input type="date" value="2026-05-21">
+        </label>
+        <label>시험시간
+            <input type="time" value="10:00">
+        </label>
+        <label>정원
+            <input type="number" value="8">
+        </label>
+        <label>접수상태
+            <select>
+                <option>접수가능</option>
+                <option>마감</option>
+                <option>비공개</option>
+            </select>
+        </label>
+    </form>
+
+    <div class="button-area">
+        <button type="button" class="admin-small-btn">일정 저장</button>
+        <button type="button" class="admin-small-btn sub">초기화</button>
+    </div>
+</section>
+
+<section class="admin-table-card">
+    <div class="table-title">
+        <h3>등록된 시험 일정</h3>
+        <span>최근 등록순</span>
+    </div>
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>시험구분</th>
+            <th>시험장</th>
+            <th>시험일</th>
+            <th>시간</th>
+            <th>정원</th>
+            <th>상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>필기</td>
+            <td>대전 운전면허시험장</td>
+            <td>2026-05-21</td>
+            <td>10:00</td>
+            <td>8</td>
+            <td><span class="state progress">접수가능</span></td>
+        </tr>
+        <tr>
+            <td>기능</td>
+            <td>대전 운전면허시험장</td>
+            <td>2026-05-22</td>
+            <td>13:10</td>
+            <td>6</td>
+            <td><span class="state progress">접수가능</span></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:src="@{/js/admin-dashboard.js}"></script>
+</body>
+</html>

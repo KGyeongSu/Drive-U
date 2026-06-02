@@ -11,10 +11,10 @@ public interface VideoProgressRepository extends JpaRepository<VideoProgress, Lo
             Long userSeq,
             String memberType);
 
-    Optional<VideoProgress> findByUserSeqAndMemberTypeAndCourse_CourseId(
+    Optional<VideoProgress> findByUserSeqAndMemberTypeAndCourse_CourseType(
             Long userSeq,
             String memberType,
-            Long courseId
+            String courseType
     );
 
     boolean existsByUserSeqAndMemberTypeAndCourse_CourseTypeAndFinalCompletedYn(

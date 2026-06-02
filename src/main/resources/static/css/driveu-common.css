@@ -600,6 +600,10 @@ button, input, select, textarea {
     font-weight: 800;
     color: #111827;
 }
+.quiz-item {
+    margin-top:12px;
+    margin-bottom: 50px;
+}
 
 .quiz-question {
     margin-bottom: 16px;
@@ -617,7 +621,6 @@ button, input, select, textarea {
     border: 1px solid #dbeafe;
     background: #f8fafc;
     color: #111827;
-    font-weight: 700;
     text-align: left;
     cursor: pointer;
 }
@@ -628,9 +631,22 @@ button, input, select, textarea {
     font-weight: 800;
 }
 
-.quiz-option:hover {
-    background: #eaf2ff;
+.quiz-option.disabled {
+   cursor:default;
+}
+
+.quiz-option.correct {
+    cursor:default;
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #166534;
+    font-weight: 800;
+}
+
+
+.quiz-box .quiz-option:not(:disabled):hover {
     border-color: #2563eb;
+    background-color: #eff6ff;
 }
 
 .quiz-message {
@@ -646,12 +662,14 @@ button, input, select, textarea {
     color: #dc2626;
 }
 .quiz-explanation {
-    margin-top: 12px;
+    margin-top: 16px;
     padding: 14px 16px;
     border-radius: 12px;
     background: #f8fafc;
     border: 1px solid #dbeafe;
-    color: #374151;
+
+    font-weight: 700;
+    color: #2563eb;
     line-height: 1.6;
 }
 
@@ -1082,7 +1100,7 @@ button, input, select, textarea {
 .learn-video-card,
 .map-panel,
 .center-list {
-    padding: 24px;
+    padding: 20px;
 }
 
 .chapter-panel .chapter {
@@ -1592,7 +1610,7 @@ button, input, select, textarea {
 .summary-grid {
     margin-bottom: 48px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 16px;
 }
 
@@ -2356,4 +2374,10 @@ button:disabled {
     flex-shrink: 0;
     width: 250px;
     justify-content: flex-end;
+}
+/* 교통안전교육 완료 후 퀴즈 보기 disabled 전용 */
+.quiz-box .quiz-option:disabled {
+    opacity: 1;
+    cursor: default;
+    background-color: #f8fafc;
 }
