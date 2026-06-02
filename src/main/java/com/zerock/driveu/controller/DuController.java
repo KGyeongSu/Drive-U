@@ -2,7 +2,6 @@ package com.zerock.driveu.controller;
 
 import com.zerock.driveu.domain.VideoChapter;
 import com.zerock.driveu.dto.AuthUserDTO;
-import com.zerock.driveu.repository.ChapterProgressRepository;
 import com.zerock.driveu.service.DuService;
 import com.zerock.driveu.service.EligibilityService;
 import lombok.RequiredArgsConstructor;
