@@ -78,7 +78,7 @@
             <div class="mega-column">
                 <a th:href="@{/drive-u/userInfo/noticeHome}">공지사항</a>
                 <a th:href="@{/drive-u/userInfo/questionHome}">문의사항</a>
-                <a th:href="@{/drive-u/userInfo/law}">최신법규</a>
+                <a th:href="@{/drive-u/userInfo/lawsHome}">최신법규</a>
                 <a th:href="@{/drive-u/userInfo/location}">길 안내</a>
             </div>
         </div>
@@ -176,7 +176,7 @@
                            th:classappend="${currentPage == 'noticeHome'} ? ' selected'">공지사항</a></li>
                     <li><a th:href="@{/drive-u/userInfo/questionHome}"
                            th:classappend="${currentPage == 'questionHome'} ? ' selected'">문의사항</a></li>
-                    <li><a th:href="@{/drive-u/userInfo/law}" th:classappend="${currentPage == 'law'} ? ' selected'">최신법규</a>
+                    <li><a th:href="@{/drive-u/userInfo/lawsHome}" th:classappend="${currentPage == 'lawsHome'} ? ' selected'">최신법규</a>
                     </li>
                     <li><a th:href="@{/drive-u/userInfo/location}"
                            th:classappend="${currentPage == 'location'} ? ' selected'">길 안내</a></li>
