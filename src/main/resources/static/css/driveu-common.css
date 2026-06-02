@@ -2042,8 +2042,23 @@ button, input, select, textarea {
     padding: 12px 15px;
     border-radius: 12px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #e0e0e0;
     transition: all 0.2s ease;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-item:hover {
+    background-color: #f9f9f9;
+}
+
+.news-item.active {
+    background-color: #eef4ff;
+    border-left: 3px solid #0056b3;
 }
 
 .news-date {

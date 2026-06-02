@@ -78,7 +78,7 @@
 
                         <button type="button"
                                 class="outline-btn"
-                                onclick="confirmDelete(this)">문의 삭제</button>
+                                onclick="confirmDelete('/drive-u/userInfo/questionRemove', 'questionForm')">문의 삭제</button>
                     </th:block>
 
                     <a href="/drive-u/userInfo/questionHome" class="outline-btn">목록으로</a>
@@ -92,6 +92,12 @@
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script th:src="@{/js/pagination.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const hasAnswer = /*[[${questionDetail != null and questionDetail.answer != null}]]*/ false;
+    /*]]>*/
+</script>
 
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>

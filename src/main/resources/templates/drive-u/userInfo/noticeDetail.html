@@ -22,7 +22,7 @@
 
             <form id="noticeForm"
                   th:action="${noticeDetail == null ? '/drive-u/userInfo/noticeHome/noticeRegister' : '/drive-u/userInfo/noticeHome/noticeModify'}"
-                  method="post" enctype="multipart/form-data" class="form-box" onsubmit="return syncFilesBeforeSubmit()">
+                  method="post" enctype="multipart/form-data" class="form-box" onsubmit="return validateAndSubmit()">
 
                 <input type="hidden" name="id" th:if="${noticeDetail != null}" th:value="${noticeDetail.id}">
 
@@ -31,10 +31,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span>제목</span>
 
-                            <div th:if="${noticeDetail != null and noticeDetail.files != null and !noticeDetail.files.isEmpty()}" style="display: flex; gap: 10px;">
+                            <div th:if="${noticeDetail != null and noticeDetail.files != null and !noticeDetail.files.isEmpty() and !#authorization.expression('hasRole(''ADMIN'')')}" style="display: flex; gap: 10px;">
                                 <a th:each="file : ${noticeDetail.files}"
                                    th:href="@{${file.fileUrl}}"
-                                   th:text="'📎 ' + ${file.fileName}"
+                                   th:text="' 📄 ' + ${file.fileName}"
                                    style="font-size: 0.85em; color: #007bff; text-decoration: none; border: 1px solid #007bff; padding: 4px 8px; border-radius: 4px;"
                                    onmouseover="this.style.backgroundColor='#e7f1ff'"
                                    onmouseout="this.style.backgroundColor='transparent'">
@@ -77,8 +77,8 @@
                             type="submit" class="outline-btn">공지 등록</button>
 
                     <th:block th:if="${#authorization.expression('hasRole(''ADMIN'')') and noticeDetail != null}">
-                        <button type="submit" class="outline-btn">공지 수정</button>
-                        <button type="button" class="outline-btn" onclick="confirmDelete()">공지 삭제</button>
+                        <button type="submit" id="modifyBtn" class="outline-btn">공지 수정</button>
+                        <button type="button" class="outline-btn" onclick="confirmDelete('/drive-u/userInfo/noticeHome/noticeDelete', 'noticeForm')">공지 삭제</button>
                     </th:block>
 
                     <a href="/drive-u/userInfo/noticeHome" class="outline-btn">목록으로</a>
@@ -93,6 +93,11 @@
 
 <script th:src="@{/js/pagination.js}"></script>
 
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const filesFromThymeleaf = /*[[${noticeDetail != null ? noticeDetail.files : '[]'}]]*/ [];
+    /*]]>*/
+</script>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>
