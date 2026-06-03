@@ -1,4 +1,4 @@
-const DU_TEST_MODE = true;
+const DU_TEST_MODE = false;
 
 let player;
 let maxWatchedSec = 0;
@@ -107,6 +107,7 @@ function showQuiz() {
     if (quizBox) {
         quizBox.style.display = 'block';
     }
+
 }
 
 function forceCompleteForTest() {
@@ -144,165 +145,287 @@ function resetChapter() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    if (DU_TEST_MODE) {
-        setTimeout(function () {
-            forceCompleteForTest();
-        }, 500);
-    }
-    const options = document.querySelectorAll('.quiz-option');
+    const quizBox = document.getElementById('quizBox');
+    const quizItems = document.querySelectorAll('.quiz-item');
+    const quizOptions = document.querySelectorAll('.quiz-option');
+
+    const prevQuizBtn = document.getElementById('prevQuizBtn');
+    const nextQuizBtn = document.getElementById('nextQuizBtn');
+    const submitQuizBtn = document.getElementById('submitQuizBtn');
+
+    const quizCurrentNo = document.getElementById('quizCurrentNo');
     const message = document.getElementById('quizMessage');
-    const nextBtn = document.getElementById('nextChapterBtn');
-    const completeBtn = document.getElementById('completeBtn');
-    const retryBtn = document.getElementById('retryChapterBtn');
 
-    const selectedAnswers = {};
+    const nextChapterBtn = document.getElementById('nextChapterBtn');
+    const retryBtn = document.getElementById('retryBtn');
+    const chapterIdInput = document.getElementById('currentChapterId');
 
-    options.forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
+    if (!quizBox || quizItems.length === 0) {
+        return;
+    }
 
-            if (!videoCompleted) {
-                message.textContent = '영상을 끝까지 시청한 후 퀴즈를 풀 수 있습니다.';
-                message.className = 'quiz-message wrong';
+    const duCompleted = String(quizBox.dataset.completed).toLowerCase() === 'true';
+
+    let currentQuizIndex = 0;
+
+    // quizId별 선택한 choiceId 저장
+    const selectedAnswerMap = {};
+
+    function getCurrentQuizItem() {
+        return quizItems[currentQuizIndex];
+    }
+
+    function isCurrentQuizSelected() {
+        const currentItem = getCurrentQuizItem();
+
+        if (!currentItem) {
+            return false;
+        }
+
+        return currentItem.querySelector('.quiz-option.selected') !== null;
+    }
+
+    function isLastQuiz() {
+        return currentQuizIndex === quizItems.length - 1;
+    }
+
+    function updateNavButtons() {
+        const selected = isCurrentQuizSelected();
+        const last = isLastQuiz();
+
+        if (prevQuizBtn) {
+            prevQuizBtn.disabled = currentQuizIndex === 0;
+        }
+
+        if (nextQuizBtn) {
+            nextQuizBtn.style.display = last ? 'none' : 'inline-flex';
+
+            if (duCompleted) {
+                nextQuizBtn.disabled = last;
+            } else {
+                nextQuizBtn.disabled = !selected;
+            }
+        }
+
+        if (submitQuizBtn) {
+            if (duCompleted) {
+                submitQuizBtn.style.display = 'none';
+                submitQuizBtn.disabled = true;
+            } else {
+                submitQuizBtn.style.display = last ? 'inline-flex' : 'none';
+                submitQuizBtn.disabled = !selected;
+            }
+        }
+    }
+    function showQuiz(index) {
+        quizItems.forEach(function (item, itemIndex) {
+            item.style.display = itemIndex === index ? 'block' : 'none';
+        });
+
+        if (quizCurrentNo) {
+            quizCurrentNo.textContent = index + 1;
+        }
+
+        updateNavButtons();
+    }
+
+    function getSelectedAnswers() {
+        const answers = [];
+
+        quizItems.forEach(function (item) {
+            const selectedOption = item.querySelector('.quiz-option.selected');
+
+            if (!selectedOption) {
                 return;
             }
 
-            const quizId = button.dataset.quizId;
-            const choiceId = button.dataset.choiceId;
-
-            selectedAnswers[quizId] = choiceId;
-
-            const sameQuizButtons = document.querySelectorAll(
-                `.quiz-option[data-quiz-id="${quizId}"]`
-            );
-
-            sameQuizButtons.forEach(function (option) {
-                option.classList.remove('selected');
+            answers.push({
+                quizId: Number(selectedOption.dataset.quizId),
+                choiceId: Number(selectedOption.dataset.choiceId)
             });
+        });
 
-            button.classList.add('selected');
+        return answers;
+    }
 
-            const quizItems = document.querySelectorAll('.quiz-item');
-            const totalQuizCount = quizItems.length;
-            const selectedQuizCount = Object.keys(selectedAnswers).length;
+    function markSelectedOption(button) {
+        const currentItem = button.closest('.quiz-item');
 
-            if (selectedQuizCount < totalQuizCount) {
-                message.textContent = `${selectedQuizCount}/${totalQuizCount}문제를 선택했습니다.`;
-                message.className = 'quiz-message';
+        if (!currentItem) {
+            return;
+        }
+
+        currentItem.querySelectorAll('.quiz-option').forEach(function (option) {
+            option.classList.remove('selected');
+        });
+
+        button.classList.add('selected');
+
+        selectedAnswerMap[button.dataset.quizId] = button.dataset.choiceId;
+
+        if (message) {
+            message.textContent = '';
+            message.className = 'quiz-message';
+        }
+
+        updateNavButtons();
+    }
+
+    quizOptions.forEach(function (button) {
+        button.addEventListener('click', function () {
+            if (button.disabled) {
                 return;
             }
 
-            submitQuizAnswers();
+            markSelectedOption(button);
         });
     });
 
-    function submitQuizAnswers() {
-        const chapterId = document.getElementById('currentChapterId').value;
-        const memberSeq = document.getElementById('currentMemberSeq').value;
+    if (prevQuizBtn) {
+        prevQuizBtn.addEventListener('click', function () {
+            if (currentQuizIndex <= 0) {
+                return;
+            }
 
-        const answers = Object.keys(selectedAnswers).map(function (quizId) {
-            return {
-                quizId: Number(quizId),
-                choiceId: Number(selectedAnswers[quizId])
-            };
+            currentQuizIndex--;
+            showQuiz(currentQuizIndex);
         });
-
-        fetch('/drive-u/du/quiz/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chapterId: Number(chapterId),
-                answers: answers
-            })
-        })
-            .then(function (response) {
-                console.log('submit status:', response.status);
-                console.log('submit redirected:', response.redirected);
-                console.log('submit url:', response.url);
-
-                if (response.redirected) {
-                    throw new Error('로그인 또는 권한 문제로 다른 페이지로 이동되었습니다.');
-                }
-
-                const contentType = response.headers.get('content-type');
-
-                if (!contentType || !contentType.includes('application/json')) {
-                    return response.text().then(function (text) {
-                        console.log('JSON이 아닌 응답:', text);
-                        throw new Error('서버가 JSON이 아닌 HTML을 반환했습니다.');
-                    });
-                }
-
-                if (!response.ok) {
-                    throw new Error('퀴즈 제출 중 오류가 발생했습니다.');
-                }
-
-                return response.json();
-            })
-            .then(function (result) {
-                console.log('passed:', result.passed);
-                console.log('nextBtn:', nextBtn);
-                console.log('next href:', nextBtn ? nextBtn.href : 'nextBtn 없음');
-                console.log('next class:', nextBtn ? nextBtn.className : 'nextBtn 없음');
-
-                message.textContent = result.message;
-                message.className = result.passed
-                    ? 'quiz-message correct'
-                    : 'quiz-message wrong';
-
-
-                showExplanations();
-                markCorrectChoices();
-
-                if (result.passed) {
-                    if (nextBtn) {
-                        nextBtn.classList.remove('disabled');
-                    }
-
-                    if (completeBtn) {
-                        completeBtn.classList.remove('disabled');
-                    }
-
-                    if (retryBtn) {
-                        retryBtn.classList.add('disabled');
-                    }
-
-                    options.forEach(function (option) {
-                        option.disabled = true;
-                    });
-                } else {
-                    message.textContent = result.message || '오답입니다. 해설을 확인한 뒤 이 챕터를 다시 시청하세요.';
-                    message.className = 'quiz-message wrong';
-
-                    showExplanations();
-                    markCorrectChoices();
-
-                    if (nextBtn) {
-                        nextBtn.classList.add('disabled');
-                    }
-
-                    if (completeBtn) {
-                        completeBtn.classList.add('disabled');
-                    }
-
-                    if (retryBtn) {
-                        retryBtn.classList.remove('disabled');
-                    }
-
-                    options.forEach(function (option) {
-                        option.disabled = true;
-                    });
-                }
-            })
-            .catch(function (error) {
-                message.textContent = error.message;
-                message.className = 'quiz-message wrong';
-            });
     }
-});
 
+    if (nextQuizBtn) {
+        nextQuizBtn.addEventListener('click', function () {
+            if (!duCompleted && !isCurrentQuizSelected()) {
+                if (message) {
+                    message.textContent = '답안을 선택한 후 다음 문제로 이동할 수 있습니다.';
+                    message.className = 'quiz-message wrong';
+                }
+                return;
+            }
+
+            if (currentQuizIndex < quizItems.length - 1) {
+                currentQuizIndex++;
+                showQuiz(currentQuizIndex);
+            }
+        });
+    }
+
+    if (submitQuizBtn) {
+        submitQuizBtn.addEventListener('click', function () {
+            const answers = getSelectedAnswers();
+
+            if (answers.length !== quizItems.length) {
+                if (message) {
+                    message.textContent = '모든 문제의 답안을 선택해 주세요.';
+                    message.className = 'quiz-message wrong';
+                }
+                return;
+            }
+
+            const chapterId = chapterIdInput ? Number(chapterIdInput.value) : 0;
+
+            submitQuizBtn.disabled = true;
+
+            fetch('/drive-u/du/quiz/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chapterId: chapterId,
+                    answers: answers
+                })
+            })
+                .then(function (response) {
+                    const contentType = response.headers.get('content-type');
+
+                    if (response.redirected) {
+                        throw new Error('로그인 또는 권한 문제로 다른 페이지로 이동되었습니다.');
+                    }
+
+                    if (!contentType || !contentType.includes('application/json')) {
+                        return response.text().then(function () {
+                            throw new Error('서버가 JSON이 아닌 응답을 반환했습니다.');
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then(function (result) {
+                    if (message) {
+                        message.textContent = result.message;
+                    }
+
+                    if (result.passed) {
+                        if (message) {
+                            message.className = 'quiz-message correct';
+                        }
+
+                        quizOptions.forEach(function (option) {
+                            option.disabled = true;
+                        });
+
+                        if (nextChapterBtn) {
+                            nextChapterBtn.classList.remove('disabled');
+                        }
+
+                        if (retryBtn) {
+                            retryBtn.classList.add('disabled');
+                        }
+
+                        if (prevQuizBtn) {
+                            prevQuizBtn.disabled = true;
+                        }
+
+                        if (nextQuizBtn) {
+                            nextQuizBtn.disabled = true;
+                        }
+
+                        if (submitQuizBtn) {
+                            submitQuizBtn.style.display = 'none';
+                        }
+                    } else {
+                        if (message) {
+                            message.className = 'quiz-message wrong';
+                        }
+
+                        if (retryBtn) {
+                            retryBtn.classList.remove('disabled');
+                        }
+
+                        if (nextChapterBtn) {
+                            nextChapterBtn.classList.add('disabled');
+                        }
+
+                        if (submitQuizBtn) {
+                            submitQuizBtn.disabled = false;
+                        }
+                    }
+                })
+                .catch(function (error) {
+                    if (message) {
+                        message.textContent = error.message;
+                        message.className = 'quiz-message wrong';
+                    }
+
+                    if (submitQuizBtn) {
+                        submitQuizBtn.disabled = false;
+                    }
+                });
+        });
+    }
+
+    if (retryBtn) {
+        retryBtn.addEventListener('click', function () {
+            if (retryBtn.classList.contains('disabled')) {
+                return;
+            }
+
+            location.reload();
+        });
+    }
+
+    showQuiz(currentQuizIndex);
+});
 function showExplanations() {
     const explanations = document.querySelectorAll('.quiz-explanation');
 
