@@ -226,20 +226,47 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // 파일 업로드
-let fileListArray = [];
+// 함수 내부에서 쓰이는 식별자는 공통으로 사용해도 무관
+// 각 데이터용 식별자는 구분이 필요 -> 각 html에서 선언해 넘겨준 것 활용 (데이터 오염 방지)
 let initialFileCount = 0;
 let initialTitle = "";
 let initialContent = "";
-let deleteIdsArray = [];
 
 // 파일 등록
 // 폼 제출 시 실행할 함수
-function syncFilesBeforeSubmit() {
+function validateAndSubmit(formId, fileListArray, deleteIdsArray) {
+
+    if (!validateForm()) return false;
+
+    return syncFilesBeforeSubmit(formId, fileListArray, deleteIdsArray);
+
+}
+
+// 필수 입력 체크 함수
+function validateForm() {
+    const title = document.getElementById("title").value.trim();
+    const content = document.getElementById("content").value.trim();
+
+    if (!title) {
+        Swal.fire({icon: 'warning', title: '알림', text: '제목을 입력해 주세요.'});
+        return false;
+    }
+    if (!content) {
+        Swal.fire({icon: 'warning', title: '알림', text: '내용을 입력해 주세요.'});
+        return false;
+    }
+    return true;
+}
+
+// 폼 제출 전 실제 등록 or 수정 파일, 삭제 파일 아이디 넣어주기
+function syncFilesBeforeSubmit(formId, fileListArray, deleteIdsArray) {
 
     const fileInput = document.getElementById('fileInput');
     const dataTransfer = new DataTransfer();
     // 수정 시 삭제 대상
-    const form = document.getElementById('noticeForm');
+    const form = document.getElementById(formId);
+
+    if (!form || !fileInput) return false;
 
     deleteIdsArray.forEach(id => {
 
@@ -262,75 +289,33 @@ function syncFilesBeforeSubmit() {
 
 }
 
-// 폼 제출 프로세스 제어
-function validateAndSubmit() {
+function initModifyCheck(renderCallback, fileListArray) {
 
-    if (!validateForm()) return false;
-    return syncFilesBeforeSubmit();
-
-}
-
-// 필수 입력 체크 함수
-function validateForm() {
-    const title = document.getElementById("title").value.trim();
-    const content = document.getElementById("content").value.trim();
-
-    if (!title) {
-        Swal.fire({icon: 'warning', title: '알림', text: '제목을 입력해 주세요.'});
-        return false;
-    }
-    if (!content) {
-        Swal.fire({icon: 'warning', title: '알림', text: '내용을 입력해 주세요.'});
-        return false;
-    }
-    return true;
-}
-
-// 파일 수정
-document.addEventListener("DOMContentLoaded", function () {
     const titleInput = document.getElementById("title");
     const contentTextarea = document.getElementById("content");
-    const fileInput = document.getElementById("fileInput");
     const modifyBtn = document.getElementById("modifyBtn");
 
     if (titleInput && contentTextarea) {
         initialTitle = titleInput.value;
         initialContent = contentTextarea.value;
 
-        titleInput.addEventListener("input", checkChange);
-        contentTextarea.addEventListener("input", checkChange);
+        // 리스너 등록 시 현재 페이지의 배열 상태를 반영하기 위해 래핑
+        // title, content, file 모든 변화 체크하기 위함
+        titleInput.addEventListener("input", () => checkChange(fileListArray));
+        contentTextarea.addEventListener("input", () => checkChange(fileListArray));
     }
 
     if (modifyBtn) {
-
-        if (typeof hasAnswer !== 'undefined' && hasAnswer) {
-            modifyBtn.disabled = true;
-        } else {
-            modifyBtn.disabled = true; // 변경 전까지는 비활성화
-        }
-
+        modifyBtn.disabled = true;
     }
+}
 
-    if (fileInput) {
-        fileInput.addEventListener("change", handleFileChange);
-    }
-
-    // 문서 준비되면 기존 파일 복원 로직 실행
-    loadExistingFiles();
-
-});
-
-// 페이지 로드 시 기존 파일 정보를 진짜 File 객체로 복원하는 함수
-console.log("js에서 확인한 파일:", filesFromThymeleaf);
-
-async function loadExistingFiles() {
+async function loadExistingFiles(fileListArray, renderCallback) {
 
     const existingFiles = (typeof filesFromThymeleaf !== 'undefined') ? filesFromThymeleaf : [];
     console.log("로드할 파일 목록:", existingFiles);
 
     if (!existingFiles ||existingFiles.length === 0) return;
-
-    fileListArray = [];
 
     existingFiles.forEach(f => {
         const fileObj = {
@@ -345,13 +330,14 @@ async function loadExistingFiles() {
 
     initialFileCount = fileListArray.length;
 
-    renderFileList();
+    // 공용이라 어디에 렌더링시킬 지 모름 -> 각 페이지에서 본인을 넣어서 다시 호출
+    renderCallback(fileListArray);
 
 }
 
 const isAnswered = (typeof hasAnswer !== 'undefined') ? hasAnswer : false;
 
-function checkChange() {
+function checkChange(fileListArray) {
     const titleInput = document.getElementById("title");
     const contentTextarea = document.getElementById("content");
     const modifyBtn = document.getElementById("modifyBtn");
@@ -378,7 +364,7 @@ function checkChange() {
 }
 
 // 새 파일 선택 시 처리 함수
-function handleFileChange(targetOrEvent) {
+function handleFileChange(targetOrEvent, fileListArray, renderCallback) {
     const input = targetOrEvent.target ? targetOrEvent.target : targetOrEvent;
     const files = Array.from(input.files);
 
@@ -398,11 +384,14 @@ function handleFileChange(targetOrEvent) {
         fileListArray.push(file);
     });
 
-    renderFileList();
+    // 공용으로 써서 어디에다가 html rendering 하라고 알려주는 목적
+    // 각 html에서 해당 부분을 넘겨줌
+    renderCallback();
+    checkChange(fileListArray);
     input.value = '';
 }
 
-function renderFileList() {
+function renderFileList(fileListArray) {
     const fileListDiv = document.getElementById('fileList');
     if (!fileListDiv) return;
 
@@ -410,7 +399,6 @@ function renderFileList() {
 
     if (fileListArray.length === 0) {
         fileListDiv.innerHTML = '<span style="color: #999; font-size: 0.9em;">파일을 클릭하여 선택하세요</span>';
-        checkChange();
         return;
     }
 
@@ -429,21 +417,24 @@ function renderFileList() {
             <span style="font-size: 0.95em; color: #333; font-weight: 500;">
                 <span style="color: ${iconColor}; margin-right: 5px;">${icon}</span> ${file.name}
             </span>
-            <span onclick="removeFile(event, ${index})" 
+            <span onclick="handleRemove(event, ${index})" 
                   style="color: red; cursor: pointer; font-weight: bold; padding: 0 10px; font-size: 1.1em;">X</span>
         `;
         fileListDiv.appendChild(fileItem);
     });
 
-    checkChange();
 }
 
 // 파일 삭제 함수
-function removeFile(event, index) {
+// 화면에서 파일 삭제하면 다시 그릴 수 있도록 callBack 함수 추가
+function removeFile(event, index, fileListArray, deleteIdsArray, renderCallback) {
 
     event.stopPropagation();
     event.preventDefault();
 
+    // 화면 갱신 + 새 파일 전송용
+    // 파일 등록이나 수정 시 사용자가 선택했다 취소할 가능성
+    // X 표시 누르면 해당 인덱스랑 같이 전달됨 -> 삭제 대상 파일임 앎
     const file = fileListArray[index];
 
     if (file.isExisting) {
@@ -452,8 +443,11 @@ function removeFile(event, index) {
 
     }
 
+    // 파일 리스트에서 해당 인덱스 1개 out
     fileListArray.splice(index, 1);
-    renderFileList();
+    renderCallback();
+
+    checkChange(fileListArray);
 
 }
 

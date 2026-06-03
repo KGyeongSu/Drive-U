@@ -67,8 +67,13 @@ public class LawsService {
                 .law_content(lawsRequestDTO.getContent())
                 .build();
 
-        if (files != null && !files.isEmpty()) {
-            List<UploadFileDTO> result = fileUtils.uploadFiles(files, "laws");
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(files);
+
+        // 업로드 진행
+        if (!validFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "laws");
 
             result.forEach(r -> {
                 laws.addFile(LawsFile.builder()
@@ -83,32 +88,45 @@ public class LawsService {
 
     // 법규 수정
     @Transactional
-    public void updateLaws(Long id, LawsRequestDTO lawsRequestDTO, List<MultipartFile> files) throws IOException {
+    public void updateLaws(Long id, LawsRequestDTO lawsRequestDTO, List<MultipartFile> newFiles, List<Long> deleteIds) throws IOException {
         LawsBoard l = lawsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 법규를 찾을 수 없습니다."));
 
-        List<LawsFile> newFile = new ArrayList<>();
-
-        if (files != null && !files.isEmpty()) {
-            List<String> oldFile = l.getFileList().stream()
-                    .map(LawsFile::getFilePath)
+        if (deleteIds != null && !deleteIds.isEmpty()) {
+            List<LawsFile> removeFile = l.getFileList().stream()
+                    .filter(f -> deleteIds.contains(f.getId()))
                     .collect(Collectors.toList());
 
-            List<UploadFileDTO> result = fileUtils.uploadFiles(files, "laws");
+            List <String> removeFilePath = removeFile.stream()
+                    .map(LawsFile :: getFilePath).collect(Collectors.toList());
 
-            newFile = result.stream()
-                    .map(r -> LawsFile.builder()
-                            .fileName(r.getFileName())
-                            .filePath(r.getFilePath())
-                            .uuid(r.getUuid())
-                            .build())
-                    .collect(Collectors.toList());
+            fileUtils.deleteFile(removeFilePath);
 
-            l.updateLaws(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent(), newFile);
-            fileUtils.deleteFile(oldFile);
-        } else {
-            l.updateTextOnly(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent());
+            l.getFileList().removeAll(removeFile);
+
         }
+
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(newFiles);
+
+        if (!validFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "law");
+
+            result.forEach(r -> {
+
+                l.addFile(LawsFile.builder()
+                        .fileName(r.getFileName())
+                        .filePath(r.getFilePath())
+                        .uuid(r.getUuid())
+                        .build());
+
+            });
+
+        }
+
+        l.updateTextOnly(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent());
+
     }
 
     // 법규 삭제
@@ -123,6 +141,20 @@ public class LawsService {
 
         lawsRepository.delete(laws);
         fileUtils.deleteFile(target);
+    }
+
+    private List <MultipartFile> checkValidFile (List<MultipartFile> files) {
+
+        if (files == null) {
+
+            return new ArrayList<>();
+
+        }
+
+        return files.stream()
+                .filter(f -> f != null && !f.isEmpty() && f.getOriginalFilename() != null && !f.getOriginalFilename().isEmpty())
+                .collect(Collectors.toList());
+
     }
 
 }

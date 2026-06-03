@@ -89,6 +89,8 @@ public class FileUtils {
         // Path : 파일 경로, Paths : 객체 생성
         Path path = Paths.get(rootPath, filePath);
 
+        // Files.newInputStream(path) : 파일 내용 읽기 위한 데이터 통로 엶
+        // resource : 해당 통로를 0, 1로 된 데이터 덩어리로 서버 메모리에 전달
         return new InputStreamResource(Files.newInputStream(path));
 
     }

@@ -22,7 +22,7 @@
 
             <form id="noticeForm"
                   th:action="${noticeDetail == null ? '/drive-u/userInfo/noticeHome/noticeRegister' : '/drive-u/userInfo/noticeHome/noticeModify'}"
-                  method="post" enctype="multipart/form-data" class="form-box" onsubmit="return validateAndSubmit()">
+                  method="post" enctype="multipart/form-data" class="form-box" onsubmit="return validateAndSubmit('noticeForm', noticeFileListArray, noticeDeleteIdsArray)">
 
                 <input type="hidden" name="id" th:if="${noticeDetail != null}" th:value="${noticeDetail.id}">
 
@@ -58,7 +58,7 @@
                         </label>
 
                         <input type="file" name="files" id="fileInput" multiple accept=".pdf,.doc,.docx,.hwp"
-                               style="display: none;" onchange="handleFileChange(this)">
+                               style="display: none;" onchange="handleFileChange(this, noticeFileListArray, renderNoticeList)">
 
                         <small style="color: gray;">* 최대 3개까지 업로드 가능합니다.</small>
                     </label>
@@ -97,6 +97,39 @@
     /*<![CDATA[*/
     const filesFromThymeleaf = /*[[${noticeDetail != null ? noticeDetail.files : '[]'}]]*/ [];
     /*]]>*/
+</script>
+
+<script>
+    // 이 페이지 전용 데이터
+    let noticeFileListArray = [];
+    let noticeDeleteIdsArray = [];
+
+    // 공용 렌더링에 내 배열을 넣어서 호출하는 내 전용 함수
+    function renderNoticeList(list) {
+
+        const currentList = list || noticeFileListArray;
+
+        renderFileList(currentList);
+
+    }
+
+    // X 버튼 누를 때 실행되는 전용 함수
+    function handleRemove(event, index) {
+
+        removeFile(event, index, noticeFileListArray, noticeDeleteIdsArray, renderNoticeList);
+
+    }
+
+    // DOM 로드 완료 시 초기화 및 파일 복원 실행
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // 기존 파일 있으면 복원하고 renderNoticeList 호출
+        loadExistingFiles(noticeFileListArray, renderNoticeList);
+
+        // 수정 모드일 때 실시간 변경 감지 리스너 초기화
+        initModifyCheck(renderNoticeList, noticeFileListArray);
+
+    });
 </script>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
