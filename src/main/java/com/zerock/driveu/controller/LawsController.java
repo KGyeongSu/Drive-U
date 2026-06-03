@@ -78,9 +78,9 @@ public class LawsController {
     }
 
     @PostMapping("/lawsModify")
-    public String modify(@RequestParam("id") Long id, LawsRequestDTO lawsRequestDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files, RedirectAttributes redirectAttributes) throws IOException {
+    public String modify(@RequestParam("id") Long id, LawsRequestDTO lawsRequestDTO, @RequestParam(value = "files", required = false) List<MultipartFile> newFiles, @RequestParam(value = "deleteIds", required = false) List<Long> deleteIds, RedirectAttributes redirectAttributes) throws IOException {
 
-        lawsService.updateLaws(id, lawsRequestDTO, files);
+        lawsService.updateLaws(id, lawsRequestDTO, newFiles, deleteIds);
 
         redirectAttributes.addFlashAttribute("successMsg", "법규 수정이 완료되었습니다.");
         redirectAttributes.addAttribute("id", id);

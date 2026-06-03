@@ -46,15 +46,6 @@ public class LawsBoard {
         file.setLawsId(this);
     }
 
-    public void updateLaws(String law_title, String law_content, List<LawsFile> files) {
-        this.law_title = law_title;
-        this.law_content = law_content;
-        this.fileList.clear();
-        for (LawsFile file : files) {
-            addFile(file);
-        }
-    }
-
     public void updateTextOnly(String law_title, String law_content) {
         this.law_title = law_title;
         this.law_content = law_content;

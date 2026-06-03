@@ -303,7 +303,7 @@ async function showCenterPredict (center) {
 
     }
 
-    // 🎨 UI 렌더링용 컬러 및 텍스트 맵
+    // UI 렌더링용 컬러 및 텍스트 맵
     const colorMap = { 'RED': '#e11d48', 'YELLOW': '#eab308', 'GREEN': '#22c55e', 'GRAY': '#9ca3af' };
     const textMap = { 'RED': '혼잡', 'YELLOW': '보통', 'GREEN': '원활', 'GRAY': '마감' };
 

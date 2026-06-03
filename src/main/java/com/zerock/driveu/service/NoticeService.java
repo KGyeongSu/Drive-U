@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,10 +106,13 @@ public class NoticeService {
                 .content(noticeRequestDTO.getContent())
                 .build();
 
-        // 파일 저장 및 정보 가져오기
-        if (files != null && !files.isEmpty()) {
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(files);
 
-            List <UploadFileDTO> result = fileUtils.uploadFiles(files, "notice");
+        // 파일 저장 및 정보 가져오기
+        if (!validFiles.isEmpty()) {
+
+            List <UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "notice");
 
             // dto 정보 entity에 세팅
             result.forEach(r -> {
@@ -154,10 +158,13 @@ public class NoticeService {
 
         }
 
-        // 파일이 새로 들어온 경우
-        if (newFiles != null && !newFiles.isEmpty()) {
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(newFiles);
 
-            List<UploadFileDTO> result = fileUtils.uploadFiles(newFiles, "notice");
+        // 파일이 새로 들어온 경우
+        if (!validFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "notice");
 
             result.forEach(r -> {
                 n.addFile(NoticeFile.builder()
@@ -190,6 +197,20 @@ public class NoticeService {
 
         // 실제 파일 삭제
         fileUtils.deleteFile(target);
+
+    }
+
+    private List <MultipartFile> checkValidFile (List<MultipartFile> files) {
+
+        if (files == null) {
+
+            return new ArrayList<>();
+
+        }
+
+        return files.stream()
+                .filter(f -> f != null && !f.isEmpty() && f.getOriginalFilename() != null && !f.getOriginalFilename().isEmpty())
+                .collect(Collectors.toList());
 
     }
 

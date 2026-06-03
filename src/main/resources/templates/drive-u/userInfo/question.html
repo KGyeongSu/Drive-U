@@ -98,7 +98,11 @@
     const hasAnswer = /*[[${questionDetail != null and questionDetail.answer != null}]]*/ false;
     /*]]>*/
 </script>
-
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script th:if="${questionDetail != null}">
+    const fileListArray = [];
+
+    initModifyCheck(() => {}, fileListArray);
+</script>
 </body>
 </html>
