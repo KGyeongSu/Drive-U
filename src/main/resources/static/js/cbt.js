@@ -18,13 +18,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextBtn = document.getElementById("nextBtn");
     const submitBtn = document.getElementById("submitBtn");
 
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultScore = document.getElementById("resultScore");
+    const resultPassText = document.getElementById("resultPassText");
+    const resultTotalCount = document.getElementById("resultTotalCount");
+    const resultCorrectCount = document.getElementById("resultCorrectCount");
+    const resultWrongCount = document.getElementById("resultWrongCount");
+    const resultUnansweredCount = document.getElementById("resultUnansweredCount");
+    const questionResultList = document.getElementById("questionResultList");
+
+    const retryBtn = document.getElementById("retryBtn");
+    const goApplyBtn = document.getElementById("goApplyBtn");
+
     loadQuestions();
 
     function loadQuestions() {
         fetch("/api/cbt/questions/random?count=40")
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("문제 API 호출 실패");
+                    return response.text().then(message => {
+                        throw new Error(message || "문제 API 호출 실패");
+                    });
                 }
                 return response.json();
             })
@@ -44,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error(error);
-                loadingBox.textContent = "문제를 불러오지 못했습니다. API 또는 DB 상태를 확인하세요.";
+                loadingBox.textContent = error.message || "문제를 불러오지 못했습니다.";
             });
     }
 
@@ -52,8 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const question = questions[currentIndex];
 
         questionCounter.textContent = `문제 ${currentIndex + 1} / ${questions.length}`;
+
         if (question.questionType === "MULTIPLE") {
-            questionText.textContent = question.questionText + " (2개 선택)";
+            questionText.textContent = question.questionText;
         } else {
             questionText.textContent = question.questionText;
         }
@@ -77,8 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
         answerList.innerHTML = "";
 
         const savedAnswer = userAnswers[question.questionId] || [];
-
-        // 단일정답은 1개, 복수정답은 2개까지만 선택
         const maxSelectCount = question.questionType === "MULTIPLE" ? 2 : 1;
 
         question.choices.forEach(choice => {
@@ -106,11 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (userAnswers[questionId].length >= maxSelectCount) {
                         this.checked = false;
 
-                        if (maxSelectCount === 1) {
-                            alert("이 문제는 1개만 선택할 수 있습니다.");
-                        } else {
-                            alert("이 문제는 2개까지만 선택할 수 있습니다.");
-                        }
+                        alert(maxSelectCount === 1
+                            ? "이 문제는 1개만 선택할 수 있습니다."
+                            : "이 문제는 2개까지만 선택할 수 있습니다."
+                        );
 
                         return;
                     }
@@ -124,6 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 userAnswers[questionId].sort((a, b) => a - b);
+                console.log("현재 답안:", userAnswers);
             });
 
             label.appendChild(input);
@@ -146,8 +160,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateButtons() {
         prevBtn.disabled = currentIndex === 0;
-        nextBtn.style.display = currentIndex === questions.length - 1 ? "none" : "inline-block";
-        submitBtn.style.display = currentIndex === questions.length - 1 ? "inline-block" : "none";
+
+        if (currentIndex === questions.length - 1) {
+            nextBtn.style.display = "none";
+            submitBtn.style.display = "inline-block";
+        } else {
+            nextBtn.style.display = "inline-block";
+            submitBtn.style.display = "none";
+        }
     }
 
     prevBtn.addEventListener("click", function () {
@@ -169,12 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(questionId => userAnswers[questionId].length > 0)
             .length;
 
-        if (answeredCount < questions.length) {
-            const submitConfirm = confirm(`아직 ${questions.length - answeredCount}문제를 풀지 않았습니다. 그래도 제출할까요?`);
-            if (!submitConfirm) {
-                return;
-            }
-        }
+        const unansweredCount = questions.length - answeredCount;
 
         const submitAnswers = questions.map(question => {
             return {
@@ -184,8 +199,60 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         console.log("제출 답안:", submitAnswers);
-        alert("제출 데이터가 콘솔에 출력되었습니다.");
+
+        fetch("/api/cbt/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                answers: submitAnswers
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(message => {
+                        throw new Error(message || "제출 실패");
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log("채점 결과:", result);
+                showResult(result, unansweredCount);
+            })
+            .catch(error => {
+                console.error(error);
+                alert(error.message);
+            });
     });
+
+    function showResult(result, unansweredCount) {
+        if (timerId) {
+            clearInterval(timerId);
+        }
+
+        const passText = result.passYn === "Y" ? "합격" : "불합격";
+        const realWrongCount = Math.max(result.wrongCount - unansweredCount, 0);
+
+        questionBox.style.display = "none";
+        loadingBox.style.display = "none";
+        resultBox.style.display = "block";
+
+        questionCounter.textContent = "채점 완료";
+        timer.textContent = "시험 종료";
+
+        resultTitle.textContent = "CBT 모의고사 결과";
+        resultScore.textContent = `${result.score}점`;
+        resultPassText.textContent = passText;
+
+        resultTotalCount.textContent = result.totalCount;
+        resultCorrectCount.textContent = result.correctCount;
+        resultWrongCount.textContent = realWrongCount;
+        resultUnansweredCount.textContent = unansweredCount;
+
+        renderQuestionResults(result.questionResults || []);
+    }
 
     function startTimer() {
         timerId = setInterval(function () {
@@ -199,8 +266,62 @@ document.addEventListener("DOMContentLoaded", function () {
             if (remainSeconds <= 0) {
                 clearInterval(timerId);
                 alert("시험 시간이 종료되었습니다.");
-                console.log("시간 종료 답안:", userAnswers);
+                submitBtn.click();
             }
         }, 1000);
     }
+
+    function renderQuestionResults(questionResults) {
+        questionResultList.innerHTML = "";
+
+        questionResults.forEach((item, index) => {
+            const selected = item.selectedChoiceNos || [];
+            const correct = item.correctChoiceNos || [];
+
+            let statusClass = "wrong";
+            let statusText = "오답";
+
+            if (selected.length === 0) {
+                statusClass = "unanswered";
+                statusText = "미풀이";
+            } else if (item.correctYn === "Y") {
+                statusClass = "correct";
+                statusText = "정답";
+            }
+
+            const card = document.createElement("div");
+            card.className = `question-result-card ${statusClass}`;
+
+            card.innerHTML = `
+            <span class="result-label ${statusClass}">${statusText}</span>
+            <h4>문제 ${index + 1}. ${escapeHtml(item.questionText || "")}</h4>
+            <p><strong>내 답:</strong> ${selected.length > 0 ? selected.join(", ") : "선택 안 함"}</p>
+            <p><strong>정답:</strong> ${correct.join(", ")}</p>
+            <p><strong>해설:</strong> ${escapeHtml(item.explanation || "해설이 없습니다.")}</p>
+        `;
+
+            questionResultList.appendChild(card);
+        });
+    }
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    if (retryBtn) {
+        retryBtn.addEventListener("click", function () {
+            location.reload();
+        });
+    }
+
+    if (goApplyBtn) {
+        goApplyBtn.addEventListener("click", function () {
+            location.href = "/drive-u/process/wApply1";
+        });
+    }
+
 });
