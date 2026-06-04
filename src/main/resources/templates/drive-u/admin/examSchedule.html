@@ -3,6 +3,7 @@
 <head th:replace="~{fragments/layout :: head('시험 일정 등록')}"></head>
 <body>
 <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+<link rel="stylesheet" th:href="@{/css/admin-exam-schedule.css}">
 
 <header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
 
@@ -18,10 +19,13 @@
             </div>
         </section>
 
+        <button type="button" id="openCalendarBtn" class="admin-form-card schedule-toolbar-btn">
+            📅 시험 일정 관리
+        </button>
+
         <section class="admin-form-card">
             <div class="section-head">
                 <h2>시험 일정 등록</h2>
-                <span>학과 기능 도로주행</span>
             </div>
 
             <form id="scheduleForm" class="admin-form-grid" th:action="@{/drive-u/admin/examSchedule}" method="post">
@@ -75,6 +79,52 @@
         </section>
     </main>
 </div>
+
+<!-- 일정 달력 모달 -->
+<div id="calendarModal" class="cal-modal-overlay" style="display:none;">
+    <div class="modal-wrap">
+        <div class="cal-modal-box">
+            <div class="cal-modal-head">
+                <strong id="calModalTitle">시험 일정</strong>
+                <button type="button" onclick="closeCalendarModal()">✕</button>
+            </div>
+            <!-- 모달 안 시험장 선택 (바꾸면 달력 다시 그림) -->
+            <div class="cal-center-pick">
+                <select id="modalCenterSelect">
+                    <option value="">시험장 선택</option>
+                    <option th:each="c : ${centers}"
+                            th:value="${c.testCenterId}"
+                            th:text="${c.centerName}"></option>
+                </select>
+            </div>
+
+            <!-- 1단계: 월간 -->
+            <div id="viewMonthly">
+                <div class="cal-nav">
+                    <button type="button" id="prevMonth" class="cal-nav-btn" aria-label="이전 달">‹</button>
+                    <span id="monthLabel"></span>
+                    <button type="button" id="nextMonth" class="cal-nav-btn" aria-label="다음 달">›</button>
+                </div>
+                <div id="monthlyGrid"></div>
+            </div>
+
+            <!-- 2단계: 주간 (표만) -->
+            <div id="viewWeekly" style="display:none;">
+                <button type="button" id="backToMonthly" class="cal-back-btn">← 월간으로</button>
+                <div id="weeklyGrid"></div>
+            </div>
+        </div>
+        <div id="slotBox" class="slot-modal-box" style="display:none;">
+            <div class="slot-modal-head">
+                <strong>일정 등록·삭제</strong>
+                <button type="button" onclick="closeSlotModal()">✕</button>
+            </div>
+            <aside id="slotPanel" class="slot-panel"></aside>
+        </div>
+    </div>
+</div>
+
+
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>

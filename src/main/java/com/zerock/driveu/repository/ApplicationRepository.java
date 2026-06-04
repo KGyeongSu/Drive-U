@@ -25,4 +25,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             String memberType,
             ApplicationStatus status);
 
+    // Application 엔티티가 ExamSchedule를 schedule 필드로 참조한다면
+    boolean existsByExamScheduleScheduleId(Long scheduleId);
+
 }

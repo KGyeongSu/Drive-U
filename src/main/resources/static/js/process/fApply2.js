@@ -217,7 +217,7 @@ function resetSelection() {
 
     // 시간버튼 전부 초기화
     document.querySelectorAll('.time-item').forEach(btn => {
-        btn.classList.remove('selected', 'full', 'no-schedule');
+        btn.classList.remove('selected', 'full', 'no-schedule', 'too-soon');
         btn.disabled = false;
         const oldInfo = btn.querySelector('.time-info');
         if (oldInfo) oldInfo.remove();

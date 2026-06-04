@@ -24,7 +24,7 @@ public class ExamScheduleCreateDTO {
     private Long testCenterId;          // 폼: 시험장 (지역 select는 안 보냄, ID만)
 
     @NotNull(message = "시험 날짜를 입력하세요.")
-    @Future(message = "시험 날짜는 미래여야 합니다.")
+    @FutureOrPresent(message = "시험 날짜는 오늘 이후여야 합니다.")
     private LocalDate examDate;         // 폼: 시험일
 
     @NotEmpty(message = "시험 시간을 1개 이상 선택하세요.")

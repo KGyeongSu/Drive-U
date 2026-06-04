@@ -90,6 +90,7 @@
         // 3. 결제창 에러 (사용자 닫기 등)
         if (response.code != null) {
             alert('결제 실패: ' + response.message);
+            document.getElementById('payBtn').disabled = false;
             return;
         }
 
@@ -107,10 +108,12 @@
             location.href = '/drive-u/process/dApply5';
         } else {
             alert('결제 검증 실패: ' + result.status);
+            document.getElementById('payBtn').disabled = false;
         }
 
     }
     document.getElementById('payBtn').addEventListener('click', function() {
+        this.disabled = true;
         const merchantUid = this.dataset.merchantUid;
         const fee = parseInt(this.dataset.fee);
         requestPay(merchantUid, fee);
