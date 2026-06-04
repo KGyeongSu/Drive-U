@@ -31,8 +31,4 @@ public class AdminController {
         return "drive-u/admin/cbt";
     }
 
-    @GetMapping("/drive-u/admin/examSchedule")
-    public String adminExamSchedule() {
-        return "drive-u/admin/examSchedule";
-    }
 }

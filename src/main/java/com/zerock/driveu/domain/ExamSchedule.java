@@ -26,7 +26,7 @@ public class ExamSchedule {
     private ExamType examType;            // 학과,기능,도로주행 종류
 
     @Column(length = 30)
-    private String licenseType;         // 면허종류 (학과/도로:null, 기능만 구분)
+    private String licenseType;         // 면허종류
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_center_id", nullable = false)
