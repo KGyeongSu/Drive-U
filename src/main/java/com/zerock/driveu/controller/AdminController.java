@@ -1,4 +1,4 @@
-package com.zerock.driveu.controller.Admin;
+package com.zerock.driveu.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

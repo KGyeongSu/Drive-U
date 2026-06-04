@@ -1,4 +1,4 @@
-package com.zerock.driveu.controller;
+package com.zerock.driveu.controller.Admin;
 
 import com.zerock.driveu.dto.admin.DuReplaceDTO;
 import com.zerock.driveu.service.admin.AdminDuService;
