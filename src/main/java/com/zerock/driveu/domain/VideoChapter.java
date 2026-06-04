@@ -55,6 +55,16 @@ public class VideoChapter {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name ="use_yn", nullable = false, length = 1)
+    private String useYn;
+
+    @Column(name ="version_no", nullable = false)
+    private Integer versionNo;
+
+    @Column(name ="replaced_by")
+    private Long replacedBy;
+
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();

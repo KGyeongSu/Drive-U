@@ -15,11 +15,54 @@
             <b th:text="${#authentication.principal instanceof T(com.zerock.driveu.dto.AuthUserDTO)
                 ? #authentication.principal.realName : '사용자'}"></b>님
         </span>
-                <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
-                    <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
-                </form>
-            </th:block>
+            <a th:href="@{/drive-u/admin/dashboard}">관리자페이지</a>
+            <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
+                <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
+            </form>
         </nav>
+    </div>
+    <nav class="main-nav">
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'edu'} ? ' active'">사전교육</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'cbt'} ? ' active'">모의시험</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'process'} ? ' active'">면허취득절차</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'card'} ? ' active'">면허증 관리</button>
+        <button type="button" class="nav-button" th:classappend="${activeMenu == 'userInfo'} ? ' active'">고객센터</button>
+    </nav>
+
+    <div class="mega-menu">
+        <div class="mega-inner">
+            <div class="mega-column">
+                <a th:href="@{/drive-u/du}">교통안전교육</a>
+                <a th:href="@{/drive-u/lVideo}">학습영상</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/cbt}">CBT 문제은행</a>
+                <a th:href="@{/drive-u/Driving}">주행 시뮬레이션</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/process}">취득절차안내</a>
+                <a th:href="@{/drive-u/process/checking}">신체검사안내</a>
+                <a th:href="@{/drive-u/process/wApply1}">학과시험</a>
+                <a th:href="@{/drive-u/process/fApply1}">기능시험</a>
+                <a th:href="@{/drive-u/process/pLicense1}">연습면허발급</a>
+                <a th:href="@{/drive-u/process/dApply1}">도로주행시험</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/card}">신규발급</a>
+                <a th:href="@{/drive-u/card/re}">재발급</a>
+                <a th:href="@{/drive-u/card/up}">갱신</a>
+            </div>
+
+            <div class="mega-column">
+                <a th:href="@{/drive-u/userInfo/noticeHome}">공지사항</a>
+                <a th:href="@{/drive-u/userInfo/questionHome}">문의사항</a>
+                <a th:href="@{/drive-u/userInfo/lawsHome}">최신법규</a>
+                <a th:href="@{/drive-u/userInfo/location}">길 안내</a>
+            </div>
+        </div>
     </div>
 </header>
 <body>
@@ -36,7 +79,7 @@
 
         <div class="admin-side-folder"
              th:classappend="${currentPage == 'duVideo' or currentPage == 'lVideo'} ? ' active'">
-            <a th:href="@{/drive-u/admin/video}" class="admin-side-link">
+            <a th:href="@{/drive-u/admin/video/du}" class="admin-side-link">
                 영상 등록
             </a>
 

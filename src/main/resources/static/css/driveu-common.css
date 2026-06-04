@@ -133,7 +133,6 @@ button, input, select, textarea {
 }
 
 .nav-button::after {
-    content: "⌄";
     margin-left: 8px;
     color: #6b7280;
     font-size: 13px;
@@ -278,7 +277,6 @@ button, input, select, textarea {
 }
 
 .side-title::after {
-    content: "⌃";
     color: var(--blue);
     font-size: 13px;
 }
@@ -558,7 +556,6 @@ button, input, select, textarea {
 }
 
 .outline-btn::after {
-    content: "›";
     margin-left: 8px;
     font-size: 20px;
 }
@@ -2579,6 +2576,7 @@ button:disabled {
 
 /* 필기 원서접수 버튼 */
 .primary-btn {
+    margin-top: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;

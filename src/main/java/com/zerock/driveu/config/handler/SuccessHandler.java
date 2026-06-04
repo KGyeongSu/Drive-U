@@ -35,7 +35,15 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 
         // 1. 일반 로그인(UsernamePassword)일 경우의 처리
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            response.sendRedirect("/drive-u"); // 또는 원하시는 경로
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+            if (isAdmin) {
+                response.sendRedirect("/drive-u/admin");
+            } else {
+                response.sendRedirect("/drive-u");
+            }
+
             return;
         }
 
