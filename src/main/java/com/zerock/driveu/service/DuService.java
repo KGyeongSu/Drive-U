@@ -48,7 +48,7 @@ public class DuService {
     public List<VideoChapter> getDuChapters() {
         return getDuCourse()
                 .map(course -> videoChapterRepository
-                        .findByCourse_CourseIdOrderByChapterOrderAsc(course.getCourseId()))
+                        .findByCourse_CourseIdAndUseYnOrderByChapterOrderAsc(course.getCourseId(), course.getUseYn()))
                 .orElse(Collections.emptyList());
     }
 
@@ -79,7 +79,7 @@ public class DuService {
 
         VideoChapter current = currentOpt.get();
 
-        List<VideoChapter> chapters = videoChapterRepository.findByCourse_CourseIdOrderByChapterOrderAsc(current.getCourse().getCourseId());
+        List<VideoChapter> chapters = videoChapterRepository.findByCourse_CourseIdAndUseYnOrderByChapterOrderAsc(current.getCourse().getCourseId(), current.getCourse().getUseYn());
 
         return chapters.stream()
                 .filter(chapter -> chapter.getChapterOrder() > current.getChapterOrder())
@@ -298,8 +298,10 @@ public class DuService {
             String memberType,
             VideoCourse course
     ) {
-        long totalChapterCount = videoChapterRepository.countByCourse_CourseId(
-                course.getCourseId()
+        long totalChapterCount = videoChapterRepository.countByCourseTypeAndUseYn(
+                course.getCourseType(),
+                "Y",
+                "Y"
         );
 
         long completedChapterCount = chapterProgressRepository.countCompletedChaptersByCourse(

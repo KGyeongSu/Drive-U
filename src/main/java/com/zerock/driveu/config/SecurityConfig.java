@@ -66,8 +66,8 @@ public class SecurityConfig {
                                 "/login/checkEmail",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
-                // 관리자 권한
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // 관리자 권한 *인수 추가
+                .requestMatchers("/drive-u/admin", "/drive-u/admin/**").hasRole("ADMIN")
 
                 // 로그인 유저는 아무거나
                 .anyRequest().authenticated()

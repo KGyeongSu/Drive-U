@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/layout :: head('교통안전교육 새 버전 등록')}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+</head>
+<body>
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="layout">
+    <aside th:replace="~{fragments/admin-layout :: adminSide('duVideo')}"></aside>
+
+    <main class="content">
+        <div class="breadcrumb">관리자 &gt; 교통안전교육 관리 &gt; 새 버전 등록</div>
+
+        <section class="hero-card">
+            <div class="hero-text">
+                <p class="eyebrow">REPLACE CHAPTER</p>
+                <h1>교통안전교육 새 버전 등록</h1>
+                <p>기존 챕터는 비활성화하고 새 영상과 퀴즈를 등록합니다.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">기존 챕터 정보</h2>
+
+            <div class="info-box">
+                <p>
+                    <strong th:text="|${chapter.chapterOrder}강. ${chapter.chapterTitle}|">
+                        1강. 운전자가 되는 첫걸음
+                    </strong>
+                </p>
+                <p th:text="${chapter.videoUrl}">기존 영상 URL</p>
+            </div>
+
+            <form class="admin-form"
+                  th:action="@{/drive-u/admin/video/{chapterId}/replace(chapterId=${chapter.chapterId})}"
+                  th:object="${form}"
+                  method="post">
+
+                <h2 class="section-title">새 영상 정보</h2>
+
+                <div class="form-row">
+                    <label>챕터 제목</label>
+                    <input type="text" th:field="*{chapterTitle}" required>
+                </div>
+
+                <div class="form-row">
+                    <label>영상 URL</label>
+                    <input type="text" th:field="*{videoUrl}" required>
+                </div>
+
+                <div class="form-row">
+                    <label>시작 초</label>
+                    <input type="number" th:field="*{startSec}" min="0">
+                </div>
+
+                <div class="form-row">
+                    <label>종료 초</label>
+                    <input type="number" th:field="*{endSec}" min="0">
+                </div>
+
+                <div class="form-row">
+                    <label>변경 사유</label>
+                    <textarea th:field="*{changeReason}"></textarea>
+                </div>
+
+                <h2 class="section-title">퀴즈 등록</h2>
+
+                <div class="admin-help-box">
+                    <p>챕터별 퀴즈는 여러 개 등록할 수 있으며, 사용자 화면에서는 이 중 랜덤으로 3개가 출제됩니다.</p>
+                </div>
+
+                <div id="quizFormContainer">
+                    <!-- JS로 퀴즈 세트가 추가됨 -->
+                </div>
+
+                <div class="form-actions">
+                    <button type="button"
+                            id="addQuizBtn"
+                            class="outline-btn">
+                        + 퀴즈 추가
+                    </button>
+                </div>
+
+                <template id="quizTemplate">
+                    <div class="quiz-admin-box data-quiz-box" >
+                        <div class="quiz-admin-head">
+                            <h3 class="data-quiz-title">퀴즈</h3>
+
+                            <button type="button"
+                                    class="outline-btn danger"
+                                    data-remove-quiz>
+                                삭제
+                            </button>
+                        </div>
+
+                        <input type="hidden"
+                               data-name="quizOrder">
+
+                        <div class="form-row">
+                            <label>문제</label>
+                            <input type="text"
+                                   data-name="questionText"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <label>해설</label>
+                            <textarea data-name="explanation"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <label>보기 1</label>
+                            <input type="text"
+                                   data-choice-index="0"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <label>보기 2</label>
+                            <input type="text"
+                                   data-choice-index="1"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <label>보기 3</label>
+                            <input type="text"
+                                   data-choice-index="2"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <label>보기 4</label>
+                            <input type="text"
+                                   data-choice-index="3"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <label>정답</label>
+                            <select data-name="correctChoiceOrder" required>
+                                <option value="">정답 선택</option>
+                                <option value="1">보기 1</option>
+                                <option value="2">보기 2</option>
+                                <option value="3">보기 3</option>
+                                <option value="4">보기 4</option>
+                            </select>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="form-actions">
+                    <a class="outline-btn" th:href="@{/drive-u/admin/video/du}">
+                        목록으로
+                    </a>
+                    <button type="submit" class="primary-btn">
+                        새 버전 등록
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+<script src="/js/admin/adminDu.js"></script>
+</body>
+</html>
