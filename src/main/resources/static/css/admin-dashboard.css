@@ -406,6 +406,45 @@
     font-weight: 900;
 }
 
+/* ===== 시험시간 칩 (멀티선택) ===== */
+.time-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.time-chip {
+    padding: 8px 14px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #4b5563;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.time-chip:hover:not(:disabled):not(.selected) {
+    border-color: #2f6fdc;
+    color: #2f6fdc;
+}
+
+.time-chip.selected {
+    background: #2f6fdc;
+    border-color: #2f6fdc;
+    color: #fff;
+}
+
+.time-chip.taken,
+.time-chip:disabled {
+    background: #eef1f5;
+    border-color: #e2e8f0;
+    color: #aab2bf;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
 .state.done { background: #e0f2fe; color: #0369a1; }
 .state.pass { background: #dcfce7; color: #15803d; }
 .state.progress { background: #eef5ff; color: #2f6fdc; }
