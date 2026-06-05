@@ -40,12 +40,46 @@
                     </div>
 
                     <div class="answer-list" id="answerList"></div>
-
                     <div class="button-area">
                         <button type="button" class="outline-btn" id="prevBtn">이전 문제</button>
                         <button type="button" class="outline-btn" id="nextBtn">다음 문제</button>
                         <button type="button" class="outline-btn" id="submitBtn">제출하기</button>
                     </div>
+                </div>
+                <div id="resultBox" style="display:none;">
+                    <div class="result-summary">
+                        <h3 id="resultTitle">채점 결과</h3>
+
+                        <div class="result-score">
+                            <strong id="resultScore">0점</strong>
+                            <span id="resultPassText">불합격</span>
+                        </div>
+
+                        <div class="result-stats">
+                            <div>
+                                <span>총 문항</span>
+                                <strong id="resultTotalCount">0</strong>
+                            </div>
+                            <div>
+                                <span>정답</span>
+                                <strong id="resultCorrectCount">0</strong>
+                            </div>
+                            <div>
+                                <span>오답</span>
+                                <strong id="resultWrongCount">0</strong>
+                            </div>
+                            <div>
+                                <span>미풀이</span>
+                                <strong id="resultUnansweredCount">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-area">
+                        <button type="button" class="outline-btn" id="retryBtn">다시 풀기</button>
+                        <button type="button" class="outline-btn" id="goApplyBtn">필기 원서접수 확인</button>
+                    </div>
+
+                    <div id="questionResultList" class="question-result-list"></div>
                 </div>
             </div>
         </section>

@@ -3,6 +3,7 @@
 <head th:replace="~{fragments/layout :: head('시험 일정 등록')}"></head>
 <body>
 <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+<link rel="stylesheet" th:href="@{/css/admin-exam-schedule.css}">
 
 <header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
 
@@ -14,113 +15,137 @@
             <div>
                 <p class="eyebrow">EXAM SCHEDULE</p>
                 <h1>시험 일정 등록</h1>
-                <p>필기·기능·도로주행 시험 일정과 정원을 등록합니다.</p>
+                <p>학과 기능 도로주행 시험 일정과 정원을 등록합니다.</p>
             </div>
         </section>
 
-        
-<section class="admin-form-card">
-    <div class="section-head">
-        <h2>시험 일정 등록</h2>
-        <span>필기·기능·도로주행</span>
-    </div>
+        <button type="button" id="openCalendarBtn" class="admin-form-card schedule-toolbar-btn">
+            📅 시험 일정 관리
+        </button>
 
-    <form class="admin-form-grid">
-        <label>시험구분
-            <select>
-                <option>필기</option>
-                <option>기능</option>
-                <option>도로주행</option>
-            </select>
-        </label>
-        <label>면허종별
-            <select>
-                <option>1종 보통</option>
-                <option>2종 보통</option>
-                <option>1종 대형</option>
-            </select>
-        </label>
-        <label>지역
-            <select>
-                <option>대전</option>
-                <option>서울</option>
-                <option>충북</option>
-                <option>부산</option>
-            </select>
-        </label>
-        <label>시험장
-            <select>
-                <option>대전 운전면허시험장</option>
-                <option>청주 운전면허시험장</option>
-                <option>강남 운전면허시험장</option>
-            </select>
-        </label>
-        <label>시험일
-            <input type="date" value="2026-05-21">
-        </label>
-        <label>시험시간
-            <input type="time" value="10:00">
-        </label>
-        <label>정원
-            <input type="number" value="8">
-        </label>
-        <label>접수상태
-            <select>
-                <option>접수가능</option>
-                <option>마감</option>
-                <option>비공개</option>
-            </select>
-        </label>
-    </form>
+        <section class="admin-form-card">
+            <div class="section-head">
+                <h2>시험 일정 등록</h2>
+            </div>
+            <p class="form-guide">
+                여러 시간대를 <strong>한 번에</strong> 등록할 때 사용하세요.
+                시험구분·종별·시험장·날짜를 고른 뒤 시간대를 복수 선택하면 일괄 등록됩니다.
+            </p>
+            <form id="scheduleForm" class="admin-form-grid" th:action="@{/drive-u/admin/examSchedule}" method="post">
+                <label>시험구분
+                    <select id="examTypeSelect" name="examType">
+                        <option value="">시험구분 선택</option>
+                        <option th:each="type : ${examTypes}"
+                                th:value="${type}"
+                                th:text="${type.label}"></option>
+                    </select>
+                </label>
+                <label>면허종별
+                    <select id="licenseTypeSelect" name="licenseType">
+                        <option value="" id="licenseGuide">면허종별 선택</option>
+                        <option th:each="fl : ${functionLicenseType}" th:value="${fl}" th:text="${fl}" th:data-exam="'FUNCTION'"></option>
+                        <option th:each="dl : ${driveLicenseType}" th:value="${dl}" th:text="${dl}" th:data-exam="'DRIVE'"></option>
+                    </select>
+                </label>
+                <label>지역
+                    <select id="regionSelect">
+                        <option th:each="region : ${regions}" th:value="${region}" th:text="${region}"></option>
+                    </select>
+                </label>
+                <label>시험장
+                    <select id="centerSelect" name="testCenterId">
+                        <option value="">시험장 선택</option>
+                        <option th:each="c : ${centers}" th:value="${c.testCenterId}" th:text="${c.centerName}" th:data-region="${c.region}"></option>
+                    </select>
+                </label>
+                <label>시험일
+                    <input type="date" name="examDate" id="examDateInput">
+                </label>
+                <label>시험시간
+                    <div id="timeChips" class="time-chips">
+                        <button type="button" class="time-chip"
+                                th:each="t : ${examTimes}"
+                                th:data-time="${t}"
+                                th:text="${#temporals.format(t, 'HH') + '시'}">09시</button>
+                    </div>
+                    <div id="timeHiddenBox"></div>
+                </label>
+                <label>정원
+                    <input type="number" name="maxCount" min="1" value="30">
+                </label>
 
-    <div class="button-area">
-        <button type="button" class="admin-small-btn">일정 저장</button>
-        <button type="button" class="admin-small-btn sub">초기화</button>
-    </div>
-</section>
-
-<section class="admin-table-card">
-    <div class="table-title">
-        <h3>등록된 시험 일정</h3>
-        <span>최근 등록순</span>
-    </div>
-    <table class="admin-table">
-        <thead>
-        <tr>
-            <th>시험구분</th>
-            <th>시험장</th>
-            <th>시험일</th>
-            <th>시간</th>
-            <th>정원</th>
-            <th>상태</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>필기</td>
-            <td>대전 운전면허시험장</td>
-            <td>2026-05-21</td>
-            <td>10:00</td>
-            <td>8</td>
-            <td><span class="state progress">접수가능</span></td>
-        </tr>
-        <tr>
-            <td>기능</td>
-            <td>대전 운전면허시험장</td>
-            <td>2026-05-22</td>
-            <td>13:10</td>
-            <td>6</td>
-            <td><span class="state progress">접수가능</span></td>
-        </tr>
-        </tbody>
-    </table>
-</section>
-
+                <div class="button-area">
+                    <button type="submit" class="admin-small-btn">일정 저장</button>
+                    <button type="reset" class="admin-small-btn sub">초기화</button>
+                </div>
+            </form>
+        </section>
     </main>
 </div>
 
+<!-- 일정 달력 모달 -->
+<div id="calendarModal" class="cal-modal-overlay" style="display:none;">
+    <div class="modal-wrap">
+        <div class="cal-modal-box">
+            <div class="cal-modal-head">
+                <strong id="calModalTitle">시험 일정</strong>
+                <button type="button" onclick="closeCalendarModal()">✕</button>
+            </div>
+            <!-- 모달 안 시험장 선택 (바꾸면 달력 다시 그림) -->
+            <div class="cal-center-pick">
+                <select id="modalCenterSelect">
+                    <option value="">시험장 선택</option>
+                    <option th:each="c : ${centers}"
+                            th:value="${c.testCenterId}"
+                            th:text="${c.centerName}"></option>
+                </select>
+            </div>
+
+            <!-- 1단계: 월간 -->
+            <div id="viewMonthly">
+                <div class="cal-nav">
+                    <button type="button" id="prevMonth" class="cal-nav-btn" aria-label="이전 달">‹</button>
+                    <span id="monthLabel"></span>
+                    <button type="button" id="nextMonth" class="cal-nav-btn" aria-label="다음 달">›</button>
+                </div>
+                <div id="monthlyGrid"></div>
+            </div>
+
+            <!-- 2단계: 주간 (표만) -->
+            <div id="viewWeekly" style="display:none;">
+                <button type="button" id="backToMonthly" class="cal-back-btn">← 월간으로</button>
+                <div id="weeklyGrid"></div>
+            </div>
+        </div>
+        <div id="slotBox" class="slot-modal-box" style="display:none;">
+            <div class="slot-modal-head">
+                <strong>일정 등록·삭제</strong>
+                <button type="button" onclick="closeSlotModal()">✕</button>
+            </div>
+            <aside id="slotPanel" class="slot-panel"></aside>
+        </div>
+    </div>
+</div>
+
+
+
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
-<script th:src="@{/js/admin-dashboard.js}"></script>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const flashMessage = /*[[${message}]]*/ null;
+    const flashError = /*[[${errorMessage}]]*/ null;
+
+    if (flashMessage) {
+        Swal.fire({ icon: 'success', title: flashMessage });
+    } else if (flashError) {
+        Swal.fire({ icon: 'error', title: flashError });
+    }
+    /*]]>*/
+</script>
+
+<script th:src="@{/js/admin-exam-schedule.js}"></script>
 </body>
 </html>

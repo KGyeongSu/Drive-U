@@ -133,7 +133,6 @@ button, input, select, textarea {
 }
 
 .nav-button::after {
-    content: "⌄";
     margin-left: 8px;
     color: #6b7280;
     font-size: 13px;
@@ -278,7 +277,6 @@ button, input, select, textarea {
 }
 
 .side-title::after {
-    content: "⌃";
     color: var(--blue);
     font-size: 13px;
 }
@@ -558,7 +556,6 @@ button, input, select, textarea {
 }
 
 .outline-btn::after {
-    content: "›";
     margin-left: 8px;
     font-size: 20px;
 }
@@ -1170,7 +1167,127 @@ button, input, select, textarea {
     border: 1px solid #dbe7f6;
     border-radius: 16px;
 }
+.result-summary {
+    padding: 28px;
+    border: 1px solid #dbe7ff;
+    border-radius: 20px;
+    background: #f8fbff;
+    margin-bottom: 24px;
+}
 
+.result-summary h3 {
+    margin: 0 0 18px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0b1f3a;
+}
+
+.result-score {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.result-score strong {
+    font-size: 42px;
+    font-weight: 900;
+    color: #145fe8;
+}
+
+.result-score span {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0b1f3a;
+}
+
+.result-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.result-stats div {
+    padding: 18px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #dbe7ff;
+    text-align: center;
+}
+
+.result-stats span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #60708a;
+}
+
+.result-stats strong {
+    font-size: 24px;
+    color: #0b1f3a;
+}
+
+.question-result-list {
+    margin-top: 28px;
+}
+
+.question-result-card {
+    padding: 22px;
+    border: 1px solid #dbe7ff;
+    border-radius: 18px;
+    background: #ffffff;
+    margin-bottom: 16px;
+}
+
+.question-result-card.correct {
+    border-color: #bde7c8;
+    background: #f7fff9;
+}
+
+.question-result-card.wrong {
+    border-color: #ffd1d1;
+    background: #fffafa;
+}
+
+.question-result-card.unanswered {
+    border-color: #ffe0a3;
+    background: #fffaf0;
+}
+
+.question-result-card h4 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    color: #0b1f3a;
+}
+
+.question-result-card p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.result-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.result-label.correct {
+    background: #dff8e6;
+    color: #16813a;
+}
+
+.result-label.wrong {
+    background: #ffe3e3;
+    color: #d12b2b;
+}
+
+.result-label.unanswered {
+    background: #fff1c7;
+    color: #a66a00;
+}
 .simulator-box {
     padding: 24px;
     border-radius: 24px;
@@ -2060,8 +2177,23 @@ button, input, select, textarea {
     padding: 12px 15px;
     border-radius: 12px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #e0e0e0;
     transition: all 0.2s ease;
+}
+
+.news-item:last-child {
+    border-bottom: none;
+}
+
+.news-item:hover {
+    background-color: #f9f9f9;
+}
+
+.news-item.active {
+    background-color: #eef4ff;
+    border-left: 3px solid #0056b3;
 }
 
 .news-date {
@@ -2361,8 +2493,106 @@ button:disabled {
     justify-content: flex-end;
 }
 /* 교통안전교육 완료 후 퀴즈 보기 disabled 전용 */
+/* 퀴즈 진행 표시 */
+.quiz-progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 18px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 800;
+    font-size: 14px;
+}
+
+/* 보기 선택 상태 */
+.quiz-box .quiz-option.selected {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 800;
+}
+
+/* 전역 button:disabled 덮어쓰기 */
 .quiz-box .quiz-option:disabled {
     opacity: 1;
     cursor: default;
     background-color: #f8fafc;
+}
+
+/* 완료 후 정답 보기 */
+.quiz-box .quiz-option.correct,
+.quiz-box .quiz-option.correct:disabled {
+    opacity: 1;
+    background-color: #ecfdf3;
+    border-color: #86d39a;
+    color: #2f7d42;
+    font-weight: 800;
+}
+
+/* 클릭 가능한 보기만 hover */
+.quiz-box .quiz-option:not(:disabled):hover {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+}
+
+/* disabled 상태 hover 방지 */
+.quiz-box .quiz-option:disabled:hover {
+    background-color: #f8fafc;
+    border-color: #dbeafe;
+    color: inherit;
+}
+
+/* disabled + 정답 hover 유지 */
+.quiz-box .quiz-option.correct:disabled:hover {
+    background-color: #ecfdf3;
+    border-color: #86d39a;
+    color: #2f7d42;
+}
+
+/* 퀴즈 이동 버튼 영역 */
+.quiz-nav,
+.chapter-action-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+/* 해설 */
+.quiz-explanation {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: #f8fafc;
+    color: #1f2937;
+    line-height: 1.6;
+    font-weight: 600;
+}
+
+/* 필기 원서접수 버튼 */
+.primary-btn {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

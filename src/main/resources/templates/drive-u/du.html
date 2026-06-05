@@ -78,12 +78,27 @@
                 </div>
 
                 <!-- 퀴즈 영역 -->
-                <input type="hidden" id="currentChapterId" th:value="${chapter != null ? chapter.chapterId : 0}">
-                <input type="hidden" id="currentMemberSeq" value="1">
+                <div class="quiz-box" id="quizBox" th:data-completed="${duCompleted}">
 
-                <div class="quiz-box" id="quizBox" style="display:none;">
+                    <!-- 현재 챕터 ID -->
+                    <input type="hidden"
+                           id="currentChapterId"
+                           th:value="${chapter != null ? chapter.chapterId : 0}">
+
+                    <!-- 문제 진행 표시 -->
+                    <div class="quiz-progress"
+                         th:if="${quizzes != null and !quizzes.isEmpty()}">
+                        <span id="quizCurrentNo">1</span>
+                        /
+                        <span id="quizTotalNo"
+                              th:text="${quizzes.size()}">3</span>
+                    </div>
+
+                    <!-- 문제 목록: 화면에는 JS로 하나씩만 표시 -->
                     <div class="quiz-item"
-                         th:each="quiz, quizStat : ${quizzes}">
+                         th:each="quiz, quizStat : ${quizzes}"
+                         th:data-index="${quizStat.index}"
+                         th:style="${quizStat.index == 0} ? 'display:block;' : 'display:none;'">
 
                         <p class="quiz-question"
                            th:text="|${quizStat.count}. ${quiz.questionText}|">
@@ -97,41 +112,73 @@
                                     th:data-quiz-id="${quiz.quizId}"
                                     th:data-choice-id="${choice.choiceId}"
                                     th:data-answer="${choice.correctYn}"
-                                    th:classappend="${duCompleted and choice.correctYn == 'Y'} ? ' correct'"
+                                    th:classappend="${duCompleted == true and choice.correctYn == 'Y'} ? ' correct' : ''"
                                     th:disabled="${duCompleted == true}"
                                     th:text="${choice.choiceText}">
                                 보기 내용
                             </button>
                         </div>
 
+                        <!-- 전체 이수 완료 후에는 해설 표시 -->
                         <p class="quiz-explanation"
-                           th:if="${duCompleted and quiz.explanation != null}"
+                           th:if="${duCompleted == true and quiz.explanation != null}"
                            th:text="${quiz.explanation}">
                             해설 내용
                         </p>
                     </div>
 
-                    <p id="quizMessage" class="quiz-message"  th:text="${duCompleted} ? '교통안전교육을 모두 이수했습니다.' : ''"></p>
+                    <!-- 메시지 -->
+                    <p id="quizMessage"
+                       class="quiz-message"
+                       th:text="${duCompleted == true} ? '교통안전교육을 모두 이수했습니다.' : ''">
+                    </p>
 
-                    <a id="nextChapterBtn"
-                       class="outline-btn disabled"
-                       th:if="${!duCompleted and nextChapter != null}"
-                       th:href="@{/drive-u/du/{chapterId}(chapterId=${nextChapter.chapterId})}">
-                        다음 챕터로 이동
-                    </a>
-                    <a id="retryChapterBtn"
-                       class="outline-btn disabled"
-                       th:if="${!duCompleted and nextChapter != null}"
-                       th:href="@{/drive-u/du/{chapterId}(chapterId=${chapter.chapterId})}">
-                        이 챕터 다시보기
-                    </a>
-                    <div class="complete-box" th:if="${duCompleted}">
-                        <h3>교통안전교육 이수 완료</h3>
-                        <p>모든 교통안전교육 챕터를 이수했습니다. 필기시험 원서접수를 진행할 수 있습니다.</p>
+                    <!-- 문제 이동 / 제출 버튼 -->
+                    <div class="quiz-nav"
+                         th:if="${quizzes != null and !quizzes.isEmpty()}">
 
-                        <a class="outline-btn"
+                        <button type="button"
+                                id="prevQuizBtn"
+                                class="outline-btn">
+                            이전 문제
+                        </button>
+
+                        <button type="button"
+                                id="nextQuizBtn"
+                                class="outline-btn">
+                            다음 문제
+                        </button>
+                        <button type="button"
+                                id="submitQuizBtn"
+                                class="primary-btn"
+                                style="display:none;"
+                                th:if="${duCompleted != true}"
+                                disabled>
+                            퀴즈 제출
+                        </button>
+                    </div>
+
+                    <!-- 챕터 이동 / 다시보기 / 필기 원서접수 -->
+                    <div class="chapter-action-box">
+
+                        <a id="nextChapterBtn"
+                           class="outline-btn disabled"
+                           th:if="${duCompleted != true and nextChapter != null}"
+                           th:href="@{/drive-u/du/{chapterId}(chapterId=${nextChapter.chapterId})}">
+                            다음 챕터로 이동
+                        </a>
+
+                        <button type="button"
+                                id="retryBtn"
+                                class="outline-btn disabled"
+                                th:if="${duCompleted != true}">
+                            이 챕터 다시보기
+                        </button>
+
+                        <a class="primary-btn"
+                           th:if="${duCompleted == true}"
                            th:href="@{/drive-u/process}">
-                            다음 절차 확인하기
+                            다음 단계 확인하기
                         </a>
                     </div>
                 </div>

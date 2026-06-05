@@ -6,6 +6,7 @@ import com.zerock.driveu.domain.enums.ExamType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long> {
@@ -24,6 +25,22 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
     List<ExamSchedule> findByExamTypeAndLicenseTypeAndTestCenterAndExamDate(
             ExamType examType, String licenseType, TestCenter testCenter, LocalDate examDate);
 
+    // 시험장 + 날짜 범위로 조회 (월별 조회: 1일~말일)
+    List<ExamSchedule> findByTestCenterAndExamDateBetween(
+            TestCenter testCenter, LocalDate startDate, LocalDate endDate);
 
+    // 슬롯 단위 조회: 시험장 + 날짜 + 시간 -> 그 칸의 일정 목록 (examSchedule 3단계 우측 패널)
+    List<ExamSchedule> findByTestCenterAndExamDateAndExamTime(
+            TestCenter testCenter, LocalDate examDate, LocalTime examTime);
+
+    // licenseType 있는 경우 (FUNCTION/DRIVE)
+    boolean existsByExamTypeAndLicenseTypeAndTestCenterAndExamDateAndExamTime(
+            ExamType examType, String licenseType, TestCenter testCenter,
+            LocalDate examDate, LocalTime examTime);
+
+    // licenseType 없는 경우 (WRITTEN - null 비교)
+    boolean existsByExamTypeAndLicenseTypeIsNullAndTestCenterAndExamDateAndExamTime(
+            ExamType examType, TestCenter testCenter,
+            LocalDate examDate, LocalTime examTime);
 
 }

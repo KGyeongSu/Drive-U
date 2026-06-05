@@ -130,23 +130,22 @@
                 <button class="news-tab" onclick="switchNewsTab('law', this)">최신법규</button>
             </div>
             <div id="news-items-container" class="news-items-wrapper">
-                <div class="news-item" onclick="updateNewsDetail('notice', 0)">
-                    <span class="news-date">2026.05.15</span>
-                    <span class="news-item-title">여름철 빗길 안전운전 수칙 안내</span>
+                <div class="news-item" th:each="item : ${noticeList}"
+                     th:onclick="|updateNewsDetail('notice', ${item.id}, this)|">
+                    <span class="news-item-title" th:text="${item.title}"></span>
+                    <span class="news-date" th:text="${item.date}"></span>
                 </div>
             </div>
         </div>
 
-        <div class="news-detail-area transparent-bg">
-            <button class="outline-btn news-more-btn" onclick="location.href='/drive-u/userInfo'">
+        <div class="news-detail-area transparent-bg" th:if="${not #lists.isEmpty(noticeList)}">
+            <button class="outline-btn news-more-btn" th:onclick="|location.href='/drive-u/userInfo/noticeHome/noticeDetail?id=${noticeList[0].id}'|">
                 전체보기
             </button>
             <div class="detail-content" id="news-detail-box">
-                <span id="detail-category" class="news-category-label">NOTICE</span>
-                <h3 id="detail-title" class="news-main-title">여름철 빗길<br>안전운전 수칙 안내</h3>
-                <p id="detail-desc" class="news-main-desc">
-                    최근 잦은 집중호우로 인한 사고가 급증하고 있습니다. 타이어 상태 점검과 감속 운행을 통해 안전한 드라이빙을 준비하세요.
-                </p>
+                <span id="detail-category" class="news-category-label">미리보기</span>
+                <h3 id="detail-title" class="news-main-title" th:text="${noticeList[0].title}"></h3>
+                <p id="detail-desc" class="news-main-desc" th:text="${noticeList[0].content}"></p>
             </div>
         </div>
     </section>
@@ -155,6 +154,14 @@
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 <script th:src="@{/js/index.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // 서버 데이터를 JS 변수로 주입
+    window.noticeList = /*[[${noticeList}]]*/ [];
+    window.lawList = /*[[${lawList}]]*/ [];
+    /*]]>*/
+</script>
 
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>

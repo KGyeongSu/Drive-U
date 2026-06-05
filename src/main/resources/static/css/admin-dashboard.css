@@ -78,7 +78,7 @@
 }
 
 .admin-side-depth a::before {
-    content: "↳";
+    content: "-";
     margin-right: 7px;
     color: #94a3b8;
 }
@@ -349,6 +349,7 @@
 .admin-table-card {
     overflow: hidden;
     margin-top: 30px;
+    height: 465px;
 }
 
 .table-title {
@@ -384,7 +385,7 @@
     padding: 0 18px;
     border-bottom: 1px solid #edf1f7;
     color: #374151;
-    text-align: left;
+    text-align: center;
     font-size: 15px;
 }
 
@@ -392,6 +393,12 @@
     background: #f8fbff;
     color: #0f3767;
     font-weight: 900;
+}
+
+.admin-table tbody td:nth-child(1),
+.admin-table tbody td:nth-child(2) {
+    text-align: left;
+    padding-left: 40px;
 }
 
 .state {
@@ -404,6 +411,45 @@
     justify-content: center;
     font-size: 13px;
     font-weight: 900;
+}
+
+/* ===== 시험시간 칩 (멀티선택) ===== */
+.time-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.time-chip {
+    padding: 8px 14px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #4b5563;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.time-chip:hover:not(:disabled):not(.selected) {
+    border-color: #2f6fdc;
+    color: #2f6fdc;
+}
+
+.time-chip.selected {
+    background: #2f6fdc;
+    border-color: #2f6fdc;
+    color: #fff;
+}
+
+.time-chip.taken,
+.time-chip:disabled {
+    background: #eef1f5;
+    border-color: #e2e8f0;
+    color: #aab2bf;
+    cursor: not-allowed;
+    text-decoration: line-through;
 }
 
 .state.done { background: #e0f2fe; color: #0369a1; }
@@ -461,4 +507,258 @@
     .admin-table {
         min-width: 900px;
     }
+}
+
+/* admin du*/
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-row {
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 12px;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-row label {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    font-size: 15px;
+}
+
+.form-row textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.quiz-admin-box {
+    margin-bottom: 30px;
+    padding: 22px;
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+    background: #f8fbff;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.admin-help-box {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    background: #f8fbff;
+    color: #475569;
+    font-weight: 600;
+}
+
+.quiz-admin-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+
+}
+
+.data-quiz-title{
+    font-weight: bold;
+}
+
+.outline-btn.danger {
+    border-color: #fecaca;
+    color: #dc2626;
+    background: #fff;
+}
+
+.outline-btn.danger:hover {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+/* ===== 합격처리 명단: 배지 · 버튼 ===== */
+
+/* 합격 배지 — 기존 .state.pass 와 같은 초록 팔레트 (알약형) */
+.passed-badge {
+    display: inline-flex;
+    min-width: 58px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* 합격취소 버튼 — 위험 동작이라 빨강 계열 */
+.cancel-btn {
+    padding: 6px 14px;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    background: #fff;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cancel-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* 불합격 행 — 화면에서만 잠깐 표시 (DB엔 안 남음) */
+.failed-row td {
+    background: #fef2f2;   /* 연한 빨강 배경 */
+}
+.failed-row .pass-btn {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ===== 합격처리: 상단 필터 ===== */
+.pass-filter {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 26px 24px;
+}
+
+/* 라벨 = 세로 묶음 (글자 위 / 입력칸 아래) */
+.pass-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+}
+
+/* select · 날짜칸 공통 */
+.pass-filter select,
+.pass-filter input[type="date"] {
+    height: 40px;
+    min-width: 160px;
+    padding: 0 12px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.pass-filter select:focus,
+.pass-filter input[type="date"]:focus {
+    outline: none;
+    border-color: #2f6fdc;          /* 기존 파랑 톤 */
+}
+
+/* 조회 버튼 */
+.pass-filter button {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2f6fdc;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.pass-filter button:hover {
+    background: #2559bf;
+}
+
+/* ===== 합격처리: 명단 테이블 ===== */
+.pass-table td,
+.pass-table th {
+    padding: 14px 12px;
+    white-space: nowrap;            /* 글자 줄바꿈 방지 (합격취소·면허종별 깨짐 해결) */
+    vertical-align: middle;
+}
+
+/* 시험장만 길어서 줄바꿈 허용 */
+.pass-table td:nth-child(4) {
+    white-space: normal;
+    min-width: 120px;
+}
+
+/* 점수 입력칸 */
+.pass-table .score-input {
+    width: 80px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+.pass-table .score-input:focus {
+    outline: none;
+    border-color: #2f6fdc;
+}
+
+/* 합격처리 버튼 */
+.pass-table .pass-btn {
+    padding: 6px 14px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.pass-table .pass-btn:hover {
+    border-color: #2f6fdc;
+    color: #2f6fdc;
+}
+
+/* ===== 합격처리 카드: 공용 height:465px 고정 해제 ===== */
+/* 팀원이 .admin-table-card 에 height:465px 를 박아서
+   응시자 없을 때 빈 카드가 큰 공백으로 남음.
+   passPanel 안의 카드만 height:auto 로 되돌려 내용물 높이에 맞춤.
+   #passPanel = id 라 명시도가 높아 안전하게 이김. */
+#passPanel .admin-table-card {
+    height: auto;
+}
+/* ===== 합격처리 표: 공용 admin-table 정렬 덮어쓰기 ===== */
+/* 팀원이 .admin-table 를 center 정렬로 바꿨는데,
+   내 합격명단 표는 왼쪽 정렬이 맞아서 pass-table 스코프로만 되돌림.
+   클래스 2개라 명시도가 높아 팀원 규칙을 안전하게 이김. */
+.admin-table.pass-table th,
+.admin-table.pass-table td {
+    text-align: left;
+}
+
+/* 팀원이 1·2번째 칸에 준 padding-left:40px 도 내 표에선 원복 */
+.admin-table.pass-table tbody td:nth-child(1),
+.admin-table.pass-table tbody td:nth-child(2) {
+    padding-left: 12px;   /* pass-table 기본 좌우 패딩과 맞춤 */
 }

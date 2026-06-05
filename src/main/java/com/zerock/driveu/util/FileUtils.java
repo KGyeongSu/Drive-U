@@ -54,7 +54,7 @@ public class FileUtils {
             fileEntities.add(UploadFileDTO.builder()
                     .fileName(file.getOriginalFilename())
                     // 절대경로는 DB에 저장 X -> 환경 이동성 및 보안 문제
-                    // 경로 조합 용이 목적으로 "/" 넣어줌
+                    // 경로 조합 용이 목적으로 "/" 넣어줌 -> yaml에 존재
                     .filePath(subPath + savedFileName)
                     .uuid(uuid)
                     .build());
@@ -89,6 +89,8 @@ public class FileUtils {
         // Path : 파일 경로, Paths : 객체 생성
         Path path = Paths.get(rootPath, filePath);
 
+        // Files.newInputStream(path) : 파일 내용 읽기 위한 데이터 통로 엶
+        // resource : 해당 통로를 0, 1로 된 데이터 덩어리로 서버 메모리에 전달
         return new InputStreamResource(Files.newInputStream(path));
 
     }

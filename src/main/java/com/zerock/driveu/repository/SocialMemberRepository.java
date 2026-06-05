@@ -2,6 +2,8 @@ package com.zerock.driveu.repository;
 
 import com.zerock.driveu.domain.SocialMember;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,4 +19,8 @@ public interface SocialMemberRepository extends JpaRepository<SocialMember, Long
 
     // 소셜 회원 테이블에 이메일이 존재하는지 확인
     boolean existsByEmail(String email);
+
+    // user만 카운트
+    @Query("SELECT COUNT(m) FROM SocialMember m WHERE m.role = :role")
+    long countByRole(@Param("role") SocialMember.Role role);
 }

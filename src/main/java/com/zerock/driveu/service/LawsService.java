@@ -7,12 +7,15 @@ import com.zerock.driveu.repository.LawsRepository;
 import com.zerock.driveu.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +28,42 @@ public class LawsService {
     private final LawsRepository lawsRepository;
     private final FileUtils fileUtils;
 
+    // 메인 홈페이지에 최신 리스트 7개 미리보기
+    public List <MainNewsDTO> getMainLaw(int limit) {
+
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("regDate").descending());
+
+        return lawsRepository.findAll(pageable).getContent().stream()
+                .map(l -> {
+
+                    String shortContent = l.getLaw_content();
+                    if (shortContent != null && shortContent.length() > 50) {
+
+                        shortContent = shortContent.substring(0, 50) + "...";
+
+
+                    }
+
+                    return MainNewsDTO.builder()
+                            .category("law")
+                            .id(l.getId())
+                            .title(l.getLaw_title())
+                            .content(shortContent)
+                            .date(l.getRegDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+                            .build();
+                })
+
+                .collect(Collectors.toList());
+
+    }
+
     // 리스트 가져오기
     public Page<LawsListDTO> getList(Pageable pageable) {
         return lawsRepository.findAll(pageable)
                 .map(l -> LawsListDTO.builder()
                         .id(l.getId())
                         .title(l.getLaw_title())
-                        .regDate(l.getLaw_regDate())
+                        .regDate(l.getRegDate())
                         .modDate(l.getLaw_modDate())
                         .build());
     }
@@ -54,7 +86,7 @@ public class LawsService {
                 .title(l.getLaw_title())
                 .content(l.getLaw_content())
                 .files(fileDTO)
-                .regDate(l.getLaw_regDate())
+                .regDate(l.getRegDate())
                 .modDate(l.getLaw_modDate())
                 .build();
     }
@@ -67,8 +99,13 @@ public class LawsService {
                 .law_content(lawsRequestDTO.getContent())
                 .build();
 
-        if (files != null && !files.isEmpty()) {
-            List<UploadFileDTO> result = fileUtils.uploadFiles(files, "laws");
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(files);
+
+        // 업로드 진행
+        if (!validFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "laws");
 
             result.forEach(r -> {
                 laws.addFile(LawsFile.builder()
@@ -83,32 +120,45 @@ public class LawsService {
 
     // 법규 수정
     @Transactional
-    public void updateLaws(Long id, LawsRequestDTO lawsRequestDTO, List<MultipartFile> files) throws IOException {
+    public void updateLaws(Long id, LawsRequestDTO lawsRequestDTO, List<MultipartFile> newFiles, List<Long> deleteIds) throws IOException {
         LawsBoard l = lawsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 법규를 찾을 수 없습니다."));
 
-        List<LawsFile> newFile = new ArrayList<>();
-
-        if (files != null && !files.isEmpty()) {
-            List<String> oldFile = l.getFileList().stream()
-                    .map(LawsFile::getFilePath)
+        if (deleteIds != null && !deleteIds.isEmpty()) {
+            List<LawsFile> removeFile = l.getFileList().stream()
+                    .filter(f -> deleteIds.contains(f.getId()))
                     .collect(Collectors.toList());
 
-            List<UploadFileDTO> result = fileUtils.uploadFiles(files, "laws");
+            List <String> removeFilePath = removeFile.stream()
+                    .map(LawsFile :: getFilePath).collect(Collectors.toList());
 
-            newFile = result.stream()
-                    .map(r -> LawsFile.builder()
-                            .fileName(r.getFileName())
-                            .filePath(r.getFilePath())
-                            .uuid(r.getUuid())
-                            .build())
-                    .collect(Collectors.toList());
+            fileUtils.deleteFile(removeFilePath);
 
-            l.updateLaws(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent(), newFile);
-            fileUtils.deleteFile(oldFile);
-        } else {
-            l.updateTextOnly(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent());
+            l.getFileList().removeAll(removeFile);
+
         }
+
+        // 파일 유효성 검사 -> 빈 파일 리스트 검증
+        List <MultipartFile> validFiles = checkValidFile(newFiles);
+
+        if (!validFiles.isEmpty()) {
+
+            List<UploadFileDTO> result = fileUtils.uploadFiles(validFiles, "law");
+
+            result.forEach(r -> {
+
+                l.addFile(LawsFile.builder()
+                        .fileName(r.getFileName())
+                        .filePath(r.getFilePath())
+                        .uuid(r.getUuid())
+                        .build());
+
+            });
+
+        }
+
+        l.updateTextOnly(lawsRequestDTO.getTitle(), lawsRequestDTO.getContent());
+
     }
 
     // 법규 삭제
@@ -123,6 +173,20 @@ public class LawsService {
 
         lawsRepository.delete(laws);
         fileUtils.deleteFile(target);
+    }
+
+    private List <MultipartFile> checkValidFile (List<MultipartFile> files) {
+
+        if (files == null) {
+
+            return new ArrayList<>();
+
+        }
+
+        return files.stream()
+                .filter(f -> f != null && !f.isEmpty() && f.getOriginalFilename() != null && !f.getOriginalFilename().isEmpty())
+                .collect(Collectors.toList());
+
     }
 
 }

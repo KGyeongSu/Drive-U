@@ -24,10 +24,6 @@ public class CbtResult {
     @Column(name = "member_type", nullable = false, length = 20)
     private String memberType; // MEMBER / SOCIAL
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_id", nullable = false)
-    private CbtExam exam;
-
     @Column(nullable = false)
     @Builder.Default
     private Integer score = 0;

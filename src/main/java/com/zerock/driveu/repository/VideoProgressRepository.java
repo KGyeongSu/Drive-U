@@ -24,5 +24,8 @@ public interface VideoProgressRepository extends JpaRepository<VideoProgress, Lo
             String finalCompletedYn
     );
 
+    // 교통안전교육 이수자 세기(admin metaData)
+    long countByFinalCompletedYn (String status);
+
 
 }

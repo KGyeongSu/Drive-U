@@ -1,4 +1,4 @@
-// 1. 지도 클릭 시 발동하는 함수 (SVG 내 onclick에서 호출됨)
+``// 1. 지도 클릭 시 발동하는 함수 (SVG 내 onclick에서 호출됨)
 async function selectRegion(regionName) {
 
     const mapSvg = document.querySelector('.korea-map');
@@ -303,7 +303,7 @@ async function showCenterPredict (center) {
 
     }
 
-    // 🎨 UI 렌더링용 컬러 및 텍스트 맵
+    // UI 렌더링용 컬러 및 텍스트 맵
     const colorMap = { 'RED': '#e11d48', 'YELLOW': '#eab308', 'GREEN': '#22c55e', 'GRAY': '#9ca3af' };
     const textMap = { 'RED': '혼잡', 'YELLOW': '보통', 'GREEN': '원활', 'GRAY': '마감' };
 
@@ -400,17 +400,98 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// driveU 소식 탭 메뉴 (기존 기능 그대로 유지)
+// driveU 소식 탭 메뉴
 function switchNewsTab(type, element) {
     const tabs = document.querySelectorAll('.news-tab');
     tabs.forEach(tab => tab.classList.remove('active'));
-
     element.classList.add('active');
 
+    // 타입별 사용 데이터 선택
+    const dataList = (type === 'notice') ? window.noticeList : window.lawList;
     const container = document.getElementById('news-items-container');
-    if(type === 'notice') {
-        container.innerHTML = `<div class="news-item">...공지사항 리스트...</div>`;
+    const moreBtn = document.querySelector('.news-more-btn');
+
+    // 초기화
+    container.innerHTML = '';
+
+    // 데이터가 있는경우 반복문으로 리스트 생성
+    if (dataList && dataList.length > 0) {
+
+        dataList.forEach(item => {
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'news-item';
+            itemDiv.onclick = function() {
+                updateNewsDetail(type, item.id, this);
+            };
+
+            itemDiv.innerHTML = `
+            
+                <span class="news-item-title">${item.title}</span>
+                <span class="news-date">${item.date}</span>
+            
+            `;
+
+            moreBtn.style.display = 'block';
+            container.appendChild(itemDiv);
+
+        });
+
+        const firstItem = container.querySelector('.news-item');
+
+        if (firstItem) {
+            updateNewsDetail(type, dataList[0].id, firstItem);
+        }
+
+        moreBtn.disabled = false;
+
     } else {
-        container.innerHTML = `<div class="news-item">...최신법규 리스트...</div>`;
+
+        container.innerHTML = `<div class="news-item">등록된 정보가 없습니다.</div>`;
+
+        document.getElementById('detail-category').innerText = '미리보기';
+        document.getElementById('detail-title').innerText = '등록된 내용이 없습니다.';
+        document.getElementById('detail-desc').innerText = '';
+
+        moreBtn.disabled = true;
+
     }
+
 }
+
+// 탭 이동
+function updateNewsDetail (type, id, element) {
+
+    const dataList = (type === 'notice') ? window.noticeList : window.lawList;
+
+    const items = document.querySelectorAll('.news-item');
+    items.forEach(item => item.classList.remove('active'));
+
+    document.querySelectorAll('.news-item').forEach(el => el.classList.remove('active'));
+
+    if (element) {
+        element.classList.add('active');
+    }
+
+    // i : 각 글 하나하나, id 같은지 선별해서
+    const item = dataList.find(i => i.id === id);
+    if (!item) return;
+
+    // 화면 갱신
+    document.getElementById('detail-title').innerText = item.title;
+    document.getElementById('detail-desc').innerText = item.content;
+
+    // 전체보기 url 변경
+    const moreBtn = document.querySelector('.news-more-btn');
+    const url = (type === 'notice') ? `/drive-u/userInfo/noticeHome/noticeDetail?id=${id}` : `/drive-u/userInfo/lawsHome/lawsDetail?id=${id}`;
+    moreBtn.setAttribute('onclick', `location.href='${url}'`);
+
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 처음 로딩 시 공지사항 첫 번째 선택
+    const firstNotice = document.querySelector('.news-item');
+    if (firstNotice) firstNotice.classList.add('active');
+
+});

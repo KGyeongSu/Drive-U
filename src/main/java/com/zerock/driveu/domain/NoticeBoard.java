@@ -52,22 +52,6 @@ public class NoticeBoard {
 
     }
 
-    // 공지사항 수정 method
-    public void updateNotice (String title, String content, List <NoticeFile> files) {
-
-        this.title = title;
-        this.content = content;
-
-        this.fileList.clear();
-
-        for (NoticeFile file : files) {
-
-            addFile(file);
-
-        }
-
-    }
-
     // 파일은 수정 안 됐을 경우
     public void updateTextOnly (String title, String content) {
 

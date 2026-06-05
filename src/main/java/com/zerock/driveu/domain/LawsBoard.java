@@ -34,7 +34,7 @@ public class LawsBoard {
 
     @CreationTimestamp
     @Column(name = "law_reg_date")
-    private LocalDateTime law_regDate;
+    private LocalDateTime regDate;
 
     @UpdateTimestamp
     @Column(name = "law_mod_date")
@@ -44,15 +44,6 @@ public class LawsBoard {
     public void addFile(LawsFile file) {
         this.fileList.add(file);
         file.setLawsId(this);
-    }
-
-    public void updateLaws(String law_title, String law_content, List<LawsFile> files) {
-        this.law_title = law_title;
-        this.law_content = law_content;
-        this.fileList.clear();
-        for (LawsFile file : files) {
-            addFile(file);
-        }
     }
 
     public void updateTextOnly(String law_title, String law_content) {
