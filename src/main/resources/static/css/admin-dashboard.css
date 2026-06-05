@@ -349,6 +349,7 @@
 .admin-table-card {
     overflow: hidden;
     margin-top: 30px;
+    height: 465px;
 }
 
 .table-title {
@@ -384,7 +385,7 @@
     padding: 0 18px;
     border-bottom: 1px solid #edf1f7;
     color: #374151;
-    text-align: left;
+    text-align: center;
     font-size: 15px;
 }
 
@@ -392,6 +393,12 @@
     background: #f8fbff;
     color: #0f3767;
     font-weight: 900;
+}
+
+.admin-table tbody td:nth-child(1),
+.admin-table tbody td:nth-child(2) {
+    text-align: left;
+    padding-left: 40px;
 }
 
 .state {

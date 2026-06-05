@@ -34,7 +34,7 @@ public class LawsBoard {
 
     @CreationTimestamp
     @Column(name = "law_reg_date")
-    private LocalDateTime law_regDate;
+    private LocalDateTime regDate;
 
     @UpdateTimestamp
     @Column(name = "law_mod_date")
