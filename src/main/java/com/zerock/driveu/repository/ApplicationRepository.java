@@ -4,7 +4,6 @@ import com.zerock.driveu.domain.Application;
 import com.zerock.driveu.domain.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -26,7 +25,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             String memberType,
             ApplicationStatus status);
 
-    // 특정 달의 시험 접수 개수 (admin metaData)
-    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    // Application 엔티티가 ExamSchedule를 schedule 필드로 참조한다면
+    boolean existsByExamScheduleScheduleId(Long scheduleId);
 
 }

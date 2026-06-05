@@ -53,9 +53,11 @@
                 <div class="apply-info-row">
                     <strong>이메일</strong>
                     <span>
-                        <input type="text" id="emailId" placeholder="이메일아이디" required>
+                        <input type="text" id="emailId" placeholder="이메일아이디"
+                               pattern="[a-zA-Z0-9._%+\-]+" required>
                         <b>@</b>
-                        <input type="text" id="emailDomain" placeholder="직접입력" required>
+                        <input type="text" id="emailDomain" placeholder="직접입력"
+                               pattern="[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" required>
 
                         <select id="emailDomainSelect">
                             <option value="">
