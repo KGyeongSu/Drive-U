@@ -22,14 +22,14 @@ document.addEventListener("DOMContentLoaded", function() {
     if (urlParams.has('keyword') || urlParams.has('type') || urlParams.has('status')) {
         const searchArea = document.getElementById('searchResult');
         if (searchArea) {
-            searchArea.scrollIntoView({ behavior: 'smooth' });
+            searchArea.scrollIntoView({behavior: 'smooth'});
         }
     }
 
     // 검색어 입력창 감지
     const keywordInput = document.querySelector('input[name="keyword"]');
     if (keywordInput) {
-        keywordInput.addEventListener('input', function(e) {
+        keywordInput.addEventListener('input', function (e) {
             // 값이 완전히 지워졌을 때만 이동
             if (e.target.value.trim() === "") {
                 window.location.href = "/drive-u/admin";
@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+});
 // ===== 합격처리 =====
 let allCandidates = [];   // 서버에서 받은 COMPLETED 전체 명단 (필터의 원본)
 
