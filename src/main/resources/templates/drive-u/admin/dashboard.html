@@ -66,7 +66,7 @@
 <section class="admin-tab-card">
     <div class="admin-tab-head">
         <button type="button" class="admin-tab active" data-target="statusPanel">현황</button>
-        <button type="button" class="admin-tab" data-target="passerPanel">합격자</button>
+        <button type="button" class="admin-tab" data-target="passPanel">합격처리</button>
     </div>
 
     <div class="admin-panel active" id="statusPanel">
@@ -128,53 +128,47 @@
         </div>
     </div>
 
-    <div class="admin-panel" id="passerPanel">
+    <div class="admin-panel" id="passPanel">
+
+        <!-- 1단계: 시험일정 선택 -->
         <div class="admin-table-card">
             <div class="table-title">
-                <h3>합격자 조회</h3>
-                <span>시험별 합격자 목록</span>
+                <h3>합격 처리</h3>
+                <span>시험장·시간대를 선택해 응시자를 조회하세요</span>
             </div>
 
-            <table class="admin-table">
+            <div class="pass-filter">
+                <label>시험장
+                    <select id="passCenter"></select>
+                </label>
+                <label>시험일
+                    <input type="date" id="passDate">
+                </label>
+                <label>시간대
+                    <select id="passTime"></select>
+                </label>
+                <button type="button" id="loadCandidatesBtn">새로고침</button>
+            </div>
+        </div>
+
+        <!-- 2단계: 응시자 명단 + 점수 입력 -->
+        <div class="admin-table-card">
+            <table class="admin-table pass-table">
                 <thead>
                 <tr>
-                    <th>합격일</th>
-                    <th>회원명</th>
-                    <th>생년월일</th>
+                    <th>접수번호</th>
                     <th>시험구분</th>
                     <th>면허종별</th>
                     <th>시험장</th>
+                    <th>시험일지</th>
+                    <th>이름</th>
+                    <th>연락처</th>
                     <th>점수</th>
+                    <th>처리</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>2026-05-14</td>
-                    <td>박서연</td>
-                    <td>1998-03-12</td>
-                    <td>기능</td>
-                    <td>2종 보통</td>
-                    <td>대전 운전면허시험장</td>
-                    <td>90</td>
-                </tr>
-                <tr>
-                    <td>2026-05-13</td>
-                    <td>이하준</td>
-                    <td>1997-11-08</td>
-                    <td>필기</td>
-                    <td>1종 보통</td>
-                    <td>청주 운전면허시험장</td>
-                    <td>86</td>
-                </tr>
-                <tr>
-                    <td>2026-05-12</td>
-                    <td>정민지</td>
-                    <td>2000-09-21</td>
-                    <td>도로주행</td>
-                    <td>2종 보통</td>
-                    <td>대전 운전면허시험장</td>
-                    <td>합격</td>
-                </tr>
+                <tbody id="candidateBody">
+                <tr><td colspan="9">시험장과 시간대를 선택하세요.</td></tr>
                 </tbody>
             </table>
         </div>

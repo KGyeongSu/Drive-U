@@ -1,7 +1,6 @@
 package com.zerock.driveu.repository;
 
 import com.zerock.driveu.domain.PracticeLicense;
-import com.zerock.driveu.domain.enums.ExamType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

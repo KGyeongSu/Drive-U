@@ -27,7 +27,10 @@
             <div class="section-head">
                 <h2>시험 일정 등록</h2>
             </div>
-
+            <p class="form-guide">
+                여러 시간대를 <strong>한 번에</strong> 등록할 때 사용하세요.
+                시험구분·종별·시험장·날짜를 고른 뒤 시간대를 복수 선택하면 일괄 등록됩니다.
+            </p>
             <form id="scheduleForm" class="admin-form-grid" th:action="@{/drive-u/admin/examSchedule}" method="post">
                 <label>시험구분
                     <select id="examTypeSelect" name="examType">
