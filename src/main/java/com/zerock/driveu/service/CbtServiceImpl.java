@@ -7,10 +7,13 @@ import com.zerock.driveu.dto.*;
 import com.zerock.driveu.repository.CbtChoiceRepository;
 import com.zerock.driveu.repository.CbtCorrectAnswerRepository;
 import com.zerock.driveu.repository.CbtQuestionRepository;
+import com.zerock.driveu.util.CsvParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +24,7 @@ public class CbtServiceImpl implements CbtService {
 
     private final CbtQuestionRepository cbtQuestionRepository;
     private final CbtChoiceRepository cbtChoiceRepository;
+    private final CsvParser csvParser; //육상우 추가 (util 파일 위치)
     private final CbtCorrectAnswerRepository cbtCorrectAnswerRepository;
 
     @Override
@@ -32,6 +36,26 @@ public class CbtServiceImpl implements CbtService {
                 .toList();
     }
 
+    @Transactional
+    @Override //육상우 추가 (csv 파일 파싱 로직)
+    public void uploadQuestionsFromCsv(MultipartFile file, String sourceName, LocalDate effectiveDate) {
+
+        cbtQuestionRepository.deleteBySourceNameAndEffectiveDate(sourceName, effectiveDate);
+
+        //CSV 파싱 구간
+        List<CbtQuestion> newQuestions = csvParser.parse(file, sourceName, effectiveDate);
+
+        Integer maxNo = cbtQuestionRepository.findMaxQuestionNo();
+        // 데이터가 없으면 1부터, 있으면 maxNo + 1부터 시작
+        int sequence = (maxNo == null) ? 1 : maxNo + 1;
+
+        // 파싱된 리스트에 순차적으로 번호 부여
+        for (CbtQuestion question : newQuestions) {
+            question.setQuestionNo(sequence++);
+        }
+
+        //저장
+        cbtQuestionRepository.saveAll(newQuestions);
     @Override
     @Transactional(readOnly = true)
     public CbtSubmitResultDTO submitCbt(CbtSubmitRequestDTO requestDTO) {
