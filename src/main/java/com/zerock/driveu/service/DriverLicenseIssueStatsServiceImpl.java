@@ -103,11 +103,17 @@ public class DriverLicenseIssueStatsServiceImpl implements DriverLicenseIssueSta
         if (issueCenterWeight < 0.3) issueCenterWeight = 0.3;
 
         // 대기 예상시간 계산 & 대기 인수 (issueCount 기반으로 역산)
-        double divisor = 2000.0;
-        if ("수도권".equals(cityGroup)) {
-
-            divisor = 6000.0;
-
+        double divisor = 15000.0;
+        switch (cityGroup) {
+            case "수도권": divisor = 45000.0; break;
+            case "대전·충남":
+            case "부산·울산·경남": divisor = 30000.0; break;
+            case "대구·경북":
+            case "광주·전남": divisor = 25000.0; break;
+            case "충북":
+            case "전북":
+            case "강원":
+            case "제주": divisor = 15000.0; break;
         }
 
         int finalIssueTime = (int) (BASE_MINUTES * dayWeight * hourWeight * issueCenterWeight);

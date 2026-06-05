@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
 // ===== 합격처리 =====
 let allCandidates = [];   // 서버에서 받은 COMPLETED 전체 명단 (필터의 원본)
 
