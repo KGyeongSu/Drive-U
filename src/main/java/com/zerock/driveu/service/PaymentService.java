@@ -88,6 +88,13 @@ public class PaymentService {
     @Transactional
     public Payment verifyPayment(String paymentId) {
 
+        // 0. 멱등성 가드 — 이미 처리된 결제면 재검증 없이 그대로 반환
+        Payment existing = paymentRepository.findByMerchantUid(paymentId).orElse(null);
+        if (existing != null && existing.getStatus() == PaymentStatus.PAID) {
+            log.info("이미 결제 완료된 건 — 재검증 생략: paymentId={}", paymentId);
+            return existing;
+        }
+
         // 1. 우리 DB에서 Application 조회 (V2 paymentId == 우리 merchantUid)
         Application application = applicationRepository.findByMerchantUid(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("신청건 없음: " + paymentId));

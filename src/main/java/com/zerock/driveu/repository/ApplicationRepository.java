@@ -5,6 +5,7 @@ import com.zerock.driveu.domain.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -31,5 +32,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // 특정 달의 시험 접수 개수 (admin metaData)
     long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+    // 결제완료 신청건 전체 (응시자 명단 — 화면에서 시험장·시간대로 필터)
+    List<Application> findByStatus(ApplicationStatus status);
 
 }
