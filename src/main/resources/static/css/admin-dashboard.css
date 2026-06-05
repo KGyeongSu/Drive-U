@@ -739,3 +739,26 @@
     border-color: #2f6fdc;
     color: #2f6fdc;
 }
+
+/* ===== 합격처리 카드: 공용 height:465px 고정 해제 ===== */
+/* 팀원이 .admin-table-card 에 height:465px 를 박아서
+   응시자 없을 때 빈 카드가 큰 공백으로 남음.
+   passPanel 안의 카드만 height:auto 로 되돌려 내용물 높이에 맞춤.
+   #passPanel = id 라 명시도가 높아 안전하게 이김. */
+#passPanel .admin-table-card {
+    height: auto;
+}
+/* ===== 합격처리 표: 공용 admin-table 정렬 덮어쓰기 ===== */
+/* 팀원이 .admin-table 를 center 정렬로 바꿨는데,
+   내 합격명단 표는 왼쪽 정렬이 맞아서 pass-table 스코프로만 되돌림.
+   클래스 2개라 명시도가 높아 팀원 규칙을 안전하게 이김. */
+.admin-table.pass-table th,
+.admin-table.pass-table td {
+    text-align: left;
+}
+
+/* 팀원이 1·2번째 칸에 준 padding-left:40px 도 내 표에선 원복 */
+.admin-table.pass-table tbody td:nth-child(1),
+.admin-table.pass-table tbody td:nth-child(2) {
+    padding-left: 12px;   /* pass-table 기본 좌우 패딩과 맞춤 */
+}
