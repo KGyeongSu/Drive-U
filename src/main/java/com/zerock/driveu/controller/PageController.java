@@ -1,5 +1,6 @@
 package com.zerock.driveu.controller;
 
+import com.zerock.driveu.service.LawsService;
 import com.zerock.driveu.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,13 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PageController {
 
     private final NoticeService noticeService;
-//    private final LawsService lawsService;
+    private final LawsService lawsService;
 
     @GetMapping({"/", "/drive-u"})
     public String index(Model model) {
 
         model.addAttribute("noticeList", noticeService.getMainNotice(7));
-        //model.addAttribute("lawList", lawsService.getMainLaw(7));
+        model.addAttribute("lawList", lawsService.getMainLaw(7));
 
         return "/index";
     }

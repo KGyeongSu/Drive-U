@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AdminController {
 
-    @GetMapping("/drive-u/admin")
-    public String adminDashboard() {
-        return "drive-u/admin/dashboard";
-    }
+
 
 
 

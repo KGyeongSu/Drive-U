@@ -7,12 +7,15 @@ import com.zerock.driveu.repository.LawsRepository;
 import com.zerock.driveu.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +28,42 @@ public class LawsService {
     private final LawsRepository lawsRepository;
     private final FileUtils fileUtils;
 
+    // 메인 홈페이지에 최신 리스트 7개 미리보기
+    public List <MainNewsDTO> getMainLaw(int limit) {
+
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("regDate").descending());
+
+        return lawsRepository.findAll(pageable).getContent().stream()
+                .map(l -> {
+
+                    String shortContent = l.getLaw_content();
+                    if (shortContent != null && shortContent.length() > 50) {
+
+                        shortContent = shortContent.substring(0, 50) + "...";
+
+
+                    }
+
+                    return MainNewsDTO.builder()
+                            .category("law")
+                            .id(l.getId())
+                            .title(l.getLaw_title())
+                            .content(shortContent)
+                            .date(l.getRegDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+                            .build();
+                })
+
+                .collect(Collectors.toList());
+
+    }
+
     // 리스트 가져오기
     public Page<LawsListDTO> getList(Pageable pageable) {
         return lawsRepository.findAll(pageable)
                 .map(l -> LawsListDTO.builder()
                         .id(l.getId())
                         .title(l.getLaw_title())
-                        .regDate(l.getLaw_regDate())
+                        .regDate(l.getRegDate())
                         .modDate(l.getLaw_modDate())
                         .build());
     }
@@ -54,7 +86,7 @@ public class LawsService {
                 .title(l.getLaw_title())
                 .content(l.getLaw_content())
                 .files(fileDTO)
-                .regDate(l.getLaw_regDate())
+                .regDate(l.getRegDate())
                 .modDate(l.getLaw_modDate())
                 .build();
     }

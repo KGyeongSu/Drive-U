@@ -2,6 +2,8 @@ package com.zerock.driveu.repository;
 
 import com.zerock.driveu.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -16,4 +18,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 이메일이 이미 존재하는지 여부 확인
     boolean existsByEmail(String email);
+
+    // user만 카운트
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role = :role")
+    long countByRole(@Param("role") Member.Role role);
+
 }
