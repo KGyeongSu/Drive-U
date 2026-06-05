@@ -4,6 +4,7 @@ import com.zerock.driveu.domain.Application;
 import com.zerock.driveu.domain.enums.ApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -27,5 +28,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // Application 엔티티가 ExamSchedule를 schedule 필드로 참조한다면
     boolean existsByExamScheduleScheduleId(Long scheduleId);
+
+    // 결제완료 신청건 전체 (응시자 명단 — 화면에서 시험장·시간대로 필터)
+    List<Application> findByStatus(ApplicationStatus status);
 
 }

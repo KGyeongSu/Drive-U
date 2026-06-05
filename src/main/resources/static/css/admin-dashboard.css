@@ -585,3 +585,150 @@
     border-color: #dc2626;
     background: #fef2f2;
 }
+
+/* ===== 합격처리 명단: 배지 · 버튼 ===== */
+
+/* 합격 배지 — 기존 .state.pass 와 같은 초록 팔레트 (알약형) */
+.passed-badge {
+    display: inline-flex;
+    min-width: 58px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* 합격취소 버튼 — 위험 동작이라 빨강 계열 */
+.cancel-btn {
+    padding: 6px 14px;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    background: #fff;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.cancel-btn:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* 불합격 행 — 화면에서만 잠깐 표시 (DB엔 안 남음) */
+.failed-row td {
+    background: #fef2f2;   /* 연한 빨강 배경 */
+}
+.failed-row .pass-btn {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ===== 합격처리: 상단 필터 ===== */
+.pass-filter {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 26px 24px;
+}
+
+/* 라벨 = 세로 묶음 (글자 위 / 입력칸 아래) */
+.pass-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+}
+
+/* select · 날짜칸 공통 */
+.pass-filter select,
+.pass-filter input[type="date"] {
+    height: 40px;
+    min-width: 160px;
+    padding: 0 12px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.pass-filter select:focus,
+.pass-filter input[type="date"]:focus {
+    outline: none;
+    border-color: #2f6fdc;          /* 기존 파랑 톤 */
+}
+
+/* 조회 버튼 */
+.pass-filter button {
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2f6fdc;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.pass-filter button:hover {
+    background: #2559bf;
+}
+
+/* ===== 합격처리: 명단 테이블 ===== */
+.pass-table td,
+.pass-table th {
+    padding: 14px 12px;
+    white-space: nowrap;            /* 글자 줄바꿈 방지 (합격취소·면허종별 깨짐 해결) */
+    vertical-align: middle;
+}
+
+/* 시험장만 길어서 줄바꿈 허용 */
+.pass-table td:nth-child(4) {
+    white-space: normal;
+    min-width: 120px;
+}
+
+/* 점수 입력칸 */
+.pass-table .score-input {
+    width: 80px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+.pass-table .score-input:focus {
+    outline: none;
+    border-color: #2f6fdc;
+}
+
+/* 합격처리 버튼 */
+.pass-table .pass-btn {
+    padding: 6px 14px;
+    border: 1px solid #cfd8e5;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.pass-table .pass-btn:hover {
+    border-color: #2f6fdc;
+    color: #2f6fdc;
+}

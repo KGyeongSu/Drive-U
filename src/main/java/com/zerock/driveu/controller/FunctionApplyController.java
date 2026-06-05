@@ -16,7 +16,6 @@ import com.zerock.driveu.repository.ExamScheduleRepository;
 import com.zerock.driveu.repository.TestCenterRepository;
 import com.zerock.driveu.service.LicenseStageValidator;
 import com.zerock.driveu.service.PaymentService;
-import com.zerock.driveu.service.PracticeLicenseService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
