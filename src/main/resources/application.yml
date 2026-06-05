@@ -53,6 +53,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          batch_size: 50        # 한 번에 50개씩 묶어서 처리
+        order_inserts: true     # INSERT 문 순서 정렬
+        order_updates: true     # UPDATE 문 순서 정렬
     show-sql: true
 
 server:
