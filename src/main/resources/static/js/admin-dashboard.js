@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // ===== 합격처리 =====
 let allCandidates = [];   // 서버에서 받은 COMPLETED 전체 명단 (필터의 원본)
+let currentPage = 0;      // 현재 페이지 (0부터 시작)
+const PAGE_SIZE = 5;     // 한 페이지에 보여줄 행 수
 
 // 1. 전체 응시자 명단 조회
 async function loadCandidates() {
@@ -88,15 +90,48 @@ function renderCandidates() {
 
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="9">해당 조건의 응시자가 없습니다.</td></tr>`;
+        renderPagination(0);   // 결과 없으면 페이지버튼도 비움
         return;
     }
 
-    tbody.innerHTML = filtered.map(c => {
-        // 합격행이 있으면(examPassId 존재) 합격 상태로 렌더
+    // ── 페이지 슬라이스 ──
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    // 필터가 바뀌어 페이지 수가 줄면 currentPage가 범위를 벗어날 수 있음 → 보정
+    if (currentPage >= totalPages) currentPage = totalPages - 1;
+    if (currentPage < 0) currentPage = 0;
+
+    const start = currentPage * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    tbody.innerHTML = pageItems.map(c => {
+        // 상태 우선순위: 합격 > 불합격 > 미처리
         const isPassed = c.examPassId != null;
+        const isFailed = c.examFailId != null;
+
+        // 점수칸: 합격이면 배지, 불합격이면 '불합격' 표시, 미처리면 입력칸
+        let scoreCell;
+        if (isPassed) {
+            scoreCell = `<span class="passed-badge">합격</span>`;
+        } else if (isFailed) {
+            scoreCell = `<span class="failed-badge">불합격</span>`;
+        } else {
+            scoreCell = `<input type="number" class="score-input" min="0" max="100" placeholder="점수">`;
+        }
+
+        // 처리칸: 합격이면 합격취소, 불합격이면 불합격취소, 미처리면 합격처리
+        let actionCell;
+        if (isPassed) {
+            actionCell = `<button type="button" class="cancel-btn">합격취소</button>`;
+        } else if (isFailed) {
+            actionCell = `<button type="button" class="cancel-fail-btn">불합격취소</button>`;
+        } else {
+            actionCell = `<button type="button" class="pass-btn">합격처리</button>`;
+        }
 
         return `
-    <tr data-app-id="${c.applicationId}" data-exam-pass-id="${c.examPassId ?? ''}">
+    <tr data-app-id="${c.applicationId}"
+        data-exam-pass-id="${c.examPassId ?? ''}"
+        data-exam-fail-id="${c.examFailId ?? ''}">
         <td>${c.applicationId}</td>
         <td>${c.examType}</td>
         <td>${c.licenseType}</td>
@@ -104,23 +139,56 @@ function renderCandidates() {
         <td>${c.examDate} ${c.examTime.substring(0,5)}</td>
         <td>${c.contactName}</td>
         <td>${c.contactPhone}</td>
-        <td>
-            ${isPassed
-            ? `<span class="passed-badge">합격</span>`
-            : `<input type="number" class="score-input" min="0" max="100" placeholder="점수">`}
-        </td>
-        <td>
-            ${isPassed
-            ? `<button type="button" class="cancel-btn">합격취소</button>`
-            : `<button type="button" class="pass-btn">합격처리</button>`}
-        </td>
+        <td>${scoreCell}</td>
+        <td>${actionCell}</td>
     </tr>`;
     }).join("");
+    renderPagination(totalPages);
+}
+// 페이지 버튼 그리기 (팀원 현황 탭과 같은 클래스 사용 → 모양 통일)
+function renderPagination(totalPages) {
+    const box = document.getElementById("candidatePagination");
+
+    // 페이지가 1개 이하면 버튼 숨김
+    if (totalPages <= 1) {
+        box.innerHTML = "";
+        return;
+    }
+
+    let html = "";
+
+    // « 처음 / 이전 (첫 페이지면 비활성)
+    html += `<button class="page-nav-btn" data-page="0" ${currentPage === 0 ? "disabled" : ""}>&laquo;</button>`;
+    html += `<button class="page-nav-btn" data-page="${currentPage - 1}" ${currentPage === 0 ? "disabled" : ""}>이전</button>`;
+
+    // 숫자 버튼 (현재 페이지엔 active)
+    for (let i = 0; i < totalPages; i++) {
+        html += `<button class="page-num-btn ${i === currentPage ? "active" : ""}" data-page="${i}">${i + 1}</button>`;
+    }
+
+    // 다음 / 끝 » (마지막 페이지면 비활성)
+    html += `<button class="page-nav-btn" data-page="${currentPage + 1}" ${currentPage === totalPages - 1 ? "disabled" : ""}>다음</button>`;
+    html += `<button class="page-nav-btn" data-page="${totalPages - 1}" ${currentPage === totalPages - 1 ? "disabled" : ""}>&raquo;</button>`;
+
+    box.innerHTML = html;
 }
 // 4. 필터 select 변경 → 즉시 다시 렌더
-document.getElementById("passCenter").addEventListener("change", renderCandidates);
-document.getElementById("passTime").addEventListener("change", renderCandidates);
-document.getElementById('passDate').addEventListener("change", renderCandidates);
+// 필터 바뀌면 1페이지부터 다시
+function onFilterChange() {
+    currentPage = 0;
+    renderCandidates();
+}
+document.getElementById("passCenter").addEventListener("change", onFilterChange);
+document.getElementById("passTime").addEventListener("change", onFilterChange);
+document.getElementById('passDate').addEventListener("change", onFilterChange);
+
+// 페이지 버튼 클릭 (이벤트 위임)
+document.getElementById("candidatePagination").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn || btn.disabled) return;
+    currentPage = Number(btn.dataset.page);
+    renderCandidates();
+});
 
 // 5. 합격처리 버튼 (이벤트 위임)
 document.getElementById("candidateBody").addEventListener("click", async (e) => {
@@ -145,19 +213,8 @@ document.getElementById("candidateBody").addEventListener("click", async (e) => 
         const data = await res.json();
 
         alert(data.message);              // "합격 처리됐습니다." / "불합격 (기준 점수 미달)"
-        if (data.passed) {
-            loadCandidates();
-        } else {
-            // 불합격 → DB엔 안 남음. 화면에서만 이번 회차 결과 표시.
-            row.classList.add("failed-row");      // 불합격 표시용 클래스
-            e.target.textContent = "불합격";
-
-            // 점수칸을 다시 건드리면 불합격 표시 해제 → 재입력 후 합격처리 가능
-            input.addEventListener("input", () => {
-                row.classList.remove("failed-row");
-                e.target.textContent = "합격처리";
-            }, { once: true });
-        }
+        // 합격이든 불합격이든 DB에 기록됨(exam_pass / exam_fail) → 명단 다시 그리면 상태 복원
+        loadCandidates();
     } catch (err) {
         console.error(err);
         alert("합격처리 중 오류가 발생했습니다.");
@@ -168,29 +225,29 @@ document.querySelector('.admin-tab[data-target="passPanel"]')
     ?.addEventListener("click", () => {
         if (allCandidates.length === 0) loadCandidates();
     }, { once: true });
-// 7. 합격취소 버튼
+// 7-1. 불합격취소 버튼 (합격취소의 미러)
 document.getElementById("candidateBody").addEventListener("click", async (e) => {
-    if (!e.target.classList.contains("cancel-btn")) return;
+    if (!e.target.classList.contains("cancel-fail-btn")) return;
 
     const row        = e.target.closest("tr");
-    const examPassId = row.dataset.examPassId;
+    const examFailId = row.dataset.examFailId;
 
-    if (!confirm("이 합격을 취소할까요?")) return;
+    if (!confirm("이 불합격을 취소할까요?")) return;
 
     try {
-        const res = await fetch(`/drive-u/admin/examPass/${examPassId}`, {
+        const res = await fetch(`/drive-u/admin/examPass/fail/${examFailId}`, {
             method: "DELETE"
         });
         const data = await res.json();
 
-        alert(data.message);          // "합격이 취소됐습니다." / 예외 메시지
+        alert(data.message);          // "불합격이 취소됐습니다." / 예외 메시지
 
         if (res.ok) {
-            loadCandidates();         // 명단 다시 로딩 → 취소된 행이 미합격으로 되돌아감
+            loadCandidates();         // 명단 다시 로딩 → 취소된 행이 미처리로 되돌아감
         }
     } catch (err) {
         console.error(err);
-        alert("합격취소 중 오류가 발생했습니다.");
+        alert("불합격취소 중 오류가 발생했습니다.");
     }
 });
 // 8. '응시자 조회' = 전체 새로고침

@@ -1,17 +1,11 @@
 package com.zerock.driveu.service;
 
-import com.zerock.driveu.domain.Application;
-import com.zerock.driveu.domain.ExamPass;
-import com.zerock.driveu.domain.Member;
-import com.zerock.driveu.domain.SocialMember;
+import com.zerock.driveu.domain.*;
 import com.zerock.driveu.domain.enums.ApplicationStatus;
 import com.zerock.driveu.domain.enums.ExamType;
 import com.zerock.driveu.dto.ExamCandidateDTO;
 import com.zerock.driveu.dto.ExamPassRequestDTO;
-import com.zerock.driveu.repository.ApplicationRepository;
-import com.zerock.driveu.repository.ExamPassRepository;
-import com.zerock.driveu.repository.MemberRepository;
-import com.zerock.driveu.repository.SocialMemberRepository;
+import com.zerock.driveu.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +20,7 @@ public class ExamPassService {
     private final ExamPassRepository examPassRepository;
     private final MemberRepository memberRepository;
     private final SocialMemberRepository socialMemberRepository;
+    private final ExamFailRepository examFailRepository;
 
 
     @Transactional
@@ -46,7 +41,31 @@ public class ExamPassService {
 
         // 3. 합격 판정 (서버가 한다 — 클라이언트 안 믿음)
         if (!examType.isPassed(licenseType, score)) {
-            return false;   // 불합격 → INSERT 안 함, 흔적도 안 남김
+            // 불합격 → exam_fail 에 기록 (화면 새로고침해도 빨간표시 유지됨)
+
+            // 중복 불합격 방지 (합격 쪽 already 가드의 미러)
+            // 같은 회원·시험·종별 불합격행이 이미 있으면 또 넣지 않음 → 행 0~1개 유지
+            boolean alreadyFailed = examFailRepository
+                    .findByUserSeqAndMemberTypeAndExamTypeAndLicenseType(
+                            application.getUserSeq(),
+                            application.getMemberType(),
+                            examType,
+                            licenseType)
+                    .isPresent();
+            if (alreadyFailed) {
+                return false;   // 이미 불합격 기록 있음 → 그대로 둠
+            }
+
+            ExamFail examFail = ExamFail.builder()
+                    .userSeq(application.getUserSeq())
+                    .memberType(application.getMemberType())
+                    .examType(examType)
+                    .licenseType(licenseType)
+                    .score(score)
+                    .build();
+            // failedDate, createdAt 은 @PrePersist 가 자동으로 채움
+            examFailRepository.save(examFail);
+            return false;
         }
 
         // 4. 중복 합격 방지 (이미 같은 회원·시험·종별 합격행 있으면 스킵)
@@ -90,7 +109,17 @@ public class ExamPassService {
                             .map(ExamPass::getExamPassId)   // 있으면 PK 꺼냄
                             .orElse(null);                  // 없으면 null (미합격)
 
-                    return ExamCandidateDTO.from(app, examPassId,
+                    // 불합격행이 있나? 있으면 examFailId, 없으면 null
+                    Long examFailId = examFailRepository
+                            .findByUserSeqAndMemberTypeAndExamTypeAndLicenseType(
+                                    app.getUserSeq(),
+                                    app.getMemberType(),
+                                    app.getExamType(),
+                                    app.getLicenseType())
+                            .map(ExamFail::getExamFailId)   // 있으면 PK 꺼냄
+                            .orElse(null);                  // 없으면 null (불합격 아님)
+
+                    return ExamCandidateDTO.from(app, examPassId, examFailId,
                             resolveName(app.getUserSeq(), app.getMemberType()));
                 })
                 .toList();
@@ -105,6 +134,16 @@ public class ExamPassService {
                 .orElseThrow(() -> new IllegalArgumentException("없는 합격건: " + examPassId));
 
         examPassRepository.delete(examPass);
+    }
+    @Transactional
+    public void cancelFail(Long examFailId) {
+
+        // 화면에서 본 불합격건이 서버에 실제로 있는지 확인하고 지운다.
+        // 지우면 점수 input 이 다시 열려서 재입력 가능해짐.
+        ExamFail examFail = examFailRepository.findById(examFailId)
+                .orElseThrow(() -> new IllegalArgumentException("없는 불합격건: " + examFailId));
+
+        examFailRepository.delete(examFail);
     }
 
     private String resolveName(Long userSeq, String memberType) {

@@ -44,4 +44,13 @@ public class AdminExamPassController {
                 "message", "합격이 취소됐습니다."
         ));
     }
+    @DeleteMapping("/fail/{examFailId}")
+    public ResponseEntity<Map<String, Object>> cancelFail(@PathVariable Long examFailId) {
+
+        examPassService.cancelFail(examFailId);   // 없는 id면 Service가 예외 던짐
+
+        return ResponseEntity.ok(Map.of(
+                "message", "불합격이 취소됐습니다."
+        ));
+    }
 }
