@@ -56,6 +56,7 @@ public class CbtServiceImpl implements CbtService {
 
         //저장
         cbtQuestionRepository.saveAll(newQuestions);
+    }
     @Override
     @Transactional(readOnly = true)
     public CbtSubmitResultDTO submitCbt(CbtSubmitRequestDTO requestDTO) {

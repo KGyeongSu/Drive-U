@@ -16,10 +16,6 @@ public class AdminController {
         return "drive-u/admin/cbt";
     }
 
-    @GetMapping("/drive-u/admin/examSchedule")
-    public String adminExamSchedule() {
-        return "drive-u/admin/examSchedule";
-    }
 
     //권한이 없는 곳으로 접속했을때 예외처리 주소
     @GetMapping("/drive-u/access-denied")
