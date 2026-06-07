@@ -30,7 +30,8 @@ public class DuController {
 
         boolean duCompleted = eligibilityService.hasWrittenExamEligibility(userSeq, memberType);
 
-        VideoChapter chapter = duService.getFirstDuChapter().orElse(null);
+        Long resumeChapterId = duService.findResumeChapterId(userSeq, memberType);
+        VideoChapter chapter = duService.getDuChapter(resumeChapterId).orElseThrow(() -> new IllegalArgumentException("챕터 정보가 없습니다."));
 
         model.addAttribute("currentPage", "du");
         model.addAttribute("chapter", chapter);
@@ -60,13 +61,8 @@ public class DuController {
         boolean duCompleted = eligibilityService.hasWrittenExamEligibility(userSeq, memberType);
 
         if (!duService.canAccessChapter(userSeq, memberType, chapterId)) {
-            VideoChapter firstChapter = duService.getFirstDuChapter().orElse(null);
-
-            if (firstChapter != null) {
-                return "redirect:/drive-u/du/" + firstChapter.getChapterId();
-            }
-
-            return "redirect:/drive-u/du";
+            Long resumeChapterId = duService.findResumeChapterId(userSeq, memberType);
+            return "redirect:/drive-u/du/" + resumeChapterId;
         }
 
         VideoChapter chapter = duService.getDuChapter(chapterId).orElse(null);

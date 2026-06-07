@@ -233,7 +233,6 @@ public class DuService {
             progress.setCompletedYn("Y");
             progress.setQuizPassedYn("Y");
             progress.setCompletedAt(LocalDateTime.now());
-            updateVideoProgressFinal(userSeq, memberType, chapter.getCourse());
         } else {
             progress.setCompletedYn("N");
             progress.setQuizPassedYn("N");
@@ -322,11 +321,6 @@ public class DuService {
         System.out.println("completedChapterCount = " + completedChapterCount);
         System.out.println("finalCompleted = " + finalCompleted);
 
-
-        if (!finalCompleted) {
-            return;
-        }
-
         VideoProgress videoProgress = videoProgressRepository
                 .findByUserSeqAndMemberTypeAndCourse_CourseType(
                         userSeq,
@@ -337,12 +331,84 @@ public class DuService {
                         .userSeq(userSeq)
                         .memberType(memberType)
                         .course(course)
+                        .completedChapterCount(0)
+                        .totalChapterCount(0)
                         .finalCompletedYn("N")
                         .build());
 
-        videoProgress.setFinalCompletedYn("Y");
-        videoProgress.setCompletedAt(LocalDateTime.now());
+        videoProgress.setCompletedChapterCount((int) completedChapterCount);
+        videoProgress.setTotalChapterCount((int) totalChapterCount);
+        videoProgress.setFinalCompletedYn(finalCompleted ? "Y" : "N");
+
+        if (finalCompleted) {
+            videoProgress.setCompletedAt(LocalDateTime.now());
+        } else {
+            videoProgress.setCompletedAt(null);
+        }
 
         videoProgressRepository.save(videoProgress);
     }
+
+    @Transactional(readOnly = true)
+    public Long findResumeChapterId(Long userSeq, String memberType) {
+        List<VideoChapter> activeChapters = videoChapterRepository.findByCourse_CourseTypeAndCourse_UseYnAndUseYnOrderByChapterOrderAsc(
+                "DU",
+                "Y",
+                "Y"
+        );
+
+        if (activeChapters.isEmpty()) {
+            throw new IllegalArgumentException("등록된 교통안전 교육 챕터가 없습니다.");
+        }
+
+        List<ChapterProgress> progressList = chapterProgressRepository.findByUserSeqAndMemberType(userSeq, memberType);
+
+        for (VideoChapter chapter : activeChapters) {
+            boolean passed = progressList.stream()
+                    .anyMatch(progress -> progress.getChapter().getChapterId()
+                            .equals(chapter.getChapterId())
+                            && "Y".equals(progress.getQuizPassedYn()));
+
+            if (!passed) {
+                return chapter.getChapterId();
+            }
+        }
+
+        return activeChapters
+                .get(activeChapters.size() - 1)
+                .getChapterId();
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
