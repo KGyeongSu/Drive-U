@@ -4,6 +4,7 @@ import com.zerock.driveu.domain.Member;
 import com.zerock.driveu.dto.AuthUserDTO;
 import com.zerock.driveu.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 

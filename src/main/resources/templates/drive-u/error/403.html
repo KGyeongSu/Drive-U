@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>접근 제한</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<div style="text-align: center; margin-top: 100px;">
+    <h1>접근 권한이 없습니다.</h1>
+    <p>요청하신 페이지는 관리자만 접근할 수 있습니다.</p>
+    <a href="/drive-u" style="padding: 10px 20px; background: #3085d6; color: white; text-decoration: none; border-radius: 5px;">메인으로 돌아가기</a>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var errorMsg = /*[[${errorMsg}]]*/ '기본값';
+    if (errorMsg) {
+        window.errorMsg = errorMsg;
+    }
+    /*]]>*/
+</script>
+
+<script src="/js/driveu-common.js"></script>
+</body>
+</html>

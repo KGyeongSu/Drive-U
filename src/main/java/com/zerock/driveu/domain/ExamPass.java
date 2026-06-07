@@ -44,6 +44,10 @@ public class ExamPass {
     @Column(nullable = false, length = 30)
     private String licenseType;         // "1종 보통", "2종 보통" 등
 
+    // 합격 점수
+    @Column(nullable = false)
+    private Long score;
+
     // 합격 여부가 아니라 합격 '시점'
     @Column(nullable = false)
     private LocalDate passedDate;       // 관리자가 합격 입력한 날

@@ -20,7 +20,6 @@ public class LicenseStageValidatorImpl implements LicenseStageValidator {
     private final VideoProgressRepository videoProgressRepository;
 
     // ── GET : 종별 무관 게이트 ──
-
     @Override
     @Transactional(readOnly = true)
     public boolean canEnter(Long userSeq, String memberType, ExamType examType) {
@@ -32,15 +31,7 @@ public class LicenseStageValidatorImpl implements LicenseStageValidator {
         };
     }
 
-    @Override
-    public void validateEnter(Long userSeq, String memberType, ExamType examType) {
-        if (!canEnter(userSeq, memberType, examType)) {
-            throw new IllegalStateException(examType + " 진입 자격 미충족");
-        }
-    }
-
     // ── POST : 종별 일치 게이트 ──
-
     @Override
     @Transactional(readOnly = true)
     public boolean canApply(Long userSeq, String memberType, ExamType examType, String licenseType) {
@@ -52,26 +43,11 @@ public class LicenseStageValidatorImpl implements LicenseStageValidator {
         };
     }
 
-    @Override
-    public void validateApply(Long userSeq, String memberType, ExamType examType, String licenseType) {
-        if (!canApply(userSeq, memberType, examType, licenseType)) {
-            throw new IllegalStateException(examType + "(" + licenseType + ") 신청 자격 미충족");
-        }
-    }
-
     // ── 연습면허 ──
-
     @Override
     @Transactional(readOnly = true)
     public boolean canEnterPracticeLicense(Long userSeq, String memberType) {
         return isFunctionPassedAny(userSeq, memberType);                                  // 기능 합격(종별 불문)
-    }
-
-    @Override
-    public void validateEnterPracticeLicense(Long userSeq, String memberType) {
-        if (!canEnterPracticeLicense(userSeq, memberType)) {
-            throw new IllegalStateException("연습면허 발급 진입 자격 미충족(기능 합격 필요)");
-        }
     }
 
     @Override
@@ -80,15 +56,7 @@ public class LicenseStageValidatorImpl implements LicenseStageValidator {
         return isFunctionPassed(userSeq, memberType, licenseType);                        // 같은 종별 기능 합격
     }
 
-    @Override
-    public void validateIssuePracticeLicense(Long userSeq, String memberType, String licenseType) {
-        if (!canIssuePracticeLicense(userSeq, memberType, licenseType)) {
-            throw new IllegalStateException("연습면허(" + licenseType + ") 발급 자격 미충족");
-        }
-    }
-
     // ── seam : 종별 무관 ──
-
     private boolean isDuCompleted(Long userSeq, String memberType) {
 
         return videoProgressRepository

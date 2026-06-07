@@ -153,7 +153,16 @@
 .empty-slot {
     color: #ccc;
 }
-
+.form-guide {
+    margin: 4px 0 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #6b7684;
+}
+.form-guide strong {
+    color: var(--blue, #1f4fa8);
+    font-weight: 600;
+}
 
 .slot-modal-head {
     display: flex;

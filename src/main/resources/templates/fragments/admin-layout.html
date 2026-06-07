@@ -15,7 +15,7 @@
             <b th:text="${#authentication.principal instanceof T(com.zerock.driveu.dto.AuthUserDTO)
                 ? #authentication.principal.realName : '사용자'}"></b>님
         </span>
-            <a th:href="@{/drive-u/admin/dashboard}">관리자페이지</a>
+            <a th:href="@{/drive-u/admin}">관리자페이지</a>
             <form th:action="@{/drive-u/logout}" method="post" style="display: inline;" id="logoutForm">
                 <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
             </form>

@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(
@@ -77,6 +79,7 @@ public class CbtQuestion {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -99,4 +102,14 @@ public class CbtQuestion {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    //Question 1개는 여러개의 Choice 와 Answer 을 가진다 라는 규칙 생성 (함수 육상우)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CbtChoice> choices = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CbtCorrectAnswer> correctAnswerList = new ArrayList<>();
 }
+

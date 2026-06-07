@@ -1,6 +1,5 @@
 package com.zerock.driveu.domain;
 
-import com.zerock.driveu.domain.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

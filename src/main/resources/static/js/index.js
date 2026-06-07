@@ -483,7 +483,7 @@ function updateNewsDetail (type, id, element) {
 
     // 전체보기 url 변경
     const moreBtn = document.querySelector('.news-more-btn');
-    const url = (type === 'notice') ? `/drive-u/userInfo/noticeHome/noticeDetail?id=${id}` : `/drive-u/userInfo/lowsHome/lawsDetail?id=${id}`;
+    const url = (type === 'notice') ? `/drive-u/userInfo/noticeHome/noticeDetail?id=${id}` : `/drive-u/userInfo/lawsHome/lawsDetail?id=${id}`;
     moreBtn.setAttribute('onclick', `location.href='${url}'`);
 
 }

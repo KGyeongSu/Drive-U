@@ -26,9 +26,6 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    // 메인화면에서 문의사항 미리보기
-    
-
     // 문의사항 리스트 전체 보기
     @GetMapping("/questionHome")
     public String questionHome(@PageableDefault(page = 0, size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
