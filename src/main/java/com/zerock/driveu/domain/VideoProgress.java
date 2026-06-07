@@ -40,6 +40,12 @@ public class VideoProgress {
     @Column(name = "final_completed_yn", nullable = false, length = 1)
     private String finalCompletedYn;
 
+    @Column(name = "completed_chapter_count", nullable = false)
+    private Integer completedChapterCount;
+
+    @Column(name = "total_chapter_count", nullable = false)
+    private Integer totalChapterCount;
+
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
@@ -48,7 +54,17 @@ public class VideoProgress {
 
     @PrePersist
     public void prePersist() {
-        if (finalCompletedYn == null) finalCompletedYn = "N";
+        if (completedChapterCount == null) {
+            completedChapterCount = 0;
+        }
+
+        if (totalChapterCount == null) {
+            totalChapterCount = 0;
+        }
+
+        if (finalCompletedYn == null) {
+            finalCompletedYn = "N";
+        }
 
         updatedAt = LocalDateTime.now();
     }
