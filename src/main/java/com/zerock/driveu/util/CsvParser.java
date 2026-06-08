@@ -27,7 +27,6 @@ public class CsvParser {
             boolean isHeader = true;
 
             while ((line = br.readLine()) != null) {
-                // 빈 줄 건너뛰기
                 if (line.trim().isEmpty()) continue;
 
                 if (isHeader) {
@@ -37,18 +36,16 @@ public class CsvParser {
 
                 String[] columns = line.split(",");
 
-                // 로그 추가: 데이터 구조 확인용
-                log.debug("Processing Line: {}, Columns Length: {}", line, columns.length);
-
-                if (columns.length < 7) {
-                    log.warn("Skipping invalid line (insufficient columns): {}", line);
+                if (columns.length < 8) {
+                    log.warn("Skipping invalid line (insufficient columns, expected 8): {}", line);
                     continue;
                 }
 
-                // 문제 생성 (여기에 .questionNo(qNo) 추가!)
+                // 문제 생성
                 CbtQuestion question = CbtQuestion.builder()
                         .questionNo(qNo)
                         .questionText(columns[0].trim())
+                        .explanation(columns[7].trim()) //해설
                         .sourceName(sourceName)
                         .effectiveDate(effectiveDate)
                         .build();
@@ -91,7 +88,7 @@ public class CsvParser {
 
                 questionList.add(question);
 
-                // 다음 문제를 위해 번호 증가
+                // 다음 문제를 위해 번호증가
                 qNo++;
             }
         } catch (Exception e) {
