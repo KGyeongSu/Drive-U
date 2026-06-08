@@ -227,7 +227,7 @@ button, input, select, textarea {
     margin: 0 auto;
     display: grid;
     grid-template-columns: 280px 1fr;
-    gap: 80px;
+    gap: 50px;
 }
 
 .home-content {
@@ -367,7 +367,7 @@ button, input, select, textarea {
 .section-header {
     display: flex;
     justify-content: space-between; /* 양쪽 끝으로 배치 */
-    align-items: center;            /* 수직 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
     margin-bottom: 20px;
 }
 
@@ -569,11 +569,51 @@ button, input, select, textarea {
     border-color: #d1d5db;
     color: #4b5563;
 }
+
 .outline-btn.disabled {
     pointer-events: none;
     opacity: 0.45;
     cursor: not-allowed;
 }
+
+.outline-btnn {
+    min-width: 150px;
+    height: 46px;
+    padding: 0 18px;
+    border: 1px solid #bdd6ff;
+    border-radius: 999px;
+    background: #fff;
+    color: #1f5fc9;
+    font-size: 15px;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(47, 111, 220, .08);
+    cursor: pointer;
+}
+
+.outline-btnn::after {
+    margin-left: 8px;
+    font-size: 20px;
+}
+
+.outline-btnn:hover {
+    background: var(--blue);
+    color: #fff;
+}
+
+.outline-btnn.sub {
+    border-color: #d1d5db;
+    color: #4b5563;
+}
+
+.outline-btnn.disabled {
+    pointer-events: none;
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .button-area {
     margin-top: 30px;
     display: flex;
@@ -597,8 +637,9 @@ button, input, select, textarea {
     font-weight: 800;
     color: #111827;
 }
+
 .quiz-item {
-    margin-top:12px;
+    margin-top: 12px;
     margin-bottom: 50px;
 }
 
@@ -621,6 +662,7 @@ button, input, select, textarea {
     text-align: left;
     cursor: pointer;
 }
+
 .quiz-option.selected {
     background: #dbeafe;
     border-color: #2563eb;
@@ -629,11 +671,11 @@ button, input, select, textarea {
 }
 
 .quiz-option.disabled {
-   cursor:default;
+    cursor: default;
 }
 
 .quiz-option.correct {
-    cursor:default;
+    cursor: default;
     background: #dcfce7;
     border-color: #16a34a;
     color: #166534;
@@ -658,6 +700,7 @@ button, input, select, textarea {
 .quiz-message.wrong {
     color: #dc2626;
 }
+
 .quiz-explanation {
     margin-top: 16px;
     padding: 14px 16px;
@@ -707,11 +750,13 @@ button, input, select, textarea {
     margin-top: 14px;
     font-size: 15px;
 }
+
 .outline-btn.disabled {
     pointer-events: none;
     opacity: 0.45;
     cursor: not-allowed;
 }
+
 /* ================= Apply flow ================= */
 
 .apply-step-wrap {
@@ -1125,6 +1170,7 @@ button, input, select, textarea {
     border-color: #2563eb;
     color: #2563eb;
 }
+
 .chapter.active {
     background: var(--blue-soft);
     color: var(--blue);
@@ -1167,6 +1213,7 @@ button, input, select, textarea {
     border: 1px solid #dbe7f6;
     border-radius: 16px;
 }
+
 .result-summary {
     padding: 28px;
     border: 1px solid #dbe7ff;
@@ -1288,6 +1335,7 @@ button, input, select, textarea {
     background: #fff1c7;
     color: #a66a00;
 }
+
 .simulator-box {
     padding: 24px;
     border-radius: 24px;
@@ -1407,10 +1455,10 @@ button, input, select, textarea {
 
 .lvideo-detail-title {
     padding: 18px 5px;
-   /* border-radius: 16px;
-    background: #fff;
-    border: 1px solid #dbeafe;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);*/
+    /* border-radius: 16px;
+     background: #fff;
+     border: 1px solid #dbeafe;
+     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);*/
 }
 
 .lvideo-detail-title h1 {
@@ -1442,6 +1490,7 @@ button, input, select, textarea {
     font-weight: 800;
     color: #2563eb;
 }
+
 .video-thumb {
     position: relative;
     overflow: hidden;
@@ -1990,6 +2039,7 @@ button, input, select, textarea {
     border: 0;
     display: block;
 }
+
 /*mainHome*/
 .map-section-wrapper {
     display: flex;
@@ -2271,7 +2321,7 @@ button, input, select, textarea {
     width: 400px;
     background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     z-index: 10000;
     overflow: hidden;
     display: none;
@@ -2492,6 +2542,7 @@ button:disabled {
     width: 250px;
     justify-content: flex-end;
 }
+
 /* 교통안전교육 완료 후 퀴즈 보기 disabled 전용 */
 /* 퀴즈 진행 표시 */
 .quiz-progress {
