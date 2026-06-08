@@ -3,6 +3,7 @@ package com.zerock.driveu.service.admin;
 import com.zerock.driveu.domain.Member;
 import com.zerock.driveu.domain.VideoCourse;
 import com.zerock.driveu.dto.admin.LVideoCreateDTO;
+import com.zerock.driveu.dto.admin.LVideoUpdateDTO;
 import com.zerock.driveu.repository.MemberRepository;
 import com.zerock.driveu.repository.VideoCourseRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,13 +56,10 @@ public class AdminLVideoService {
         );
 
         return switch(sort){
-            case "lastest" -> videoCourseRepository.findByCourseTypeOrderByCreatedAtDesc(
-                    "LVIDEO", pageable
-            );
             case "oldest" -> videoCourseRepository.findByCourseTypeOrderByCreatedAtAsc(
                     "LVIDEO", pageable
             );
-            default -> videoCourseRepository.findByCourseTypeOrderByCourseOrderAsc(
+            default -> videoCourseRepository.findByCourseTypeOrderByCreatedAtDesc(
                     "LVIDEO", pageable
             );
         };
@@ -128,19 +126,16 @@ public class AdminLVideoService {
     }
 
     @Transactional
-    public void update(Long courseId, String useYn) {
-        if (!"Y".equals(useYn) && !"N".equals(useYn)) {
-            throw new IllegalArgumentException("사용 여부 값이 올바르지 않습니다.");
-        }
-
+    public void update(Long courseId, LVideoUpdateDTO form) {
         VideoCourse videoCourse = videoCourseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("학습 영상을 찾을 수 없습니다."));
 
-        if (!"LVIDEO".equals(videoCourse.getCourseType())) {
-            throw new IllegalArgumentException("학습 영상 데이터가 아닙니다.");
-        }
-
-        videoCourse.setUseYn(useYn);
+        videoCourse.updateLearningVideo(
+                form.getCategory(),
+                form.getTitle(),
+                form.getDescription(),
+                form.getUseYn()
+        );
     }
 
     @Transactional

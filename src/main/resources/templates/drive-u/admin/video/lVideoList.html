@@ -30,7 +30,7 @@
         </section>
 
         <!-- 목록 영역 -->
-        <section class="admin-table-card">
+        <section class="admin-table-cards">
 
             <div class="section-head">
                 <div>
@@ -49,12 +49,6 @@
                         <select name="sort"
                                 id="videoSortSelect"
                                 class="admin-sort-select">
-
-                            <option value="order"
-                                    th:selected="${sort == 'order'}">
-                                노출순
-                            </option>
-
                             <option value="latest"
                                     th:selected="${sort == 'latest'}">
                                 최신 등록순
@@ -78,147 +72,144 @@
             </div>
 
             <!-- 영상이 있는 경우 -->
-            <div class="table-scroll"
+            <div class="admin-video-list-wrap"
                  th:if="${videos != null and !videos.isEmpty()}">
 
-                <table class="admin-table">
+                <div class="admin-video-list">
 
-                    <thead>
-                    <tr>
-                        <th>순서</th>
-                        <th>썸네일</th>
-                        <th>영상 구분</th>
-                        <th>영상 제목</th>
-                        <th>사용 여부</th>
-                        <th>등록일</th>
-                        <th>관리</th>
-                    </tr>
-                    </thead>
+                    <article class="admin-video-item"
+                             th:each="video : ${videos}"
+                             data-edit-video
+                             tabindex="0"
+                             role="button"
+                             th:aria-label="|${video.title} 수정하기|"
+                             th:data-course-id="${video.courseId}"
+                             th:data-course-order="${video.courseOrder}"
+                             th:data-title="${video.title}"
+                             th:data-category="${video.category}"
+                             th:data-video-url="${video.videoUrl}"
+                             th:data-description="${video.description}"
+                             th:data-use-yn="${video.useYn}">
 
-                    <tbody>
-
-                    <tr th:each="video, stat : ${videos}">
                         <!-- 썸네일 -->
-                        <td>
-                            <div class="admin-video-thumbnail">
+                        <div class="admin-video-item-thumbnail">
 
-                                <img th:if="${video.thumbnailUrl != null
-                                            and !#strings.isEmpty(video.thumbnailUrl)}"
-                                     th:src="${video.thumbnailUrl}"
-                                     th:alt="${video.title}">
+                            <img th:if="${video.thumbnailUrl != null
+                            and !#strings.isEmpty(video.thumbnailUrl)}"
+                                 th:src="${video.thumbnailUrl}"
+                                 th:alt="${video.title}">
 
-                                <div class="thumbnail-empty"
-                                     th:unless="${video.thumbnailUrl != null
-                                                and !#strings.isEmpty(video.thumbnailUrl)}">
-                                    No Image
-                                </div>
+                            <div class="thumbnail-empty"
+                                 th:unless="${video.thumbnailUrl != null
+                                and !#strings.isEmpty(video.thumbnailUrl)}">
+                                No Image
+                            </div>
+
+                        </div>
+
+                        <!-- 영상 정보 -->
+                        <div class="admin-video-item-content">
+
+                            <div class="admin-video-item-top">
+
+                    <span class="admin-category-badge"
+                          th:text="${video.category}">
+                        도로주행
+                    </span>
+
+                                <span class="status-badge"
+                                      th:classappend="${video.useYn == 'Y'}
+                              ? ' status-active'
+                              : ' status-inactive'"
+                                      th:text="${video.useYn == 'Y'}
+                              ? '사용'
+                              : '미사용'">
+                        사용
+                    </span>
 
                             </div>
-                        </td>
 
-                        <!-- 카테고리 -->
-                        <td>
-                            <span class="admin-category-badge"
-                                  th:text="${video.category}">
-                                도로주행
-                            </span>
-                        </td>
+                            <div class="admin-video-item-text">
 
-                        <!-- 제목과 설명 -->
-                        <td class="video-title-cell">
+                                <h3 th:text="${video.title}">
+                                    도로주행 차선 변경 방법
+                                </h3>
 
-                            <strong th:text="${video.title}">
-                                도로주행 차선 변경 방법
-                            </strong>
+                                <p th:if="${video.description != null
+                              and !#strings.isEmpty(video.description)}"
+                                   th:text="${video.description}">
+                                    영상 설명
+                                </p>
 
-                            <p th:if="${video.description != null}"
-                               th:text="${video.description}">
-                                영상 설명
-                            </p>
+                            </div>
 
-                        </td>
+                            <div class="admin-video-item-meta">
 
-                        <!-- 사용 여부 -->
-                        <td>
-                            <span class="status-badge"
-                                  th:classappend="${video.useYn == 'Y'}
-                                      ? ' status-active'
-                                      : ' status-inactive'"
-                                  th:text="${video.useYn == 'Y'}
-                                      ? '사용'
-                                      : '미사용'">
-                                사용
-                            </span>
-                        </td>
+                    <span>
+                        노출 순서
+                        <strong th:text="${video.courseOrder}">
+                            1
+                        </strong>
+                    </span>
 
-                        <!-- 등록일 -->
-                        <td th:text="${video.createdAt != null
+                                <span>
+                        등록일
+                        <strong th:text="${video.createdAt != null
                             ? #temporals.format(video.createdAt, 'yyyy-MM-dd')
                             : '-'}">
                             2026-06-05
-                        </td>
-
-                        <!-- 관리 버튼 -->
-                        <td>
-                            <div class="table-action-buttons">
-
-                                <a th:href="@{/drive-u/lVideo/{courseId}(courseId=${video.courseId})}"
-                                   class="admin-table-btn"
-                                   target="_blank">
-                                    보기
-                                </a>
-
-                                <button type="button"
-                                        class="admin-table-btn edit"
-                                        data-edit-video
-                                        th:data-course-id="${video.courseId}"
-                                        th:data-title="${video.title}"
-                                        th:data-category="${video.category}"
-                                        th:data-video-url="${video.videoUrl}"
-                                        th:data-description="${video.description}"
-                                        th:data-use-yn="${video.useYn}">
-                                    수정
-                                </button>
-
-                                <button type="button"
-                                        class="admin-table-btn danger"
-                                        data-delete-video
-                                        th:data-course-id="${video.courseId}"
-                                        th:data-title="${video.title}">
-                                    삭제
-                                </button>
+                        </strong>
+                    </span>
 
                             </div>
-                        </td>
 
-                    </tr>
+                        </div>
+                    </article>
+                </div>
 
-                    </tbody>
-                </table>
+                <!-- 페이지네이션 -->
                 <nav class="admin-pagination"
-                     th:if="${videoPage.totalPages > 1}">
+                     th:if="${videoPage != null}">
 
                     <a class="page-btn"
                        th:classappend="${videoPage.first} ? ' disabled'"
-                       th:href="@{/drive-u/admin/video/lVideo(page=${videoPage.number - 1}, size=${videoPage.size}, sort=${sort})}">
+                       th:href="${videoPage.first}
+                ? '#'
+                : @{/drive-u/admin/video/lVideo(
+                    page=${videoPage.number - 1},
+                    size=${videoPage.size},
+                    sort=${sort}
+                  )}">
                         이전
                     </a>
 
                     <a class="page-btn"
                        th:each="pageNo : ${#numbers.sequence(0, videoPage.totalPages - 1)}"
                        th:text="${pageNo + 1}"
-                       th:classappend="${pageNo == videoPage.number} ? ' active'" page=${pageNo},
-                       size=${videoPage.size}, sort=${sort})}">
+                       th:classappend="${pageNo == videoPage.number} ? ' active'"
+                       th:href="@{/drive-u/admin/video/lVideo(
+                page=${pageNo},
+                size=${videoPage.size},
+                sort=${sort}
+           )}">
                         1
                     </a>
+
                     <a class="page-btn"
                        th:classappend="${videoPage.last} ? ' disabled'"
-                       th:href="@{/drive-u/admin/video/lVideo(page=${videoPage.number + 1}, size=${videoPage.size}, sort=${sort})}">
+                       th:href="${videoPage.last}
+                ? '#'
+                : @{/drive-u/admin/video/lVideo(
+                    page=${videoPage.number + 1},
+                    size=${videoPage.size},
+                    sort=${sort}
+                  )}">
                         다음
                     </a>
-                </nav>
-            </div>
 
+                </nav>
+
+            </div>
             <!-- 영상이 없는 경우 -->
             <div class="admin-empty-box"
                  th:if="${videos == null or videos.isEmpty()}">
@@ -229,7 +220,7 @@
                     학습 영상 등록 버튼을 눌러 새로운 영상을 등록해 주세요.
                 </p>
 
-                <a th:href="@{/drive-u/admin/video/lVideo}"
+                <a th:href="@{/drive-u/admin/video/lVideo/create}"
                    class="admin-small-btn">
                     학습 영상 등록
                 </a>
@@ -261,13 +252,15 @@
                         영상 구분
                         <input type="text"
                                id="editCategory"
-                               readonly>
+                               name="category"
+                               required>
                     </label>
 
                     <label>
                         노출 순서
                         <input type="number"
                                id="editCourseOrder"
+                               name="courseOrder"
                                readonly>
                     </label>
 
@@ -275,7 +268,8 @@
                         영상 제목
                         <input type="text"
                                id="editTitle"
-                               readonly>
+                               name="title"
+                               required>
                     </label>
 
                     <label class="full">
@@ -288,7 +282,8 @@
                     <label class="full">
                         영상 설명
                         <textarea id="editDescription"
-                                  readonly></textarea>
+                                  name="description"
+                                  required></textarea>
                     </label>
 
                     <label>
@@ -303,17 +298,28 @@
 
                 </div>
 
+
                 <div class="modal-button-area">
                     <button type="button"
-                            class="admin-small-btn sub"
-                            data-close-edit-modal>
-                        취소
+                            class="admin-small-btn danger"
+                            id="editModalDeleteBtn"
+                            data-course-id=""
+                            data-title="">
+                        삭제
                     </button>
 
-                    <button type="submit"
-                            class="admin-small-btn">
-                        변경 저장
-                    </button>
+                    <div class="modal-button-right">
+                        <button type="button"
+                                class="admin-small-btn sub"
+                                data-close-edit-modal>
+                            취소
+                        </button>
+
+                        <button type="submit"
+                                class="admin-small-btn">
+                            변경 저장
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -361,7 +367,7 @@
 
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 
-<script th:src="@{/js/admin/admin-dashboard.js}"></script>
+<script th:src="@{/js/admin-dashboard.js}"></script>
 <script th:src="@{/js/admin/adminLVideoList.js}"></script>
 
 </body>

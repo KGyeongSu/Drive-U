@@ -91,4 +91,16 @@ public class VideoCourse {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateLearningVideo (
+            String category,
+            String title,
+            String description,
+            String useYn
+    ){
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.useYn = useYn;
+    }
 }
