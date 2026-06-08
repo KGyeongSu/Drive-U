@@ -55,6 +55,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 //비로그인 유저
                         .requestMatchers(
+                                "/",
                                 "/drive-u",
                                 "/drive-u/login",
                                 "/drive-u/lVideo",
@@ -72,6 +73,7 @@ public class SecurityConfig {
                                 "/login/checkId",
                                 "/login/checkEmail",
                                 "/drive-u/userInfo/**",
+                                "/api/predict/**",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
                 // 관리자 권한
