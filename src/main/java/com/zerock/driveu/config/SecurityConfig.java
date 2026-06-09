@@ -1,5 +1,6 @@
 package com.zerock.driveu.config;
 
+import com.zerock.driveu.config.handler.CustomAccessDeniedHandler;
 import com.zerock.driveu.config.handler.FailureHandler;
 import com.zerock.driveu.config.handler.SuccessHandler;
 import com.zerock.driveu.service.CustomUserDetailsService;
@@ -45,9 +46,16 @@ public class SecurityConfig {
         );
 
 
+        //접근 거부 핸들러 설정 (관리자가 아닌 권한을 가지고 접근했을때 403 페이지 이동)
+        http.exceptionHandling(exception -> exception
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+        );
+
+
         http.authorizeHttpRequests(auth -> auth
                 //비로그인 유저
                         .requestMatchers(
+                                "/",
                                 "/drive-u",
                                 "/drive-u/login",
                                 "/drive-u/lVideo",
@@ -64,10 +72,12 @@ public class SecurityConfig {
                                 "/login/signUp",
                                 "/login/checkId",
                                 "/login/checkEmail",
+                                "/drive-u/userInfo/**",
+                                "/api/predict/**",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
-                // 관리자 권한 *인수 추가
-                .requestMatchers("/drive-u/admin", "/drive-u/admin/**").hasRole("ADMIN")
+                // 관리자 권한
+                .requestMatchers("/drive-u/admin/**").hasRole("ADMIN")
 
                 // 로그인 유저는 아무거나
                 .anyRequest().authenticated()

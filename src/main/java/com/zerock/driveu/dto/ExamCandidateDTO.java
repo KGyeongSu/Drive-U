@@ -19,18 +19,20 @@ public class ExamCandidateDTO {
     private String contactPhone;
     private String contactEmail;
     private Long examPassId;        // 합격행pk, 합격 안 했으면 null
+    private Long examFailId;        // 불합격행pk, 불합격 안 했으면 null
 
     // ── 필터 기준 ──
     private String centerName;      // 시험장
     private LocalDate examDate;     // 시험일
     private LocalTime examTime;     // 시간대
 
-    public static ExamCandidateDTO from(Application app, Long examPassId, String contactName) {
+    public static ExamCandidateDTO from(Application app, Long examPassId, Long examFailId, String contactName) {
         ExamSchedule schedule = app.getExamSchedule();
         return ExamCandidateDTO.builder()
                 .applicationId(app.getApplicationId())
                 .examPassId(examPassId)
-                .contactName(contactName)        // ← 추가
+                .examFailId(examFailId)
+                .contactName(contactName)
                 .examType(app.getExamType().getLabel())
                 .licenseType(app.getLicenseType())
                 .contactPhone(app.getContactPhone())

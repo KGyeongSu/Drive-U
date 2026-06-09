@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('학습 영상 관리')}"></head>
+
+<body>
+<link rel="stylesheet"
+      th:href="@{/css/admin-dashboard.css}">
+
+<header th:replace="~{fragments/admin-layout :: header('admin')}"></header>
+
+<div class="admin-layout">
+
+    <aside th:replace="~{fragments/admin-layout :: adminSide('lVideo')}"></aside>
+
+    <main class="admin-content">
+
+        <!-- 상단 소개 -->
+        <section class="admin-hero compact">
+            <div>
+                <p class="eyebrow">LEARNING VIDEO MANAGEMENT</p>
+
+                <h1>학습 영상 관리</h1>
+
+                <p>
+                    기능·도로주행·안전운전 학습 영상을 조회하고 관리합니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 목록 영역 -->
+        <section class="admin-table-cards">
+
+            <div class="section-head">
+                <div>
+                    <h2>등록된 학습 영상</h2>
+
+                    <span th:if="${videos != null}"
+                          th:text="|총 ${videos.size()}개의 영상|">
+                        총 0개의 영상
+                    </span>
+                </div>
+                <div class="video-list-tools">
+                    <form method="get"
+                          th:action="@{/drive-u/admin/video/lVideo}"
+                          id="sortForm">
+
+                        <select name="sort"
+                                id="videoSortSelect"
+                                class="admin-sort-select">
+                            <option value="latest"
+                                    th:selected="${sort == 'latest'}">
+                                최신 등록순
+                            </option>
+
+                            <option value="oldest"
+                                    th:selected="${sort == 'oldest'}">
+                                오래된 등록순
+                            </option>
+                        </select>
+
+                        <input type="hidden"
+                               name="size"
+                               th:value="${videoPage.size}">
+                    </form>
+                    <a th:href="@{/drive-u/admin/video/lVideo/create}"
+                       class="admin-small-btn">
+                        + 학습 영상 등록
+                    </a>
+                </div>
+            </div>
+
+            <!-- 영상이 있는 경우 -->
+            <div class="admin-video-list-wrap"
+                 th:if="${videos != null and !videos.isEmpty()}">
+
+                <div class="admin-video-list">
+
+                    <article class="admin-video-item"
+                             th:each="video : ${videos}"
+                             data-edit-video
+                             tabindex="0"
+                             role="button"
+                             th:aria-label="|${video.title} 수정하기|"
+                             th:data-course-id="${video.courseId}"
+                             th:data-course-order="${video.courseOrder}"
+                             th:data-title="${video.title}"
+                             th:data-category="${video.category}"
+                             th:data-video-url="${video.videoUrl}"
+                             th:data-description="${video.description}"
+                             th:data-use-yn="${video.useYn}">
+
+                        <!-- 썸네일 -->
+                        <div class="admin-video-item-thumbnail">
+
+                            <img th:if="${video.thumbnailUrl != null
+                            and !#strings.isEmpty(video.thumbnailUrl)}"
+                                 th:src="${video.thumbnailUrl}"
+                                 th:alt="${video.title}">
+
+                            <div class="thumbnail-empty"
+                                 th:unless="${video.thumbnailUrl != null
+                                and !#strings.isEmpty(video.thumbnailUrl)}">
+                                No Image
+                            </div>
+
+                        </div>
+
+                        <!-- 영상 정보 -->
+                        <div class="admin-video-item-content">
+
+                            <div class="admin-video-item-top">
+
+                    <span class="admin-category-badge"
+                          th:text="${video.category}">
+                        도로주행
+                    </span>
+
+                                <span class="status-badge"
+                                      th:classappend="${video.useYn == 'Y'}
+                              ? ' status-active'
+                              : ' status-inactive'"
+                                      th:text="${video.useYn == 'Y'}
+                              ? '사용'
+                              : '미사용'">
+                        사용
+                    </span>
+
+                            </div>
+
+                            <div class="admin-video-item-text">
+
+                                <h3 th:text="${video.title}">
+                                    도로주행 차선 변경 방법
+                                </h3>
+
+                                <p th:if="${video.description != null
+                              and !#strings.isEmpty(video.description)}"
+                                   th:text="${video.description}">
+                                    영상 설명
+                                </p>
+
+                            </div>
+
+                            <div class="admin-video-item-meta">
+
+                    <span>
+                        노출 순서
+                        <strong th:text="${video.courseOrder}">
+                            1
+                        </strong>
+                    </span>
+
+                                <span>
+                        등록일
+                        <strong th:text="${video.createdAt != null
+                            ? #temporals.format(video.createdAt, 'yyyy-MM-dd')
+                            : '-'}">
+                            2026-06-05
+                        </strong>
+                    </span>
+
+                            </div>
+
+                        </div>
+                    </article>
+                </div>
+
+                <!-- 페이지네이션 -->
+                <nav class="admin-pagination"
+                     th:if="${videoPage != null}">
+
+                    <a class="page-btn"
+                       th:classappend="${videoPage.first} ? ' disabled'"
+                       th:href="${videoPage.first}
+                ? '#'
+                : @{/drive-u/admin/video/lVideo(
+                    page=${videoPage.number - 1},
+                    size=${videoPage.size},
+                    sort=${sort}
+                  )}">
+                        이전
+                    </a>
+
+                    <a class="page-btn"
+                       th:each="pageNo : ${#numbers.sequence(0, videoPage.totalPages - 1)}"
+                       th:text="${pageNo + 1}"
+                       th:classappend="${pageNo == videoPage.number} ? ' active'"
+                       th:href="@{/drive-u/admin/video/lVideo(
+                page=${pageNo},
+                size=${videoPage.size},
+                sort=${sort}
+           )}">
+                        1
+                    </a>
+
+                    <a class="page-btn"
+                       th:classappend="${videoPage.last} ? ' disabled'"
+                       th:href="${videoPage.last}
+                ? '#'
+                : @{/drive-u/admin/video/lVideo(
+                    page=${videoPage.number + 1},
+                    size=${videoPage.size},
+                    sort=${sort}
+                  )}">
+                        다음
+                    </a>
+
+                </nav>
+
+            </div>
+            <!-- 영상이 없는 경우 -->
+            <div class="admin-empty-box"
+                 th:if="${videos == null or videos.isEmpty()}">
+
+                <h3>등록된 학습 영상이 없습니다.</h3>
+
+                <p>
+                    학습 영상 등록 버튼을 눌러 새로운 영상을 등록해 주세요.
+                </p>
+
+                <a th:href="@{/drive-u/admin/video/lVideo/create}"
+                   class="admin-small-btn">
+                    학습 영상 등록
+                </a>
+            </div>
+        </section>
+    </main>
+    <!-- 학습영상 상세 및 사용 여부 수정 모달 -->
+    <div class="admin-modal" id="editVideoModal" aria-hidden="true">
+        <div class="admin-modal-backdrop" data-close-edit-modal></div>
+
+        <div class="admin-modal-dialog">
+            <div class="admin-modal-head">
+                <div>
+                    <p class="eyebrow">LEARNING VIDEO DETAIL</p>
+                    <h2>학습 영상 상세</h2>
+                </div>
+
+                <button type="button"
+                        class="modal-close-btn"
+                        data-close-edit-modal>
+                    ×
+                </button>
+            </div>
+
+            <form id="editVideoForm" method="post">
+                <div class="modal-form-grid">
+
+                    <label>
+                        영상 구분
+                        <input type="text"
+                               id="editCategory"
+                               name="category"
+                               required>
+                    </label>
+
+                    <label>
+                        노출 순서
+                        <input type="number"
+                               id="editCourseOrder"
+                               name="courseOrder"
+                               readonly>
+                    </label>
+
+                    <label class="full">
+                        영상 제목
+                        <input type="text"
+                               id="editTitle"
+                               name="title"
+                               required>
+                    </label>
+
+                    <label class="full">
+                        YouTube URL
+                        <input type="text"
+                               id="editVideoUrl"
+                               readonly>
+                    </label>
+
+                    <label class="full">
+                        영상 설명
+                        <textarea id="editDescription"
+                                  name="description"
+                                  required></textarea>
+                    </label>
+
+                    <label>
+                        사용 여부
+                        <select id="editUseYn"
+                                name="useYn"
+                                required>
+                            <option value="Y">사용</option>
+                            <option value="N">미사용</option>
+                        </select>
+                    </label>
+
+                </div>
+
+
+                <div class="modal-button-area">
+                    <button type="button"
+                            class="admin-small-btn danger"
+                            id="editModalDeleteBtn"
+                            data-course-id=""
+                            data-title="">
+                        삭제
+                    </button>
+
+                    <div class="modal-button-right">
+                        <button type="button"
+                                class="admin-small-btn sub"
+                                data-close-edit-modal>
+                            취소
+                        </button>
+
+                        <button type="submit"
+                                class="admin-small-btn">
+                            변경 저장
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 학습영상 삭제 확인 모달 -->
+    <div class="admin-modal" id="deleteVideoModal" aria-hidden="true">
+        <div class="admin-modal-backdrop" data-close-delete-modal></div>
+
+        <div class="admin-modal-dialog delete-modal-dialog">
+            <div class="delete-modal-icon">!</div>
+
+            <div class="delete-modal-content">
+                <h2>학습 영상을 삭제하시겠습니까?</h2>
+
+                <p>
+                    <strong id="deleteVideoTitle">선택한 영상</strong>을
+                    정말 삭제하시겠습니까?
+                </p>
+
+                <p class="delete-warning">
+                    삭제한 데이터는 복구할 수 없습니다.
+                </p>
+            </div>
+
+            <form id="deleteVideoForm" method="post">
+                <div class="modal-button-area">
+                    <button type="button"
+                            class="admin-small-btn sub"
+                            data-close-delete-modal>
+                        취소하기
+                    </button>
+
+                    <button type="submit"
+                            class="admin-small-btn danger">
+                        삭제하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
+<script th:src="@{/js/admin-dashboard.js}"></script>
+<script th:src="@{/js/admin/adminLVideoList.js}"></script>
+
+</body>
+</html>

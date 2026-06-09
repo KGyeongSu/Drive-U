@@ -19,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 이메일이 이미 존재하는지 여부 확인
     boolean existsByEmail(String email);
 
+    Optional<Member> findBySeqAndRole(Long seq, Member.Role role);
     // user만 카운트
     @Query("SELECT COUNT(m) FROM Member m WHERE m.role = :role")
     long countByRole(@Param("role") Member.Role role);

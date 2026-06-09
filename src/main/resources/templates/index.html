@@ -139,7 +139,7 @@
         </div>
 
         <div class="news-detail-area transparent-bg" th:if="${not #lists.isEmpty(noticeList)}">
-            <button class="outline-btn news-more-btn" th:onclick="|location.href='/drive-u/userInfo/noticeDetail?id=${noticeList[0].id}'|">
+            <button class="outline-btn news-more-btn" th:onclick="|location.href='/drive-u/userInfo/noticeHome/noticeDetail?id=${noticeList[0].id}'|">
                 전체보기
             </button>
             <div class="detail-content" id="news-detail-box">

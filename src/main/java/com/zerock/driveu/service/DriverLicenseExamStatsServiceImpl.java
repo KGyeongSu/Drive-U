@@ -102,11 +102,17 @@ public class DriverLicenseExamStatsServiceImpl implements DriverLicenseExamStats
 
         // 대기 예상 시간 & 대기 인수 (대기인수 가공_totalCnt 기반으로 역산)
         double baseMinutes = 20.0;
-        double divisor = 1800.0;
-        if("수도권".equals(cityGroup)) {
-
-            divisor = 5000.0;
-
+        double divisor = 5000.0; // 기본값
+        switch (cityGroup) {
+            case "수도권": divisor = 15000.0; break;
+            case "대전·충남":
+            case "부산·울산·경남": divisor = 10000.0; break;
+            case "대구·경북":
+            case "광주·전남": divisor = 8000.0; break;
+            case "충북":
+            case "전북":
+            case "강원":
+            case "제주": divisor = 5000.0; break;
         }
 
         int finalExamTime = (int) (baseMinutes * dayWeight * hourWeight * examCenterWeight);
@@ -119,11 +125,11 @@ public class DriverLicenseExamStatsServiceImpl implements DriverLicenseExamStats
 
         // 혼잡도 색상 결정
         String statusColor = "GREEN";
-        if (finalExamTime >= 70) {
+        if (finalExamTime >= 80) {
 
             statusColor = "RED";
 
-        } else if (finalExamTime >= 30) {
+        } else if (finalExamTime >= 40) {
 
             statusColor = "YELLOW";
 

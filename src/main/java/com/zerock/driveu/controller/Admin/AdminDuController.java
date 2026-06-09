@@ -40,9 +40,4 @@ public class AdminDuController {
 
         return "redirect:/drive-u/admin/video";
     }
-
-    @GetMapping("/lVideo")
-    public String adminLearningVideo() {
-        return "drive-u/admin/video/lVideo";
-    }
 }
