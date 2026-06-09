@@ -116,7 +116,7 @@ function renderCandidates() {
     </tr>`;
     }).join("");
 }
-// 4. 필터 select 변경 → 즉시 다시 렌더
+// 4. 필터 select 변경 → 즉시 다시 렌더링
 document.getElementById("passCenter").addEventListener("change", renderCandidates);
 document.getElementById("passTime").addEventListener("change", renderCandidates);
 document.getElementById('passDate').addEventListener("change", renderCandidates);
@@ -143,7 +143,7 @@ document.getElementById("candidateBody").addEventListener("click", async (e) => 
         });
         const data = await res.json();
 
-        alert(data.message);              // "합격 처리됐습니다." / "불합격 (기준 점수 미달)"
+        alert(data.message);              // "합격 처리됐습니다." / "불합격 (기준 점수 미달입니다)"
         if (data.passed) {
             loadCandidates();
         } else {
