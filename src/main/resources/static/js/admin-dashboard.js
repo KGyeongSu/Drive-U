@@ -73,6 +73,10 @@ function initAdminSearch() {
         }
     });
 }
+// 2. 명단에서 시험장·시간대 추출해 필터 옵션 생성 (중복 제거 목적)
+function buildFilterOptions() {
+    const centerSel = document.getElementById("passCenter");
+    const timeSel   = document.getElementById("passTime");
 
 /* =========================================================
    시험 합격·불합격 처리
@@ -119,6 +123,49 @@ function initExamPassManagement() {
         return;
     }
 
+    tbody.innerHTML = filtered.map(c => {
+        // 합격행이 있으면(examPassId 존재) 합격 상태로 렌더
+        const isPassed = c.examPassId != null;
+
+        return `
+    <tr data-app-id="${c.applicationId}" data-exam-pass-id="${c.examPassId ?? ''}">
+        <td>${c.applicationId}</td>
+        <td>${c.examType}</td>
+        <td>${c.licenseType}</td>
+        <td>${c.centerName}</td>
+        <td>${c.examDate} ${c.examTime.substring(0,5)}</td>
+        <td>${c.contactName}</td>
+        <td>${c.contactPhone}</td>
+        <td>
+            ${isPassed
+            ? `<span class="passed-badge">합격</span>`
+            : `<input type="number" class="score-input" min="0" max="100" placeholder="점수">`}
+        </td>
+        <td>
+            ${isPassed
+            ? `<button type="button" class="cancel-btn">합격취소</button>`
+            : `<button type="button" class="pass-btn">합격처리</button>`}
+        </td>
+    </tr>`;
+    }).join("");
+}
+// 4. 필터 select 변경 → 즉시 다시 렌더링
+document.getElementById("passCenter").addEventListener("change", renderCandidates);
+document.getElementById("passTime").addEventListener("change", renderCandidates);
+document.getElementById('passDate').addEventListener("change", renderCandidates);
+
+// 5. 합격처리 버튼 (이벤트 위임)
+document.getElementById("candidateBody").addEventListener("click", async (e) => {
+    if (!e.target.classList.contains("pass-btn")) return;
+
+    const row   = e.target.closest("tr");
+    const appId = Number(row.dataset.appId);
+    const input = row.querySelector(".score-input");
+    const score = Number(input.value);
+
+    if (input.value === "" || score < 0 || score > 100) {
+        alert("점수를 0~100 사이로 입력하세요.");
+        return;
     let allCandidates = [];
     let currentPage = 0;
 
@@ -161,6 +208,19 @@ function initExamPassManagement() {
             )
         ];
 
+        alert(data.message);              // "합격 처리됐습니다." / "불합격 (기준 점수 미달입니다)"
+        if (data.passed) {
+            loadCandidates();
+        } else {
+            // 불합격 → DB엔 안 남음. 화면에서만 이번 회차 결과 표시.
+            row.classList.add("failed-row");      // 불합격 표시용 클래스
+            e.target.textContent = "불합격";
+
+            // 점수칸을 다시 건드리면 불합격 표시 해제 → 재입력 후 합격처리 가능
+            input.addEventListener("input", () => {
+                row.classList.remove("failed-row");
+                e.target.textContent = "합격처리";
+            }, { once: true });
         const times = [
             ...new Set(
                 allCandidates
