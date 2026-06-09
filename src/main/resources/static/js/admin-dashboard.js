@@ -55,7 +55,7 @@ async function loadCandidates() {
         alert("응시자 명단을 불러오지 못했습니다.");
     }
 }
-// 2. 명단에서 시험장·시간대 추출해 필터 옵션 생성 (중복 제거)
+// 2. 명단에서 시험장·시간대 추출해 필터 옵션 생성 (중복 제거 목적)
 function buildFilterOptions() {
     const centerSel = document.getElementById("passCenter");
     const timeSel   = document.getElementById("passTime");
