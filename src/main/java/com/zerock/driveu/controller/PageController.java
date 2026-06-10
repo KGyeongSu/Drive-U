@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,7 +29,21 @@ public class PageController {
         return "drive-u/Driving";
     }
     @GetMapping("/drive-u/driving/fDriving")
-    public String functionDriving() {
+    public String functionDriving(
+            @RequestParam(required = false) Integer score,
+            @RequestParam(required = false) String penalties,
+            @RequestParam(required = false) String result,
+            @RequestParam(required = false) String failReason,
+            Model model) {
+
+        boolean pass = score != null && "PASS".equals(result);
+
+        model.addAttribute("score", score);
+        model.addAttribute("penalties", penalties);
+        model.addAttribute("result", result);
+        model.addAttribute("failReason", failReason);
+        model.addAttribute("pass", pass);
+
         return "drive-u/driving/fDriving";
     }
 
@@ -36,5 +51,6 @@ public class PageController {
     public String roadDriving() {
         return "drive-u/driving/rDriving";
     }
+
 
 }

@@ -21,11 +21,66 @@
         <section class="content-section">
             <h2 class="section-title">기능 시뮬레이션 실행</h2>
             <div class="simulator-box">
-                <div class="sim-screen"><strong>Unity WebGL 영역</strong><span>직각주차 · 경사로 · 돌발상황</span></div>
-                <div class="sim-result"><h3>실습 결과</h3>
-                    <div class="score">82점</div>
-                    <p>감점: 방향지시등 미작동, 정지선 초과</p>
-                    <button type="button" class="outline-btn">다시 연습</button>
+                <div class="sim-screen">
+                    <strong>Drive-Ü 시뮬레이터</strong>
+                    <span>직각주차 · 경사로 · 돌발상황</span>
+
+                    <button type="button"
+                            class="outline-btn"
+                            onclick="openUnity();">
+                        시뮬레이터 실행
+                    </button>
+
+                    <script>
+                        let unityWindow = null;
+
+                        function openUnity() {
+                            unityWindow = window.open('/unity/index.html', 'DriveUUnityWindow');
+                        }
+                    </script>
+                </div>
+                <div class="sim-result">
+                    <h3>실습 결과</h3>
+
+                    <div th:if="${score == null}">
+                        <p>아직 실습 결과가 없습니다.</p>
+                    </div>
+
+                    <div th:if="${score != null}">
+
+                        <div class="score" th:text="${score} + '점'">82점</div>
+
+                        <p th:if="${pass}"
+                           style="color:#2563eb;font-weight:700;font-size:20px;">
+                            합격
+                        </p>
+
+                        <p th:unless="${pass}"
+                           style="color:#ef4444;font-weight:700;font-size:20px;">
+                            불합격
+                        </p>
+
+                        <div th:if="${!pass and failReason != null and !failReason.isEmpty()}">
+                            <p style="font-weight:bold;color:#ef4444;">
+                                실격 사유
+                            </p>
+
+                            <p th:text="${failReason}">
+                                실격 사유
+                            </p>
+                        </div>
+
+                        <div>
+                            <p style="font-weight:bold;">
+                                감점 항목
+                            </p>
+
+                            <p th:text="${penalties}">
+                                감점 없음
+                            </p>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </section>
