@@ -21,7 +21,7 @@ public class PageController {
         model.addAttribute("noticeList", noticeService.getMainNotice(7));
         model.addAttribute("lawList", lawsService.getMainLaw(7));
 
-        return "/index";
+        return "index";
     }
 
     @GetMapping("/drive-u/Driving")

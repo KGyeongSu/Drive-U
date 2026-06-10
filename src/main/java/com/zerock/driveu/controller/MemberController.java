@@ -41,9 +41,7 @@ public class MemberController {
     }
 
     @GetMapping("/drive-u/login")
-    public String login() {
-        return "drive-u/login";
-    }
+    public String login() {return "drive-u/loginForm"; }
 
     @GetMapping("/login/signUp")
     public String signUp(HttpSession session, Model model) {
