@@ -19,12 +19,27 @@
         </section>
 
         <section class="content-section">
-    <h2 class="section-title">주행 시뮬레이션 실행</h2>
-    <div class="simulator-box">
-        <div class="sim-screen"><strong>Unity WebGL 영역</strong><span>차선변경 · 우회전 · 어린이보호구역</span></div>
-        <div class="sim-result"><h3>실습 결과</h3><div class="score">87점</div><p>감점: 우회전 일시정지 미흡, 차선 유지 불안정</p><button type="button" class="outline-btn">다시 연습</button></div>
-    </div>
-</section>
+            <h2 class="section-title">주행 시뮬레이션 실행</h2>
+            <div class="simulator-box">
+                <div class="sim-screen">
+                    <strong>Drive-Ü 도로주행 시뮬레이터</strong>
+                    <span>차선변경 · 우회전 · 어린이보호구역</span>
+
+                    <button type="button"
+                            class="outline-btn"
+                            onclick="openRoadUnity();">
+                        시뮬레이터 실행
+                    </button>
+
+                    <script>
+                        function openRoadUnity() {
+                            window.open('/unity/road/index.html', 'DriveURoadUnityWindow');
+                        }
+                    </script>
+                </div>
+                <div class="sim-result"><h3>실습 결과</h3><div class="score">87점</div><p>감점: 우회전 일시정지 미흡, 차선 유지 불안정</p><button type="button" class="outline-btn">다시 연습</button></div>
+            </div>
+        </section>
     </main>
 </div>
 
