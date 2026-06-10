@@ -6,6 +6,8 @@ import lombok.Setter;
 @Setter
 public class LVideoCreateDTO {
 
+    private int courseOrder;
+
     private String category;
 
     private String title;

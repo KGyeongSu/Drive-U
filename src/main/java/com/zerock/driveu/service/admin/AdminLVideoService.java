@@ -42,6 +42,7 @@ public class AdminLVideoService {
                 .requiredYn("Y")
                 .useYn(dto.getUseYn())
                 .createdBy(admin)
+                .courseOrder(nextCourseOrder)
                 .build();
 
         return videoCourseRepository.save(videoCourse).getCourseId();
@@ -143,7 +144,7 @@ public class AdminLVideoService {
         VideoCourse videoCourse = videoCourseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("삭제할 학습 영상이 없습니다."));
 
-        if (!"LVideo".equals(videoCourse.getCourseType())) {
+        if (!"LVIDEO".equals(videoCourse.getCourseType())) {
             throw new IllegalArgumentException("학습 영상 데이터가 아닙니다.");
         }
 
